@@ -1,0 +1,217 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Inserting new observations &mdash; istSOS 3.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '3.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="istSOS 3.0.0 documentation" href="index.html" />
+    <link rel="next" title="List of all istSOS.entity" href="entities.html" />
+    <link rel="prev" title="Registration of new sensors" href="insertsensor.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="entities.html" title="List of all istSOS.entity"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="insertsensor.html" title="Registration of new sensors"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">istSOS 3.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="inserting-new-observations">
+<span id="insertobservation"></span><h1>Inserting new observations<a class="headerlink" href="#inserting-new-observations" title="Permalink to this headline">¶</a></h1>
+<p>Every offering, as defined during the insertSensor request, defines the
+constellation of procedure, observedProperty and observation and feature of
+interest types. istSOS will check that this configuration is respected
+every time an insertObservation (iO) is made.</p>
+<p>Things to take into account when sending observation to a SOS server are
+several. Let&#8217;s go throught them in the nexts paragraphs.</p>
+<div class="section" id="the-observation-id">
+<h2>The observation id<a class="headerlink" href="#the-observation-id" title="Permalink to this headline">¶</a></h2>
+<p>According to the OGC SOS 2.0 standard every Observation must have an unique
+identifier represented as an attribute named &#8220;id&#8221; into the <strong>om:OM_Observation</strong>
+element. The attribute is mandatory as stated by the standard, and in
+particular:</p>
+<p>&#8220;<em>The attribute id (of type gml:id) supports provision of a handle for the XML
+element representing a GML Object. Its use is mandatory for all GML objects.
+It is of XML type ID, so is constrained to be unique in the XML document
+within which it occurs.</em>&#8221;.</p>
+<p>So every observation must have a unique identifier across the iO XML document,
+but not only. All the observations stored into the SOS server, must have a
+unique identifier, that&#8217;s because, executing a getObservationById operation using
+the id set during an iO operation, the server must return exactly that observation.
+The tricky part is to teach a sensor network to agree on which id
+to use when sending observations. A possibility that two sensors send the
+same observation id to the same server is present.</p>
+<p>So we decided not to implement the getObservationById operation. You as a user
+just pay attention to send the XML with different id for each observation.</p>
+<div class="admonition-in-the-future admonition">
+<p class="first admonition-title">In the future</p>
+<p>Maybe in the future we will handle this by adopting a convention to generate
+a unique id across all the sensors of an SOS server. maybe somthing like
+this:</p>
+<p><cite>{PROCEDURE NAME}_{OBSERVED PROPERTY}_{PHENOMENON TIME IN LINUX TIME}</cite></p>
+<p class="last"><strong>Hey but this is like making a getObservation request setting the three
+paramenters as filters.</strong></p>
+</div>
+<p>After the first iO request is done, the table containing the measures is
+configured using this request as a template. All the next iO shall respect
+this template in order to keep the structure of the time series
+represented with time instant and the procedure related measures.</p>
+<p>For instance if a sensor station is sending two or more observed properties,
+every next iO must send all the observed properties group defined the first
+time.</p>
+<p>Each measure may be of a different type: numeric, integer, boolean, text.
+The definition of the type is done during the insertSensor request configuring
+the observationType element into the SosInsertionMetadata.</p>
+</div>
+<div class="section" id="observation-types">
+<h2>Observation types<a class="headerlink" href="#observation-types" title="Permalink to this headline">¶</a></h2>
+<p>IstSOS supports various observation types, with regards to the observation
+type definition, measurements can be sent as:</p>
+<p><a class="reference external" href="http://www.opengis.net/def/observationType/OGC-OM/2.0/">http://www.opengis.net/def/observationType/OGC-OM/2.0/</a></p>
+<blockquote>
+<div><ul class="simple">
+<li>OM_CategoryObservation</li>
+<li>OM_ComplexObservation</li>
+<li>OM_CountObservation</li>
+<li>OM_DiscreteCoverageObservation</li>
+<li>OM_GeometryObservation</li>
+<li>OM_Measurement</li>
+<li>OM_Observation</li>
+<li>OM_PointCoverageObservation</li>
+<li>OM_TemporalObservation</li>
+<li>OM_TimeSeriesObservation</li>
+<li>OM_TruthObservation</li>
+<li><strong>OM_SWEArrayObservation</strong> (see Usage of the SWE Array Observation Type)</li>
+</ul>
+</div></blockquote>
+<div class="admonition-requirement-68-ogc-12-006 admonition">
+<p class="first admonition-title">Requirement 68 (OGC 12-006)</p>
+<p class="last">The type of the inserted observation (with unique result
+type) shall be supported by the SOS server (and hence listed in the
+InsertionCapabilities section) AND shall be one of the types defined for
+(each of) the ObservationOffering (s) to which the observation is added.
+[<a class="reference external" href="http://www.opengis.net/spec/SOS/2.0/req/obsInsertion/property-constellation">http://www.opengis.net/spec/SOS/2.0/req/obsInsertion/property-constellation</a>]</p>
+</div>
+</div>
+<div class="section" id="usage-of-the-swe-array-observation-type">
+<h2>Usage of the SWE Array Observation Type<a class="headerlink" href="#usage-of-the-swe-array-observation-type" title="Permalink to this headline">¶</a></h2>
+<p>Using SWE Array Observation Type it is possible to insert multiple
+observation using a swe:DataArray. That will minimize the size of the
+IO request by representing the data into only one OM_Observation object.</p>
+<p>Also here the data record of the array must respect all the observed
+properties group defined in the first iO. Consequently the time series
+structure shall be respected.</p>
+<div class="admonition-requirement-69-ogc-12-006 admonition">
+<p class="first admonition-title">Requirement 69 (OGC 12-006)</p>
+<p class="last">If multiple offerings are specified for the sensor of
+the observations which should be inserted, all specified observations shall
+be added to all specified offerings.
+[<a class="reference external" href="http://www.opengis.net/spec/SOS/2.0/req/obsInsertion/multiple-offerings">http://www.opengis.net/spec/SOS/2.0/req/obsInsertion/multiple-offerings</a>]</p>
+</div>
+<p><strong>PostgreSQL aiopg implementation</strong></p>
+<p>After a new sensor is registered an empty table for storing the measures is
+generated. That means that every procedure has its own table in the &#8220;data&#8221;
+schema.</p>
+<p>The name of the table is generated using an underscore ( _ ) followed by the
+offering name.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Inserting new observations</a><ul>
+<li><a class="reference internal" href="#the-observation-id">The observation id</a></li>
+<li><a class="reference internal" href="#observation-types">Observation types</a></li>
+<li><a class="reference internal" href="#usage-of-the-swe-array-observation-type">Usage of the SWE Array Observation Type</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="insertsensor.html"
+                        title="previous chapter">Registration of new sensors</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="entities.html"
+                        title="next chapter">List of all istSOS.entity</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/insertobservation.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="entities.html" title="List of all istSOS.entity"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="insertsensor.html" title="Registration of new sensors"
+             >previous</a> |</li>
+        <li><a href="index.html">istSOS 3.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright Institute of Eath Science - SUPSI 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

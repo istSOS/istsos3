@@ -1,0 +1,13 @@
+{
+    "proxy_path": "http://localhost/istsos3/",
+    "loaders": {
+        "aiopg": {
+            "type": "aiopg",
+            "host": "localhost",
+            "port": "5432",
+            "user": "postgres",
+            "password": "postgres",
+            "database": "istsos3"
+        }
+    }
+}

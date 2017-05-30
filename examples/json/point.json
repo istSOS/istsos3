@@ -1,0 +1,20 @@
+{
+    "geometry": {
+        "type": "Point",
+        "coordinates": [
+            "8.79212",
+            "46.15515",
+            "197.8"
+        ]
+    },
+    "crs": {
+        "type": "name",
+        "properties": {
+            "name": "EPSG:4326"
+        }
+    },
+    "type": "Feature",
+    "properties": {
+        "name": "LOCARNO"
+    }
+}

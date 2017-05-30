@@ -1,0 +1,7 @@
+
+pip3 install aiopg
+
+pip3 install jsonschema
+
+# http://lxml.de
+pip3 install lxml

@@ -1,0 +1,73 @@
+<sos:InsertObservation service="SOS" version="2.0.0"
+    xmlns:sos="http://www.opengis.net/sos/2.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:swe="http://www.opengis.net/swe/2.0"
+    xmlns:swes="http://www.opengis.net/swes/2.0"
+    xmlns:gml="http://www.opengis.net/gml/3.2"
+    xmlns:ogc="http://www.opengis.net/ogc"
+    xmlns:om="http://www.opengis.net/om/2.0"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+    <sos:offering>129430823bdc11e7b9b9e0db55c4a7a5</sos:offering>
+    <sos:observation>
+        <om:OM_Observation id="f1">
+            <om:type
+                xlink:href="http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_SWEArrayObservation"/>
+            <om:phenomenonTime>
+                <gml:TimePeriod gml:id="phenomenonTime">
+                    <gml:beginPosition>2017-05-08T17:20:00.000+00:00</gml:beginPosition>
+                    <gml:endPosition>2017-05-08T17:40:00.000+00:00</gml:endPosition>
+                </gml:TimePeriod>
+            </om:phenomenonTime>
+            <om:resultTime>
+                <gml:TimeInstant gml:id="resultTime">
+                    <gml:timePosition>2017-05-08T17:40:10.000+00:00</gml:timePosition>
+                </gml:TimeInstant>
+            </om:resultTime>
+            <om:procedure
+                xlink:href="LUGANO"/>
+            <om:observedProperty xsi:nil='true'/>
+            <om:featureOfInterest
+                xlink:href="http://istsos.org/istsos3/foi/loc_LUGANO"/>
+            <om:result
+                xsi:type="swe:DataArrayPropertyType">
+                <swe:DataArray>
+                    <swe:elementCount>
+                        <swe:Count>
+                            <swe:value>3</swe:value>
+                        </swe:Count>
+                    </swe:elementCount>
+                    <swe:elementType name="defs">
+                        <swe:DataRecord>
+                            <swe:field name="phenomenonTime">
+                                <swe:Time definition="http://www.opengis.net/def/property/OGC/0/PhenomenonTime">
+                                    <swe:uom xlink:href="http://www.opengis.net/def/uom/ISO-8601/0/Gregorian"/>
+                                </swe:Time>
+                            </swe:field>
+                            <swe:field>
+                                <swe:Quantity definition="urn:ogc:def:parameter:x-istsos:1.0:meteo:air:temperature">
+                                    <swe:uom code="°C"/>
+                                </swe:Quantity>
+                            </swe:field>
+                            <swe:field>
+                                <swe:Quantity definition="urn:ogc:def:parameter:x-istsos:1.0:meteo:air:humidity">
+                                    <swe:uom code="%"/>
+                                </swe:Quantity>
+                            </swe:field>
+                        </swe:DataRecord>
+                    </swe:elementType>
+                    <swe:encoding>
+                        <swe:TextEncoding
+                            decimalSeparator="."
+                            tokenSeparator=","
+                            blockSeparator="@"/>
+                    </swe:encoding>
+                    <swe:values>
+                        2017-05-08T17:20:00.000+00:00,20.6,78.2@
+                        2017-05-08T17:30:00.000+00:00,19.8,79.1@
+                        2017-05-08T17:40:00.000+00:00,19.5,80.5
+                    </swe:values>
+                </swe:DataArray>
+            </om:result>
+        </om:OM_Observation>
+    </sos:observation>
+</sos:InsertObservation>

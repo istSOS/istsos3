@@ -1,0 +1,4 @@
+*.py[cod]
+istsos/__pycache__/
+istsos/entity/__pycache__/
+istsos/action/__pycache__/

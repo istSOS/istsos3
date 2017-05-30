@@ -1,0 +1,77 @@
+<sos:InsertObservation service="SOS" version="2.0.0"
+    xmlns:sos="http://www.opengis.net/sos/2.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:swe="http://www.opengis.net/swe/2.0"
+    xmlns:swes="http://www.opengis.net/swes/2.0"
+    xmlns:gml="http://www.opengis.net/gml/3.2"
+    xmlns:ogc="http://www.opengis.net/ogc"
+    xmlns:om="http://www.opengis.net/om/2.0"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+    <sos:offering>d0ee4e863aca11e79ff7e0db55c4a7a5</sos:offering>
+    <sos:observation>
+        <om:OM_Observation id="f1">
+            <om:type
+                xlink:href="http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"/>
+            <om:phenomenonTime>
+                <gml:TimeInstant gml:id="phenomenonTime">
+                    <gml:timePosition>2017-05-08T16:50:00.000+00:00</gml:timePosition>
+                </gml:TimeInstant>
+            </om:phenomenonTime>
+            <om:resultTime
+                xlink:href="#phenomenonTime"/>
+            <om:procedure
+                xlink:href="BREGANZONA"/>
+            <om:observedProperty
+                xlink:href="urn:ogc:def:parameter:x-istsos:1.0:meteo:air:temperature"/>
+            <om:featureOfInterest
+                xlink:href="http://istsos.org/istsos3/foi/loc_BREGANZONA"/>
+            <om:result
+                xsi:type="gml:MeasureType"
+                uom="°C">22.4</om:result>
+        </om:OM_Observation>
+    </sos:observation>
+    <sos:observation>
+        <om:OM_Observation id="f2">
+            <om:type
+                xlink:href="http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"/>
+            <om:phenomenonTime>
+                <gml:TimeInstant gml:id="phenomenonTime">
+                    <gml:timePosition>2017-05-08T17:00:00.000+00:00</gml:timePosition>
+                </gml:TimeInstant>
+            </om:phenomenonTime>
+            <om:resultTime
+                xlink:href="#phenomenonTime"/>
+            <om:procedure
+                xlink:href="BREGANZONA"/>
+            <om:observedProperty
+                xlink:href="urn:ogc:def:parameter:x-istsos:1.0:meteo:air:temperature"/>
+            <om:featureOfInterest
+                xlink:href="http://istsos.org/istsos3/foi/loc_BREGANZONA"/>
+            <om:result
+                xsi:type="gml:MeasureType"
+                uom="°C">22.1</om:result>
+        </om:OM_Observation>
+    </sos:observation>
+    <sos:observation>
+        <om:OM_Observation id="f3">
+            <om:type
+                xlink:href="http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"/>
+            <om:phenomenonTime>
+                <gml:TimeInstant gml:id="phenomenonTime">
+                    <gml:timePosition>2017-05-08T17:10:00.000+00:00</gml:timePosition>
+                </gml:TimeInstant>
+            </om:phenomenonTime>
+            <om:resultTime
+                xlink:href="#phenomenonTime"/>
+            <om:procedure
+                xlink:href="BREGANZONA"/>
+            <om:observedProperty
+                xlink:href="urn:ogc:def:parameter:x-istsos:1.0:meteo:air:temperature"/>
+            <om:featureOfInterest
+                xlink:href="http://istsos.org/istsos3/foi/loc_BREGANZONA"/>
+            <om:result
+                xsi:type="gml:MeasureType"
+                uom="°C">20.8</om:result>
+        </om:OM_Observation>
+    </sos:observation>
+</sos:InsertObservation>
