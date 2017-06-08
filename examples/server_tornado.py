@@ -1,13 +1,51 @@
 # -*- coding: utf-8 -*-
 from tornado import gen
-from tornado.ioloop import IOLoop
-from tornado.httpserver import HTTPServer
-from tornado.options import parse_command_line
+from tornado.web import Application
 from tornado.web import RequestHandler
-from tornado.web import *
+import tornado.concurrent
+from tornado.platform.asyncio import AsyncIOMainLoop
 
-from istsos import application
-from istsos import request
+# Python 3.4.4+
+# from tornado.platform.asyncio import to_tornado_future
+# from tornado.platform.asyncio import ensure_future
+# import functools
+import asyncio
+import json
+import sys
+
+sys.path.append('../src/')
+
+
+# Python 3.4.4+
+'''def coroutine(func):
+    """WGH
+https://gist.github.com/drgarcia1986/6b666c05ccb03e9525b4#gistcomment-2008480
+    """
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        return to_tornado_future(ensure_future(func(*args, **kwargs)))
+    return wrapper'''
+
+
+# Python 3.4.3-
+def coroutine(func):
+    """code from: drgarcia1986
+https://gist.github.com/drgarcia1986/6b666c05ccb03e9525b4
+    """
+    func = asyncio.coroutine(func)
+
+    def decorator(*args, **kwargs):
+        future = tornado.concurrent.Future()
+
+        def future_done(f):
+            try:
+                future.set_result(f.result())
+            except Exception as e:
+                future.set_exception(e)
+
+        asyncio.async(func(*args, **kwargs)).add_done_callback(future_done)
+        return future
+    return decorator
 
 
 class SosHandler(RequestHandler):
@@ -16,36 +54,46 @@ class SosHandler(RequestHandler):
     def istsos(self):
         return self.settings['istsos']
 
-    @gen.coroutine
+    @coroutine
     def get(self, *args, **kwargs):
-        self.dispatch(*args, **kwargs)
+        self.set_header("Content-Type", "application/xml; charset=utf-8")
+        parameters = {
+            k: self.get_argument(k) for k in self.request.arguments
+        }
+        request = HttpRequest(
+            "GET",
+            "sos",
+            parameters=parameters
+        )
+        yield from self.istsos.execute_http_request(
+            request, stats=True
+        )
+        self.write(request['response'])
 
-    @gen.coroutine
-    def dispatch(self, *args, **kwargs):
-        request = request.Request()
-        # ... Here prepare the request object
-        response = yield self.istsos.execute_http_request(request)
-        self.write(response.to_string())
-        self.finish()
+
+@asyncio.coroutine
+def get_istsos_server():
+    return (yield from Server.create())
 
 
 if __name__ == "__main__":
 
-    parse_command_line()
+    AsyncIOMainLoop().install()
+    ioloop = asyncio.get_event_loop()
+
+    from istsos.application import Server
+    from istsos.entity.httpRequest import HttpRequest
+
+    istsos = ioloop.run_until_complete(get_istsos_server())
 
     settings = dict(
         debug=True,
-        istsos=application.Server(
-            config_file='/home/milan/workspace/istsos.json'
-        )
+        istsos=istsos
     )
 
-    application = tornado.web.Application([
+    app = Application([
         (r'/sos', SosHandler)
     ], **settings)
 
-    ioloop = IOLoop.instance()
-
-    http_server = HTTPServer(application)
-    http_server.listen(8888)
-    ioloop.start()
+    app.listen(8888)
+    ioloop.run_forever()

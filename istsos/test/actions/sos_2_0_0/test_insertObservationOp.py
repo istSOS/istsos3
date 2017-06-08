@@ -11,6 +11,50 @@ from istsos.entity.httpRequest import HttpRequest
 class TestInsertObservation:
 
     def execute_1(self):
+        with open('examples/xml/insertObservation-1.xml') as xml_file:
+
+            # Installation of the istSOS server
+            server = yield from Server.create()
+
+            # Preparing the Request object
+            request = HttpRequest(
+                "POST",
+                "sos",
+                body=xml_file.read(),
+                content_type="application/xml"
+            )
+
+            print()
+
+            response = yield from server.execute_http_request(
+                request, stats=True
+            )
+            print(response['offerings'])
+            print(response['observation'])
+
+    def execute_2(self):
+        with open('examples/xml/insertObservation-2.xml') as xml_file:
+
+            # Installation of the istSOS server
+            server = yield from Server.create()
+
+            # Preparing the Request object
+            request = HttpRequest(
+                "POST",
+                "sos",
+                body=xml_file.read(),
+                content_type="application/xml"
+            )
+
+            print()
+
+            response = yield from server.execute_http_request(
+                request, stats=True
+            )
+            print(response['offerings'])
+            print(response['observation'])
+
+    def execute_3(self):
         with open('examples/xml/insertObservation-3.xml') as xml_file:
 
             # Installation of the istSOS server
@@ -29,29 +73,13 @@ class TestInsertObservation:
             response = yield from server.execute_http_request(
                 request, stats=True
             )
-
-    def execute_2(self):
-        with open('examples/xml/insertObservation-2.xml') as xml_file:
-
-            # Installation of the istSOS server
-            server = yield from Server.create()
-
-            # Preparing the Request object
-            request = HttpRequest(
-                "POST",
-                "sos",
-                body=xml_file.read(),
-                content_type="application/xml"
-            )
-
-            response = yield from server.execute_http_request(
-                request, stats=True
-            )
+            print(response['offerings'])
+            print(response['observation'])
 
     def test_execute(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(
-            asyncio.gather(self.execute_1())
+            asyncio.gather(self.execute_2())
         )
         loop.close()
         assert True is True

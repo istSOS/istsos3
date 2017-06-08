@@ -26,7 +26,8 @@ class Offerings(Offerings):
                     pt_end,
                     rt_begin,
                     rt_end,
-                    foi_type
+                    foi_type,
+                    data_table_exists
                 FROM
                     offerings
             """
@@ -67,6 +68,7 @@ class Offerings(Offerings):
             for rec in recs:
                 data = {
                     "id": rec[0],
+                    "results": rec[9],
                     "name": rec[1],
                     "procedure": rec[2],
                     "procedure_description_format": [

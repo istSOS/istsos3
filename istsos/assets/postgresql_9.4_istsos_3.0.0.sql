@@ -79,7 +79,7 @@ SELECT pg_catalog.setval('uoms_id_uom_seq', 9, true);
 CREATE TABLE public.observation_types
 (
     id integer NOT NULL,
-    name character varying NOT NULL,
+    def character varying NOT NULL,
     description character varying,
     PRIMARY KEY (id)
 );
@@ -110,6 +110,7 @@ CREATE SEQUENCE offerings_id_seq
 CREATE TABLE public.offerings
 (
     id integer NOT NULL default nextval('offerings_id_seq'),
+    data_table_exists boolean DEFAULT FALSE,
     offering_name character varying NOT NULL,
     procedure_name character varying NOT NULL,
     description_format character varying,
@@ -126,6 +127,31 @@ CREATE TABLE public.offerings
     cached jsonb,
     PRIMARY KEY (id)
 );
+
+CREATE INDEX
+   ON public.offerings USING btree (id ASC NULLS LAST);
+
+
+CREATE SEQUENCE sensor_descriptions_id_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+CREATE TABLE public.sensor_descriptions
+(
+    id integer NOT NULL default nextval('sensor_descriptions_id_seq'),
+    id_off integer NOT NULL,
+    valid_time_begin timestamp with time zone,
+    valid_time_end timestamp with time zone,
+    data character varying,
+    PRIMARY KEY (id),
+    FOREIGN KEY (id_off) REFERENCES offerings (id)
+        ON UPDATE NO ACTION ON DELETE CASCADE
+);
+
+CREATE INDEX
+   ON public.sensor_descriptions USING btree (id_off ASC NULLS LAST);
 
 CREATE SEQUENCE off_obs_prop_id_seq
     INCREMENT BY 1
@@ -152,6 +178,9 @@ CREATE TABLE public.off_obs_prop
         ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
+CREATE INDEX
+   ON public.off_obs_prop USING btree (id_off ASC NULLS LAST);
+
 CREATE SEQUENCE off_obs_type_id_seq
     INCREMENT BY 1
     NO MAXVALUE
@@ -169,3 +198,6 @@ CREATE TABLE public.off_obs_type
     FOREIGN KEY (id_oty) REFERENCES observation_types (id)
         ON UPDATE NO ACTION ON DELETE NO ACTION
 );
+
+CREATE INDEX
+   ON public.off_obs_type USING btree (id_off ASC NULLS LAST);

@@ -15,10 +15,6 @@ class OfferingCreator(OfferingCreator):
     @asyncio.coroutine
     def process(self, request):
 
-        if 'offering' not in request:
-            # A request can also lead to an empty response
-            return
-
         with (yield from request['state'].pool.cursor()) as cur:
             yield from cur.execute("BEGIN;")
             # Register the new sensor into the offerings table

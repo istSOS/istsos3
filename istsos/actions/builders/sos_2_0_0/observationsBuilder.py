@@ -45,6 +45,7 @@ class ObservationsBuilder(ObservationsBuilder):
 
                 if unique_procedure is None:
                     unique_procedure = data["procedure"]
+
                 elif unique_procedure != data["procedure"]:
                     raise Exception(
                         "An insertObservation operation can insert data coming"

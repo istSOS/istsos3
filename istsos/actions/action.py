@@ -127,7 +127,7 @@ class CompositeAction(Action):
         self.add((yield from get_creator(action, filter=filter)))
 
     @asyncio.coroutine
-    def add_retrievers(self, action, filter=None):
+    def add_retriever(self, action, filter=None):
         self.add((yield from get_retrievers(action, filter=filter)))
 
     def add_loader(self, config, action_name):

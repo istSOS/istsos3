@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   width="100"
+   height="100"
+   id="svg2"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="logo-square.svg"
+   inkscape:export-filename="/home/milan/workspace/istsos-v3/src/docs/images/logo-square.png"
+   inkscape:export-xdpi="115.2"
+   inkscape:export-ydpi="115.2">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1636"
+     inkscape:window-height="865"
+     id="namedview2994"
+     showgrid="false"
+     inkscape:zoom="6.675088"
+     inkscape:cx="52.346376"
+     inkscape:cy="59.814103"
+     inkscape:window-x="10"
+     inkscape:window-y="34"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="g3022" />
+  <defs
+     id="defs4" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(0,-952.36218)"
+     id="layer1">
+    <g
+       transform="translate(-3.6608897,0.94999388)"
+       id="g3022">
+      <text
+         x="10"
+         y="1015.9335"
+         id="text2985"
+         xml:space="preserve"
+         style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         sodipodi:linespacing="125%"><tspan
+           x="10"
+           y="1015.9335"
+           id="tspan2987"
+           style="font-size:40px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#134a81;fill-opacity:1;font-family:BenchNine;-inkscape-font-specification:BenchNine Bold">istSOS</tspan></text>
+      <text
+         x="81.254112"
+         y="998.06879"
+         transform="matrix(0.99997521,-0.00704058,0.00704058,0.99997521,0,0)"
+         id="text2985-3"
+         xml:space="preserve"
+         style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ff0000;fill-opacity:1;stroke:none;font-family:Sans"
+         sodipodi:linespacing="125%"><tspan
+           x="81.254112"
+           y="998.06879"
+           id="tspan2987-6"
+           style="font-size:20px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;font-family:BenchNine;-inkscape-font-specification:BenchNine Bold;fill:#134a81;fill-opacity:1">3</tspan></text>
+      <path
+         style="fill:none;stroke:#134a81;stroke-width:0.9884519px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 12.103376,1015.7269 74.519784,0"
+         id="path3852"
+         inkscape:connector-curvature="0" />
+    </g>
+  </g>
+</svg>

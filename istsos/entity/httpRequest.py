@@ -106,6 +106,9 @@ class HttpRequest(BaseEntity):
     def is_get_capabilities(self):
         return (self.get_sos_request() == 'GetCapabilities')
 
+    def is_describe_sensor(self):
+        return (self.get_sos_request() == 'DescribeSensor')
+
     def is_get_observations(self):
         return (self.get_sos_request() == 'GetObservation')
 

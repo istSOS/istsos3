@@ -16,11 +16,12 @@ class ObservationsBuilder(CompositeAction):
     def before(self, request):
         """Load all the offerings relative to the given filter.
         """
-        request['observation'] = {
-            'offering': 'unknown'
-        }
+        if 'observation' not in request:
+            request['observation'] = {
+                'offering': 'unknown'
+            }
         # Adding action Offering retriever configured with the filer
         # to find related the offering
-        yield from self.add_retrievers('Offerings', filter={
+        yield from self.add_retriever('Offerings', filter={
             'offering': ['observation', 'offering']
         })

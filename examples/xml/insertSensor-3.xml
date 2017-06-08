@@ -12,7 +12,7 @@
     <swes:procedureDescription>
         <sml:SensorML version="1.0.1">
             <sml:member>
-                <sml:System gml:id="BREGANZONA">
+                <sml:System gml:id="LUGANO">
                     <gml:description>temperature weather station in Lugano</gml:description>
                     <gml:name>LUGANO</gml:name>
                     <sml:identification>

@@ -19,4 +19,5 @@ Developers corner:
 .. toctree::
     :maxdepth: 2
 
+    actions
     entities

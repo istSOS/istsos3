@@ -26,14 +26,13 @@ structured according to the O&M specification.
         """
         # @todo > Add XML Validation with XSD
 
-        # Adding ObservationBuilder action that parses the SOS 2.0.0 XML
-        # POST request into an Observation entity
+        # ObservationBuilder parses the SOS 2.0.0 XML POST request into
+        # an Observation entity
+        # > istsos.actions.builders.sos_2_0_0.observationsBuilder
         self.add(ObservationsBuilder())
 
         # Check the insertObservation consistency
         self.add(IORequirement())
-
-    def puffo(self, request):
 
         # Add the Observation action creator that will insert the new
         # observation in the database

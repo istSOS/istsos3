@@ -17,8 +17,11 @@ from istsos.actions.sos_2_0_0.requirement.core.requestRequest import (
 from istsos.actions.sos_2_0_0.getCapabilitiesOp import (
     GetCapabilities
 )
-from istsos.actions.sos_2_0_0.getObservationOperation import (
-    GetObservationOperation
+from istsos.actions.sos_2_0_0.describeSensorOp import (
+    DescribeSensor
+)
+from istsos.actions.sos_2_0_0.getObservationOp import (
+    GetObservation
 )
 from istsos.actions.sos_2_0_0.insertSensorOp import (
     InsertSensor
@@ -166,12 +169,21 @@ like this:
 
     def init_request(self):
         rid = str(uuid.uuid4())
+        return {
+            "state": self,
+            "rid": rid
+        }
+        # Older request can be used as a cache (?)
+        '''
         self.instance.requests[rid] = {
             "state": self,
             "rid": rid
         }
         self.instance.request_counter += 1
-        return self.instance.requests[rid]
+        return self.instance.requests[rid]'''
+
+    def get_current_requests(self):
+        return self.instance.requests
 
 
 class Server():
@@ -219,7 +231,10 @@ The HTTPRequest shall be prepared by the web framework used.
                     action = GetCapabilities()
 
                 elif request.is_get_observations():
-                    action = GetObservationOperation()
+                    action = GetObservation()
+
+                elif request.is_describe_sensor():
+                    action = DescribeSensor()
 
             elif request['method'] == "POST":
 
@@ -247,9 +262,9 @@ The HTTPRequest shall be prepared by the web framework used.
 
                 if stats:
                     # Show response
-                    if "response" in request:
-                        print(request['response'])
-                        print("\n")
+                    # if "response" in request:
+                    #    print(request['response'])
+                    #    print("\n")
 
                     # Print statistics
                     from istsos.actions.action import (

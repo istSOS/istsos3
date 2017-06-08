@@ -7,6 +7,9 @@ import asyncio
 from istsos.actions.action import CompositeAction
 from istsos.actions.builders.sos_2_0_0.offeringBuilder import OfferingBuilder
 from istsos.actions.creators.offeringcreator import OfferingCreator
+from istsos.actions.creators.descriptioncreator import (
+    DescriptionCreator
+)
 from lxml import etree
 
 
@@ -21,12 +24,15 @@ class InsertSensor(CompositeAction):
         """
         # @todo > Add XML Validation with XSD
         self.add(OfferingBuilder())
+        # @todo add a DescriptionBuilder that can build a generic description
+        #  if it is not given during the insertSensor operation
         self.add(OfferingCreator())
+        self.add(DescriptionCreator())
 
     @asyncio.coroutine
     def after(self, request):
         """Render the result of the request following the OGC:SOS 2.0.0
-        standard.
+standard.
         """
         request['response'] = """<swes:InsertSensorResponse
     xmlns:swes="http://www.opengis.net/swes/2.0">

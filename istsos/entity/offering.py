@@ -16,6 +16,9 @@ class Offering(BaseEntity):
             "id": {
                 "type": "integer"
             },
+            "results": {
+                "type": "boolean"
+            },
             "name": {
                 "type": "string"
             },
@@ -43,7 +46,14 @@ class Offering(BaseEntity):
                                 "type": "integer"
                             },
                             "name": {
-                                "type": "string"
+                                "oneOf": [
+                                    {
+                                        "type": "null"
+                                    },
+                                    {
+                                        "type": "string"
+                                    }
+                                ]
                             },
                             "definition": {
                                 "type": "string"
@@ -167,6 +177,14 @@ class Offering(BaseEntity):
             }
         }
     }
+
+    def get_op_definition_list(self):
+        """Return a list of Observed Properties"""
+        return [op['definition'] for op in self['observable_property']]
+
+    def get_ot_definition_list(self):
+        """Return a list of Observation Types"""
+        return [ot['definition'] for ot in self['observation_type']]
 
     def get_observed_property(self, definition):
         for observed_property in self['observable_property']:
