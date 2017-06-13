@@ -4,6 +4,7 @@
 # Version: v3.0.0
 
 import asyncio
+import istsos
 from istsos.actions.retrievers.observations import Observations
 from istsos.entity.observation import Observation
 
@@ -19,11 +20,11 @@ class Observations(Observations):
               2012-11-19T14:00:00+01:00/2012-11-19T14:15:00+01:00
     - equals: om:phenomenonTime,
               2012-11-19T14:00:00.000+01:00
-    - combination: om:phenomenonTime,
-                   2012-11-19T14:00:00+01:00/2012-11-19T14:15:00+01:00,
-                   2012-11-19T14:00:00.000+01:00
-
     """
+
+    filter_map = {
+        "procedure": "procedure_name"
+    }
 
     @asyncio.coroutine
     def process(self, request):
@@ -38,39 +39,63 @@ class Observations(Observations):
             return
 
         with (yield from request['state'].pool.cursor()) as cur:
-            for key in request['offerings']:
-                offering = request['offerings'][key]
-                table_name = key.lower()
+            for offering in request['offerings']:
+                table_name = "data._%s" % offering['name'].lower()
+
+                data = Observation.get_template()
+                data["offering"] = offering['name']
+                data["procedure"] = offering['procedure']
+
+                columns = []
+                columns_qi = []
+                for op in offering['observable_property']:
+                    data["type"].append(op['type'])
+                    data["observedProperty"].append(op['definition'])
+                    data["uom"].append(op['uom'])
+                    columns.append(op['column'])
+                    columns_qi.append('%s_qi' % op['column'])
 
                 sql = """
-                    SELECT id, event_time, val_1, val_1_qi
+                    SELECT event_time, array[%s], array[%s]
+                """ % (
+                    ", ".join(columns),
+                    ", ".join(columns_qi)
+                ) + """
                     FROM %s
                 """ % table_name
                 temporal = []
                 where = []
                 params = []
-                if 'parameters' in request:
-                    if 'temporalFilter' in request['parameters']:
-                        tfs = request['parameters']['temporalFilter'].replace(
-                            " ", "+").split(",")
-                        for tf in tfs[1:]:
-                            if '/' in tf:
-                                interval = tf.split("/")
+                if request.get_filters() is not None:
+                    keys = list(request.get_filters())
+                    for key in keys:
+                        fltr = request.get_filters()[key]
+                        if key == 'temporal':
+                            if fltr['fes'] == 'during':
+                                data["phenomenonTime"] = {
+                                    "type": "TimePeriod",
+                                    "begin": fltr['period'][0],
+                                    "end": fltr['period'][1]
+                                }
                                 temporal.append("""
                                     event_time > %s::timestamp with time zone
                                     AND
                                     event_time <= %s::timestamp with time zone
                                 """)
-                                params.extend(interval)
-                            else:
+                                params.extend(fltr['period'])
+                            elif fltr['fes'] == 'equals':
+                                data["phenomenonTime"] = {
+                                    "type": "TimeInstant",
+                                    "instant": fltr['instant']
+                                }
                                 temporal.append("""
                                     event_time = %s::timestamp with time zone
                                 """)
-                                params.append(tf)
+                                params.append(fltr['instant'])
 
-                        where.append(
-                            "(%s)" % (' OR '.join(temporal))
-                        )
+                            where.append(
+                                "(%s)" % (' OR '.join(temporal))
+                            )
 
                 if len(where) > 0:
                     sql += "WHERE %s" % (
@@ -80,10 +105,15 @@ class Observations(Observations):
                 sql += " ORDER BY event_time;"
                 yield from cur.execute(sql, tuple(params))
                 recs = yield from cur.fetchall()
+
                 for rec in recs:
-                    self.add_observation(
-                        Observation(
-                            None, rec[0], rec[1], rec[2], rec[3]
-                        ),
-                        request
-                    )
+                    data["result"][rec[0].isoformat()] = rec[1]
+                    data["quality"][rec[0].isoformat()] = rec[2]
+
+                istsos.debug("Loaded %s measures for procedure %s" % (
+                    len(recs), data["procedure"]
+                ))
+
+                request['observations'].append(
+                    Observation(json_source=data)
+                )

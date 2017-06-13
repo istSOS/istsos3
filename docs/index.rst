@@ -13,6 +13,7 @@ Contents:
 
     insertsensor
     insertobservation
+    getobservation
 
 Developers corner:
 
@@ -21,3 +22,4 @@ Developers corner:
 
     actions
     entities
+    filters

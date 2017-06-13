@@ -7,7 +7,7 @@
     xmlns:ogc="http://www.opengis.net/ogc"
     xmlns:om="http://www.opengis.net/om/2.0"
     xmlns:xlink="http://www.w3.org/1999/xlink">
-    <sos:offering>f52c4a08453a11e79247e0db55c4a7a5</sos:offering>
+    <sos:offering>4d737bd64ffa11e798b5e0db55c4a7a5</sos:offering>
     <sos:observation>
         <om:OM_Observation id="f4">
             <om:type

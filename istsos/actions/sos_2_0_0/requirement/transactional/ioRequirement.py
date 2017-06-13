@@ -23,7 +23,7 @@ class IORequirement(Action):
     def process(self, request):
         """Check the insertObservation consistency
         """
-        istsos.info("Check the insertObservation consistency")
+        istsos.debug("Check the insertObservation consistency")
         offering = request['offerings'][0]
         observation = request["observation"]
 
@@ -44,8 +44,6 @@ class IORequirement(Action):
         # types declared with the insertSensor must be used on each
         # insertObservation
         for observation_type in observation['type']:
-            print()
-            print(observation_types_usage_check)
             if observation_type not in observation_types:
                 raise Exception(
                     "observedProperty (%s) is not observed by "

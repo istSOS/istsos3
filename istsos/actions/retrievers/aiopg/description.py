@@ -18,34 +18,22 @@ class Description(Description):
 
     @asyncio.coroutine
     def process(self, request):
-        with (yield from request['state'].pool.cursor()) as cur:
-
-            conditions = []
-            where = []
-            params = []
-            filters = self.get_filters(request)
-            if filters is not None:
-                for key in list(filters):
-                    print((key + " = %s") % filters[key])
-                    cond = yield from cur.mogrify(
-                        (key + " = %s"), (filters[key],))
-                    conditions.append(
-                        cond.decode("utf-8")
-                    )
-
-            yield from cur.execute("""
-                SELECT sensor_descriptions.data
-                FROM
-                    public.sensor_descriptions,
-                    public.offerings
-                WHERE
-                    id_off = offerings.id
-                AND
-                    valid_time_end IS NULL
-                AND
-                    %s;
-            """ % (" AND ".join(conditions)))
-
-            rec = yield from cur.fetchone()
-            if rec is not None:
-                request['procedureDescription'] = rec[0]
+        procedures = request.get_filter('procedures')
+        if procedures is not None:
+            with (yield from request['state'].pool.cursor()) as cur:
+                yield from cur.execute("""
+                    SELECT sensor_descriptions.data
+                    FROM
+                        public.sensor_descriptions,
+                        public.offerings
+                    WHERE
+                        id_off = offerings.id
+                    AND
+                        valid_time_end IS NULL
+                    AND
+                        procedure_name = %s;
+                """, (procedures[0],))
+                rec = yield from cur.fetchone()
+                print("Found %s p" % len(rec))
+                if rec is not None:
+                    request['procedureDescription'] = rec[0]

@@ -10,7 +10,8 @@ from istsos.application import (
 import sys
 import logging
 log = logging.getLogger('istSOS')
-log.setLevel(logging.INFO)
+# log.setLevel(logging.INFO)
+log.setLevel(logging.DEBUG)
 format = logging.Formatter(
     "%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
@@ -44,41 +45,56 @@ __typdef = (
 _arrayObservation = {
     "id": 14,
     "definition": "%sOM_SWEArrayObservation" % __typdef,
-    "description": ""
+    "description": "",
+    "type": "swe:DataArrayPropertyType"
 }
 
 _observationTypes = [
     {
         "id": 1,
         "definition": "%sOM_CategoryObservation" % __typdef,
-        "description": ""
+        "description": "",
+        "type": "xs:ReferenceType"
     },
     {
         "id": 3,
         "definition": "%sOM_CountObservation" % __typdef,
-        "description": ""
+        "description": "",
+        "type": "xs:integer"
     },
     {
         "id": 7,
         "definition": "%sOM_Measurement" % __typdef,
-        "description": ""
+        "description": "",
+        "type": "xs:MeasureType"
     },
     {
         "id": 12,
         "definition": "%sOM_TruthObservation" % __typdef,
-        "description": ""
+        "description": "",
+        "type": "xs:boolean"
     },
     {
         "id": 13,
         "definition": "%sOM_TextObservation" % __typdef,
-        "description": ""
+        "description": "",
+        "type": "xs:string"
     },
     _arrayObservation
 ]
 
+_observationTypesDict = {}
 _observationTypesList = []
 for oty in _observationTypes:
+    _observationTypesDict[
+        oty["definition"]
+    ] = oty
     _observationTypesList.append(oty["definition"])
+
+
+def get_observation_type(definition):
+    return _observationTypesDict[definition]
+
 
 _component_type = {
     "Category": _observationTypes[0],

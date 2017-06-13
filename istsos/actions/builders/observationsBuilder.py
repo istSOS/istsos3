@@ -4,24 +4,11 @@
 # Version: v3.0.0
 
 import asyncio
-from istsos.actions.action import CompositeAction
+from istsos.actions.action import Action
 
 
-class ObservationsBuilder(CompositeAction):
+class ObservationsBuilder(Action):
     """Query an SOS to retrieve observation data structured according to the
     O&M specification.
     """
-
-    @asyncio.coroutine
-    def before(self, request):
-        """Load all the offerings relative to the given filter.
-        """
-        if 'observation' not in request:
-            request['observation'] = {
-                'offering': 'unknown'
-            }
-        # Adding action Offering retriever configured with the filer
-        # to find related the offering
-        yield from self.add_retriever('Offerings', filter={
-            'offering': ['observation', 'offering']
-        })
+    pass

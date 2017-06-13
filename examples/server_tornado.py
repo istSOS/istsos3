@@ -16,9 +16,9 @@ import sys
 sys.path.append('../src/')
 
 
-# Python 3.4.4+
+# Python>3.4.3
 '''def coroutine(func):
-    """WGH
+    """code from: WGH
 https://gist.github.com/drgarcia1986/6b666c05ccb03e9525b4#gistcomment-2008480
     """
     @functools.wraps(func)
@@ -27,7 +27,7 @@ https://gist.github.com/drgarcia1986/6b666c05ccb03e9525b4#gistcomment-2008480
     return wrapper'''
 
 
-# Python 3.4.3-
+# Python<=3.4.3
 def coroutine(func):
     """code from: drgarcia1986
 https://gist.github.com/drgarcia1986/6b666c05ccb03e9525b4
@@ -64,6 +64,24 @@ class SosHandler(RequestHandler):
             "GET",
             "sos",
             parameters=parameters
+        )
+        yield from self.istsos.execute_http_request(
+            request, stats=True
+        )
+        self.write(request['response'])
+
+    @coroutine
+    def post(self, *args, **kwargs):
+        self.set_header("Content-Type", "application/xml; charset=utf-8")
+        parameters = {
+            k: self.get_argument(k) for k in self.request.arguments
+        }
+        request = HttpRequest(
+            "POST",
+            "sos",
+            body=self.request.body,
+            content_type=self.request.headers.get(
+                "content-type", "application/xml")
         )
         yield from self.istsos.execute_http_request(
             request, stats=True

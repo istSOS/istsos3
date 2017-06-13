@@ -29,8 +29,6 @@ class TestInsertObservation:
             response = yield from server.execute_http_request(
                 request, stats=True
             )
-            print(response['offerings'])
-            print(response['observation'])
 
     def execute_2(self):
         with open('examples/xml/insertObservation-2.xml') as xml_file:
@@ -51,8 +49,6 @@ class TestInsertObservation:
             response = yield from server.execute_http_request(
                 request, stats=True
             )
-            print(response['offerings'])
-            print(response['observation'])
 
     def execute_3(self):
         with open('examples/xml/insertObservation-3.xml') as xml_file:
@@ -73,13 +69,16 @@ class TestInsertObservation:
             response = yield from server.execute_http_request(
                 request, stats=True
             )
-            print(response['offerings'])
-            print(response['observation'])
+
+    def execute_all(self):
+        yield from self.execute_1()
+        yield from self.execute_2()
+        yield from self.execute_3()
 
     def test_execute(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(
-            asyncio.gather(self.execute_2())
+            asyncio.gather(self.execute_all())
         )
         loop.close()
         assert True is True

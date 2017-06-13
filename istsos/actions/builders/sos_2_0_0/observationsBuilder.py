@@ -7,7 +7,6 @@ import asyncio
 import uuid
 import istsos
 from istsos.entity.observation import Observation
-from istsos.entity.observation import get_template
 from istsos.actions.builders.observationsBuilder import ObservationsBuilder
 
 
@@ -26,7 +25,7 @@ class ObservationsBuilder(ObservationsBuilder):
                 './/sos_2_0:offering', request.ns)
 
             # Preparing data dictionary
-            data = get_template()
+            data = Observation.get_template()
             data["offering"] = offering_name.text.strip()
 
             # Variable used to check if this insertObservation as observation

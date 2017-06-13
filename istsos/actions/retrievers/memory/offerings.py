@@ -14,6 +14,7 @@ class Offerings(Offerings):
 
     @asyncio.coroutine
     def process(self, request):
+        print("HAHAHAHAHAHA")
         req_keys = list(request)
         if self.has_filter():
             keys = list(self.filter)

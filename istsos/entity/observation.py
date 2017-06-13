@@ -4,20 +4,7 @@
 # Version: v3.0.0
 
 from istsos.entity.baseEntity import BaseEntity
-
-
-def get_template():
-    return {
-        "offering": "",
-        "type": [],
-        "phenomenonTime": {},
-        "resultTime": {},
-        "procedure": "",
-        "observedProperty": [],
-        "featureOfInterest": "",
-        "uom": [],
-        "result": {}
-    }
+import collections
 
 
 class Observation(BaseEntity):
@@ -104,9 +91,27 @@ class Observation(BaseEntity):
             },
             "result": {
                 "type": "object"
+            },
+            "quality": {
+                "type": "object"
             }
         }
     }
+
+    @staticmethod
+    def get_template():
+        return {
+            "offering": "",
+            "type": [],
+            "phenomenonTime": {},
+            "resultTime": {},
+            "procedure": "",
+            "observedProperty": [],
+            "featureOfInterest": "",
+            "uom": [],
+            "result": collections.OrderedDict(),
+            "quality": collections.OrderedDict()
+        }
 
     """def __cmp__(self, other):
         if self.phenomenon_time > other.phenomenon_time:

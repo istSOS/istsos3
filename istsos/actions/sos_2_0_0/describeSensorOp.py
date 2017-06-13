@@ -7,6 +7,9 @@ import asyncio
 from istsos.actions.action import CompositeAction
 from istsos.actions.sos_2_0_0.requirement.dsRequirement import DSRequirement
 from istsos.actions.retrievers.offerings import Offerings
+from istsos.actions.builders.sos_2_0_0.procedureFilterBuilder import (
+    ProcedureFilterBuilder
+)
 
 
 class DescribeSensor(CompositeAction):
@@ -20,11 +23,12 @@ called the "Capabilities" document) of this istSOS server.
         # Add request validation of the GetCapabilities request
         self.add(DSRequirement())
 
+        # Add builder for procedure filter
+        self.add(ProcedureFilterBuilder())
+
         # Adding action Offering retriever configured with the filer
         # to find related the offering
-        yield from self.add_retriever('Description', filter={
-            'procedure': ['parameters', 'procedure']
-        })
+        yield from self.add_retriever('Description')
 
     @asyncio.coroutine
     def after(self, request):

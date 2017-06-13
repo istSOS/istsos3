@@ -20,7 +20,7 @@ class HttpRequest(BaseEntity):
     :arg dict parameters: GET or POST parameters as a dictionary-like object
     """
 
-    def __init__(self, method, uri=None, headers=None,
+    def __init__(self, method="GET", uri=None, headers=None,
                  body=None, json=None, parameters={}, content_type=None):
         """Construction of a new HTTPRequest class.
 
@@ -54,6 +54,7 @@ class HttpRequest(BaseEntity):
                 self['headers'][key.lower()] = val
 
         self['content_type'] = content_type
+        self['filters'] = None
         self['body'] = body
         self['json'] = json
         self['xml'] = None
@@ -64,6 +65,20 @@ class HttpRequest(BaseEntity):
         if self['method'] == 'GET' and self['parameters'] is None and query:
             self['parameters'] = urlparse.parse_qs(query)
             self['parameters_keys'] = self.parameters.keys()
+
+    def set_filter(self, _filter):
+        if self['filters'] is None:
+            self['filters'] = {}
+        for key in _filter.keys():
+            self['filters'][key] = _filter[key]
+
+    def get_filters(self):
+        return self['filters']
+
+    def get_filter(self, name):
+        if self['filters'] is not None and name in self['filters']:
+            return self['filters'][name]
+        return None
 
     def set_rest_parameters(self, parameters):
         self.rest_parameters = parameters
@@ -109,7 +124,7 @@ class HttpRequest(BaseEntity):
     def is_describe_sensor(self):
         return (self.get_sos_request() == 'DescribeSensor')
 
-    def is_get_observations(self):
+    def is_get_observation(self):
         return (self.get_sos_request() == 'GetObservation')
 
     def is_insert_sensor(self):
@@ -120,6 +135,11 @@ class HttpRequest(BaseEntity):
 
     def get_parameters(self):
         return self['parameters']
+
+    def get_parameter(self, key):
+        if key in self['parameters']:
+            return self['parameters'][key]
+        return None
 
     def get_content_type(self):
         return self['content_type']

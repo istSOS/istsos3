@@ -6,6 +6,7 @@
 import asyncio
 import sys
 import traceback
+import istsos
 from istsos.actions.creators.observationCreator import ObservationCreator
 
 
@@ -173,9 +174,6 @@ class ObservationCreator(ObservationCreator):
                     )
                 str_measures = ','.join(str_measures)
 
-                print(",".join(columns))
-                print(str_measures)
-
                 yield from cur.execute("""
                     INSERT INTO data._%s(
                         event_time, %s)
@@ -185,6 +183,18 @@ class ObservationCreator(ObservationCreator):
 
                 yield from cur.execute("COMMIT;")
 
+                istsos.debug('Inserted %s measures for offering %s' % (
+                    len(measures), offering
+                ))
+
             except Exception as ex:
-                traceback.print_exc()
+                # traceback.print_exc()
+                istsos.warning(
+                    (
+                        'Error while inserting observations '
+                        'for procedure %s: %s'
+                    ) % (
+                        offering['procedure'], str(ex)
+                    )
+                )
                 yield from cur.execute("ROLLBACK;")

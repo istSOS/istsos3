@@ -5,6 +5,7 @@
 
 import asyncio
 import time
+import istsos
 
 
 class Action(object):
@@ -142,9 +143,11 @@ class CompositeAction(Action):
     @asyncio.coroutine
     def execute(self, request):
         start = time.time()
+        istsos.debug("Executing %s" % self.__class__.__name__)
         yield from self.before(request)
         yield from self.process(request)
         for action in self.actions:
+            istsos.debug("Executing %s" % action.__class__.__name__)
             yield from action.execute(request)
         yield from self.after(request)
         self.time = time.time() - start
@@ -162,9 +165,7 @@ def __get_proxy(action_package, action_module, **kwargs):
         state.config["loader"]["type"],
         fileName
     )
-    print("Importing:")
-    print(" - %s" % module)
-    print(" - %s" % state.config["loader"]["type"])
+    istsos.debug("Importing %s.%s" % (module, action_module))
     m = importlib.import_module(module)
     m = getattr(m, action_module)
     if kwargs is not None:

@@ -10,6 +10,8 @@ import os.path
 import json
 import uuid
 
+import istsos
+
 from istsos.http.rule import Rule
 from istsos.actions.sos_2_0_0.requirement.core.requestRequest import (
     RequestRequest
@@ -137,19 +139,24 @@ like this:
 
     @asyncio.coroutine
     def init_cache(self):
+        istsos.info("Init cache")
+        from istsos.entity.httpRequest import HttpRequest
         from istsos.actions.retrievers.offerings import Offerings
-        req = {
+        request = HttpRequest()
+        request.update({
             "state": self
-        }
-        yield from (Offerings()).execute(req)
+        })
+        yield from (Offerings()).execute(request)
         self.instance.cache = {
             "offerings": {
                 "entities": {}
             }
         }
-        for offering in req['offerings']:
+        for offering in request['offerings']:
             self.instance.cache['offerings']['entities'][
                 offering['id']] = offering
+
+        istsos.info("Cached %s offerings" % len(request['offerings']))
 
     def __str__(self):
         return json.dumps(self.instance.config)
@@ -230,7 +237,7 @@ The HTTPRequest shall be prepared by the web framework used.
                 if request.is_get_capabilities():
                     action = GetCapabilities()
 
-                elif request.is_get_observations():
+                elif request.is_get_observation():
                     action = GetObservation()
 
                 elif request.is_describe_sensor():
@@ -262,9 +269,13 @@ The HTTPRequest shall be prepared by the web framework used.
 
                 if stats:
                     # Show response
-                    # if "response" in request:
-                    #    print(request['response'])
-                    #    print("\n")
+                    if "response" in request:
+                        print("\n")
+                        if len(request['response'])>100:
+                            print(request['response'][:100])
+                        else:
+                            print(request['response'])
+                        print("\n")
 
                     # Print statistics
                     from istsos.actions.action import (

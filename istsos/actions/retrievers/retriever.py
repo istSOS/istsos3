@@ -17,7 +17,6 @@ class Retriever(ProxyCache):
         return False
 
     def get_request_filter(self, request, key):
-        print('"%s"' % key)
         if self.has_filter() is False:
             raise Exception("No filters declared")
 

@@ -9,6 +9,9 @@ from istsos.actions.action import CompositeAction
 from istsos.actions.builders.sos_2_0_0.observationsBuilder import (
     ObservationsBuilder
 )
+from istsos.actions.builders.sos_2_0_0.offeringFilterBuilder import (
+    OfferingFilterBuilder
+)
 from istsos.actions.sos_2_0_0.requirement.transactional.ioRequirement import (
     IORequirement
 )
@@ -30,6 +33,12 @@ structured according to the O&M specification.
         # an Observation entity
         # > istsos.actions.builders.sos_2_0_0.observationsBuilder
         self.add(ObservationsBuilder())
+
+        # Added filter used by the Offering retriever
+        self.add(OfferingFilterBuilder())
+
+        # Adding action Offering retriever
+        yield from self.add_retriever('Offerings')
 
         # Check the insertObservation consistency
         self.add(IORequirement())

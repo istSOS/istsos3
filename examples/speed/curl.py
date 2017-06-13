@@ -25,6 +25,13 @@ describeSensor = (
     '&procedureDescriptionFormat=http://www.opengis.net/sensorML/1.0.1'
 )
 
+getObservation = (
+    'service=SOS&request=GetObservation&service=SOS'
+    '&version=2.0.0&procedure=urn:ogc:def:procedure:x-istsos:1.0:LUGANO'
+    '&temporalFilter=om:phenomenonTime,2006-01-01T00:00:00Z/'
+    '2007-01-01T00:00:00Z'
+)
+
 
 def execute(url):
     print("\nAddress: %s\n" % (url))
@@ -66,4 +73,4 @@ Total:          %s
     print(result)
 
 
-execute("%s?%s" % (url, getCapabilities))
+execute("%s?%s" % (url, getObservation))
