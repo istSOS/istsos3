@@ -33,7 +33,7 @@ Listening at http://localhost:8888/sos
 
 Lib used: https://docs.pytest.org/en/latest/
 
-[@todo emprove this]
+[#todo emprove this]
 For testing in the istsos/test/ folder there same tests that has been
 implemented.
 
@@ -55,7 +55,7 @@ pytest -s istsos/test/actions/servers/sos_2_0_0/test_describeSensorOp.py
 
 #### Benchmark
 
-[@todo emprove this]
+[#todo emprove this]
 You can also do some basic benchmarking with the files in the [examples/speed](examples/speed) folder.
 
 Maybe we can take a look at this tools: https://github.com/wg/wrk
@@ -87,7 +87,7 @@ make html
 
 https://about.gitlab.com/features/gitlab-ci-cd/
 
-[@todo to be emproved]
+[#todo to be emproved]
 Here is explained the deployment Piplines that automaticalliy tests, validate and publish documentation of the master branch.
 
 
@@ -95,7 +95,7 @@ Here is explained the deployment Piplines that automaticalliy tests, validate an
 
 ### Usage example:
 
-[@todo to be emproved]
+[#todo to be emproved]
 
 ```python
 
