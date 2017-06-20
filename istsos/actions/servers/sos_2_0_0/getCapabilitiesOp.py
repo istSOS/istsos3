@@ -5,7 +5,7 @@
 
 import asyncio
 from istsos.actions.action import CompositeAction
-from istsos.actions.sos_2_0_0.requirement.gcRequirement import GCRequirement
+from istsos.actions.servers.sos_2_0_0.requirement.gcRequirement import GCRequirement
 from istsos.actions.retrievers.offerings import Offerings
 
 

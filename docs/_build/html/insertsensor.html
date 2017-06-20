@@ -56,14 +56,17 @@ insertSensor request.
 The database will be created on the go. During an InsertSensor the minimal
 info will be stored. Later when the InsertObservation will be done, the
 rest of the data store will be built.</p>
-<p><strong>Offering name</strong></p>
+<div class="section" id="offering-name">
+<h2>Offering name<a class="headerlink" href="#offering-name" title="Permalink to this headline">¶</a></h2>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">According to the OGC SWES [OGC 09-001] on each InsertSensor request a new
 Offering shall be created (OGC 09-001, REQ 49). IstSOS will generate a
 unique identifier.</p>
 </div>
-<p><strong>Procedure name</strong></p>
+</div>
+<div class="section" id="procedure-name">
+<h2>Procedure name<a class="headerlink" href="#procedure-name" title="Permalink to this headline">¶</a></h2>
 <p>The procedure name can be assigned to a new sensor by setting the
 identifier (uniqueID) in the SensorML of the procedureDescription.</p>
 <div class="admonition note">
@@ -72,7 +75,9 @@ identifier (uniqueID) in the SensorML of the procedureDescription.</p>
 will assign an auto generated name if a procedure identifier is not defined
 within the SensorML (OGC 09-001, REQ 50).</p>
 </div>
-<p><strong>Observed properties</strong></p>
+</div>
+<div class="section" id="observed-properties">
+<h2>Observed properties<a class="headerlink" href="#observed-properties" title="Permalink to this headline">¶</a></h2>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">The outputs defined within the SensorML are not used to initialize the
@@ -84,12 +89,73 @@ O&amp;M Observation instance or as a TML data stream. (OGC 07-000, 8.12.2).</p>
 </div>
 <p><strong>Flow chart</strong></p>
 <img alt="_images/flow_insert_sensor.png" src="_images/flow_insert_sensor.png" />
-<p><strong>Examples</strong></p>
+</div>
+<div class="section" id="feature-of-interest-type">
+<h2>Feature of Interest Type<a class="headerlink" href="#feature-of-interest-type" title="Permalink to this headline">¶</a></h2>
+<p>With the &lt;sos:featureOfInterestType/&gt; definition, offerings are configured to
+handle different kind of the geometry representing the feature of interest.</p>
+<p>In istSOS the feature id is used to create a geometry point, a line string, a
+polygon,</p>
+<p>Take a look here at the schema:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="http://schemas.opengis.net/samplingSpatial">http://schemas.opengis.net/samplingSpatial</a></li>
+<li><a class="reference external" href="http://schemas.opengis.net/samplingSpecimen">http://schemas.opengis.net/samplingSpecimen</a></li>
+</ul>
+</div></blockquote>
+<p><strong>SF_SamplingPoint</strong></p>
+<p><a class="reference external" href="http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint">http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint</a></p>
+<p>This type is usually used to represent an in-situ fixed procedure. For instance
+a fixed monitoring sensors, like a weather station.  The shape is a
+gml:Point element.</p>
+<div class="highlight-xml"><div class="highlight"><pre><span class="nt">&lt;gml:Point</span>
+    <span class="na">gml:id=</span><span class="s">&quot;st2p&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;gml:pos&gt;</span>-30.706 134.196 272.<span class="nt">&lt;/gml:pos&gt;</span>
+<span class="nt">&lt;/gml:Point&gt;</span>
+</pre></div>
+</div>
+<p><strong>SF_SamplingCurve</strong></p>
+<p><a class="reference external" href="http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingCurve">http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingCurve</a></p>
+<p>This type is usually used to represent observation boreholes, trajectories,
+traverses, etc. The shape is a gml:LineString element.</p>
+<div class="highlight-xml"><div class="highlight"><pre><span class="nt">&lt;gml:LineString</span>
+    <span class="na">gml:id=</span><span class="s">&quot;pr1_ls1&quot;</span>
+    <span class="na">srsName=</span><span class="s">&quot;urn:ogc:def:crs:EPSG:6.8:4347&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;gml:pos&gt;</span>-30.711 134.205 321.<span class="nt">&lt;/gml:pos&gt;</span>
+    <span class="nt">&lt;gml:pos&gt;</span>-30.710 134.204 315.<span class="nt">&lt;/gml:pos&gt;</span>
+    <span class="nt">&lt;gml:pos&gt;</span>-30.709 134.203 303.<span class="nt">&lt;/gml:pos&gt;</span>
+    <span class="nt">&lt;gml:pos&gt;</span>-30.708 134.201 296.<span class="nt">&lt;/gml:pos&gt;</span>
+    <span class="nt">&lt;gml:pos&gt;</span>-30.706 134.196 272.<span class="nt">&lt;/gml:pos&gt;</span>
+    <span class="nt">&lt;gml:pos&gt;</span>-30.703 134.197 271.<span class="nt">&lt;/gml:pos&gt;</span>
+    <span class="nt">&lt;gml:pos&gt;</span>-30.702 134.199 280.<span class="nt">&lt;/gml:pos&gt;</span>
+<span class="nt">&lt;/gml:LineString&gt;</span>
+</pre></div>
+</div>
+<p><strong>SF_SamplingSurface</strong></p>
+<p><a class="reference external" href="http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingSurface">http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingSurface</a></p>
+<p>This type is usually used to represent observation boreholes, trajectories,
+traverses, etc. The shape is a gml:Polygon element.</p>
+<div class="highlight-xml"><div class="highlight"><pre><span class="nt">&lt;gml:Polygon</span> <span class="na">gml:id=</span><span class="s">&quot;Polygon_ssf_094D1FDB65BC787B8AC339F4029B622A86EED5EC&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;gml:exterior&gt;</span>
+    <span class="nt">&lt;gml:LinearRing</span> <span class="na">xsi:type=</span><span class="s">&quot;gml:LinearRingType&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;gml:posList</span> <span class="na">srsName=</span><span class="s">&quot;http://www.opengis.net/def/crs/EPSG/0/4326&quot;</span><span class="nt">&gt;</span>7.52 7.32 7.52 52.7 52.7 52.7 52.7 7.32 7.52 7.32<span class="nt">&lt;/gml:posList&gt;</span>
+    <span class="nt">&lt;/gml:LinearRing&gt;</span>
+  <span class="nt">&lt;/gml:exterior&gt;</span>
+<span class="nt">&lt;/gml:Polygon&gt;</span>
+</pre></div>
+</div>
+<p><strong>SF_Specimen</strong></p>
+<p><a class="reference external" href="http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_Specimen">http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_Specimen</a></p>
+<p>This type is usually used to represent physical samples.</p>
+</div>
+</div>
+<div class="section" id="python-examples">
+<h1>Python examples<a class="headerlink" href="#python-examples" title="Permalink to this headline">¶</a></h1>
 <p>Here an example on how manually register a new sensor using Python 3.</p>
 <div class="highlight-python3"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">asyncio</span>
 <span class="kn">from</span> <span class="nn">istsos.application</span> <span class="k">import</span> <span class="n">Server</span>
 <span class="kn">from</span> <span class="nn">istsos.entity.httpRequest</span> <span class="k">import</span> <span class="n">HttpRequest</span>
-<span class="kn">from</span> <span class="nn">istsos.actions.sos_2_0_0.insertSensorOp</span> <span class="k">import</span> <span class="n">InsertSensor</span>
+<span class="kn">from</span> <span class="nn">istsos.actions.servers.sos_2_0_0.insertSensorOp</span> <span class="k">import</span> <span class="n">InsertSensor</span>
 
 <span class="nd">@asyncio</span><span class="o">.</span><span class="n">coroutine</span>
 <span class="k">def</span> <span class="nf">execute</span><span class="p">():</span>
@@ -125,6 +191,18 @@ O&amp;M Observation instance or as a TML data stream. (OGC 07-000, 8.12.2).</p>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Registration of new sensors</a><ul>
+<li><a class="reference internal" href="#offering-name">Offering name</a></li>
+<li><a class="reference internal" href="#procedure-name">Procedure name</a></li>
+<li><a class="reference internal" href="#observed-properties">Observed properties</a></li>
+<li><a class="reference internal" href="#feature-of-interest-type">Feature of Interest Type</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#python-examples">Python examples</a></li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="index.html"
                         title="previous chapter">Welcome to istSOS3&#8217;s documentation!</a></p>

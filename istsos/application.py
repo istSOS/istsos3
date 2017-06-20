@@ -12,27 +12,24 @@ import uuid
 
 import istsos
 
-from istsos.http.rule import Rule
-from istsos.actions.sos_2_0_0.requirement.core.requestRequest import (
+from istsos.actions.servers.rule import Rule
+from istsos.actions.servers.sos_2_0_0.requirement.core.requestRequest import (
     RequestRequest
 )
-from istsos.actions.sos_2_0_0.getCapabilitiesOp import (
+from istsos.actions.servers.sos_2_0_0.getCapabilitiesOp import (
     GetCapabilities
 )
-from istsos.actions.sos_2_0_0.describeSensorOp import (
+from istsos.actions.servers.sos_2_0_0.describeSensorOp import (
     DescribeSensor
 )
-from istsos.actions.sos_2_0_0.getObservationOp import (
+from istsos.actions.servers.sos_2_0_0.getObservationOp import (
     GetObservation
 )
-from istsos.actions.sos_2_0_0.insertSensorOp import (
+from istsos.actions.servers.sos_2_0_0.insertSensorOp import (
     InsertSensor
 )
-from istsos.actions.sos_2_0_0.insertObservationOp import (
+from istsos.actions.servers.sos_2_0_0.insertObservationOp import (
     InsertObservation
-)
-from istsos.renderers.sos_2_0_0.getObservationResponse import (
-    GetObservationResponse
 )
 
 
@@ -271,7 +268,7 @@ The HTTPRequest shall be prepared by the web framework used.
                     # Show response
                     if "response" in request:
                         print("\n")
-                        if len(request['response'])>100:
+                        if len(request['response']) > 100:
                             print(request['response'][:100])
                         else:
                             print(request['response'])
@@ -302,6 +299,7 @@ The HTTPRequest shall be prepared by the web framework used.
             return request
 
         elif path[0] == 'api':
+            # @todo think about something pluggable
             for rule in self.rules:
                 builder = rule.match(request)
                 if builder is not None:

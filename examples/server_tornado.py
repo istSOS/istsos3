@@ -73,9 +73,6 @@ class SosHandler(RequestHandler):
     @coroutine
     def post(self, *args, **kwargs):
         self.set_header("Content-Type", "application/xml; charset=utf-8")
-        parameters = {
-            k: self.get_argument(k) for k in self.request.arguments
-        }
         request = HttpRequest(
             "POST",
             "sos",

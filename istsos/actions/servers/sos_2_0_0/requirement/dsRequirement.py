@@ -9,10 +9,10 @@ from istsos.actions.action import (
     Action
 )
 
-from istsos.actions.sos_2_0_0.requirement.core.requestService import (
+from istsos.actions.servers.sos_2_0_0.requirement.core.requestService import (
     RequestService
 )
-from istsos.actions.sos_2_0_0.requirement.core.requestVersion import (
+from istsos.actions.servers.sos_2_0_0.requirement.core.requestVersion import (
     RequestVersion
 )
 

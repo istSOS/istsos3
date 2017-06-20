@@ -6,10 +6,10 @@
 import asyncio
 from istsos.application import Server
 from istsos.entity.httpRequest import HttpRequest
-from istsos.actions.sos_2_0_0.insertSensorOp import InsertSensor
+from istsos.actions.servers.sos_2_0_0.insertSensorOp import InsertSensor
 
 
-class TestDescribeSensor:
+class TestGetCapabilities:
 
     def execute_get(self):
         # Installation of the istSOS server
@@ -22,10 +22,8 @@ class TestDescribeSensor:
             parameters={
                 "service": "SOS",
                 "version": "2.0.0",
-                "request": "DescribeSensor",
-                "procedure": "urn:ogc:def:procedure:x-istsos:1.0:LUGANO",
-                "procedureDescriptionFormat": (
-                    "http://www.opengis.net/sensorML/1.0.1")
+                "request": "GetCapabilities",
+                "AcceptVersions": "2.0.0"
             }
         )
 

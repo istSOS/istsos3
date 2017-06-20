@@ -4,7 +4,6 @@
 # Version: v3.0.0
 
 import asyncio
-import uuid
 from istsos.entity.filters.proceduresFilter import ProceduresFilter
 from istsos.actions.builders.procedureFilterBuilder import (
     ProcedureFilterBuilder

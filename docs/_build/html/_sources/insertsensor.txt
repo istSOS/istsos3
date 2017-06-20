@@ -10,7 +10,9 @@ The database will be created on the go. During an InsertSensor the minimal
 info will be stored. Later when the InsertObservation will be done, the
 rest of the data store will be built.
 
-**Offering name**
+*************
+Offering name
+*************
 
 .. note::
 
@@ -18,7 +20,9 @@ rest of the data store will be built.
     Offering shall be created (OGC 09-001, REQ 49). IstSOS will generate a
     unique identifier.
 
-**Procedure name**
+**************
+Procedure name
+**************
 
 The procedure name can be assigned to a new sensor by setting the
 identifier (uniqueID) in the SensorML of the procedureDescription.
@@ -29,7 +33,9 @@ identifier (uniqueID) in the SensorML of the procedureDescription.
     will assign an auto generated name if a procedure identifier is not defined
     within the SensorML (OGC 09-001, REQ 50).
 
-**Observed properties**
+*******************
+Observed properties
+*******************
 
 .. note::
 
@@ -46,7 +52,92 @@ identifier (uniqueID) in the SensorML of the procedureDescription.
 .. image:: images/flow_insert_sensor.png
 
 
-**Examples**
+************************
+Feature of Interest Type
+************************
+
+With the <sos:featureOfInterestType/> definition, offerings are configured to
+handle different kind of the geometry representing the feature of interest.
+
+In istSOS the feature id is used to create a geometry point, a line string, a
+polygon,
+
+
+Take a look here at the schema:
+
+ - http://schemas.opengis.net/samplingSpatial
+ - http://schemas.opengis.net/samplingSpecimen
+
+**SF_SamplingPoint**
+
+http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint
+
+This type is usually used to represent an in-situ fixed procedure. For instance
+a fixed monitoring sensors, like a weather station.  The shape is a
+gml:Point element.
+
+.. code-block:: xml
+
+    <gml:Point
+        gml:id="st2p">
+        <gml:pos>-30.706 134.196 272.</gml:pos>
+    </gml:Point>
+
+**SF_SamplingCurve**
+
+http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingCurve
+
+This type is usually used to represent observation boreholes, trajectories,
+traverses, etc. The shape is a gml:LineString element.
+
+.. code-block:: xml
+
+    <gml:LineString
+        gml:id="pr1_ls1"
+        srsName="urn:ogc:def:crs:EPSG:6.8:4347">
+        <gml:pos>-30.711 134.205 321.</gml:pos>
+        <gml:pos>-30.710 134.204 315.</gml:pos>
+        <gml:pos>-30.709 134.203 303.</gml:pos>
+        <gml:pos>-30.708 134.201 296.</gml:pos>
+        <gml:pos>-30.706 134.196 272.</gml:pos>
+        <gml:pos>-30.703 134.197 271.</gml:pos>
+        <gml:pos>-30.702 134.199 280.</gml:pos>
+    </gml:LineString>
+
+**SF_SamplingSurface**
+
+http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingSurface
+
+This type is usually used to represent observation boreholes, trajectories,
+traverses, etc. The shape is a gml:Polygon element.
+
+.. code-block:: xml
+
+    <gml:Polygon gml:id="Polygon_ssf_094D1FDB65BC787B8AC339F4029B622A86EED5EC">
+      <gml:exterior>
+        <gml:LinearRing xsi:type="gml:LinearRingType">
+          <gml:posList srsName="http://www.opengis.net/def/crs/EPSG/0/4326">7.52 7.32 7.52 52.7 52.7 52.7 52.7 7.32 7.52 7.32</gml:posList>
+        </gml:LinearRing>
+      </gml:exterior>
+    </gml:Polygon>
+
+
+**SF_Specimen**
+
+http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_Specimen
+
+This type is usually used to represent physical samples.
+
+
+
+
+
+
+
+
+===============
+Python examples
+===============
 
 Here an example on how manually register a new sensor using Python 3.
 
@@ -55,7 +146,7 @@ Here an example on how manually register a new sensor using Python 3.
     import asyncio
     from istsos.application import Server
     from istsos.entity.httpRequest import HttpRequest
-    from istsos.actions.sos_2_0_0.insertSensorOp import InsertSensor
+    from istsos.actions.servers.sos_2_0_0.insertSensorOp import InsertSensor
 
     @asyncio.coroutine
     def execute():

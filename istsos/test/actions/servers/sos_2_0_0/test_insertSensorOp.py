@@ -6,7 +6,7 @@
 import asyncio
 from istsos.application import Server
 from istsos.entity.httpRequest import HttpRequest
-from istsos.actions.sos_2_0_0.insertSensorOp import InsertSensor
+from istsos.actions.servers.sos_2_0_0.insertSensorOp import InsertSensor
 
 
 class TestInsertSensor:

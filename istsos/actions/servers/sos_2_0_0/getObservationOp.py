@@ -16,7 +16,10 @@ from istsos.actions.builders.sos_2_0_0.offeringFilterBuilder import (
 from istsos.actions.builders.sos_2_0_0.procedureFilterBuilder import (
     ProcedureFilterBuilder
 )
-from istsos.actions.sos_2_0_0.requirement.goRequirement import GORequirement
+from istsos.actions.builders.sos_2_0_0.observedPropertyFilterBuilder import (
+    ObservedPropertyFilterBuilder
+)
+from istsos.actions.servers.sos_2_0_0.requirement.goRequirement import GORequirement
 
 
 class GetObservation(CompositeAction):
@@ -33,6 +36,7 @@ class GetObservation(CompositeAction):
         self.add(TemporalFilterBuilder())
         self.add(OfferingFilterBuilder())
         self.add(ProcedureFilterBuilder())
+        self.add(ObservedPropertyFilterBuilder())
 
         # Adding action Offering retriever
         yield from self.add_retriever('Offerings')

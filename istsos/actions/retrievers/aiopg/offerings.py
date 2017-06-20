@@ -18,8 +18,8 @@ class Offerings(Offerings):
     def process(self, request):
         with (yield from request['state'].pool.cursor()) as cur:
             sql = """
-SELECT
-    id,
+SELECT DISTINCT
+    offerings.id,
     offering_name,
     procedure_name,
     observed_area,
@@ -30,7 +30,13 @@ SELECT
     foi_type,
     data_table_exists
 FROM
-    offerings
+    offerings,
+    off_obs_prop,
+    observed_properties
+WHERE
+    id_opr = observed_properties.id
+AND
+    id_off = offerings.id
 """
             where = []
             params = []
@@ -39,17 +45,33 @@ FROM
                 keys = list(request.get_filters())
                 for key in keys:
                     if key == 'offerings':
-                        for offering in request.get_filter('offerings'):
-                            where.append("\noffering_name = %s\n")
+                        or_condition = []
+                        for offering in request.get_filter(key):
+                            or_condition.append("\noffering_name = %s\n")
                             params.append(offering)
+                        where.append("(%s)" % " OR ".join(or_condition))
 
                     if key == 'procedures':
-                        for procedure in request.get_filter('procedures'):
-                            where.append("\nprocedure_name = %s\n")
+                        or_condition = []
+                        for procedure in request.get_filter(key):
+                            or_condition.append("\nprocedure_name = %s\n")
                             params.append(procedure)
+                        where.append("(%s)" % " OR ".join(or_condition))
+
+                    if key == 'observedProperties':
+                        # observedProperties will filter only offerings
+                        # and will not impact the entity representation
+                        # modifying also the observable_property values.
+                        # This is because the entity can came from the cache
+                        # and modifying the cache will impact all the istSOS
+                        or_condition = []
+                        for observedProperty in request.get_filter(key):
+                            or_condition.append("\ndef = %s\n")
+                            params.append(observedProperty)
+                        where.append("(%s)" % " OR ".join(or_condition))
 
                 if len(where) > 0:
-                    sql += "WHERE %s" % (
+                    sql += "AND %s" % (
                         '\nAND '.join(where)
                     )
 

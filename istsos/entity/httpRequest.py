@@ -3,12 +3,12 @@
 # License: https://github.com/istSOS/istsos3/master/LICENSE.md
 # Version: v3.0.0
 
-from istsos.entity.baseEntity import BaseEntity
+from istsos.entity.request import Request
 import urllib.parse as urlparse
 from lxml import etree
 
 
-class HttpRequest(BaseEntity):
+class HttpRequest(Request):
     """This class represent the common HTTP request used by istSOS to
     execute requested actions.
 
@@ -54,7 +54,6 @@ class HttpRequest(BaseEntity):
                 self['headers'][key.lower()] = val
 
         self['content_type'] = content_type
-        self['filters'] = None
         self['body'] = body
         self['json'] = json
         self['xml'] = None
@@ -65,20 +64,6 @@ class HttpRequest(BaseEntity):
         if self['method'] == 'GET' and self['parameters'] is None and query:
             self['parameters'] = urlparse.parse_qs(query)
             self['parameters_keys'] = self.parameters.keys()
-
-    def set_filter(self, _filter):
-        if self['filters'] is None:
-            self['filters'] = {}
-        for key in _filter.keys():
-            self['filters'][key] = _filter[key]
-
-    def get_filters(self):
-        return self['filters']
-
-    def get_filter(self, name):
-        if self['filters'] is not None and name in self['filters']:
-            return self['filters'][name]
-        return None
 
     def set_rest_parameters(self, parameters):
         self.rest_parameters = parameters

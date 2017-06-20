@@ -12,7 +12,7 @@ from istsos.actions.builders.sos_2_0_0.observationsBuilder import (
 from istsos.actions.builders.sos_2_0_0.offeringFilterBuilder import (
     OfferingFilterBuilder
 )
-from istsos.actions.sos_2_0_0.requirement.transactional.ioRequirement import (
+from istsos.actions.servers.sos_2_0_0.requirement.transactional.ioRequirement import (
     IORequirement
 )
 from istsos.actions.creators.observationCreator import ObservationCreator

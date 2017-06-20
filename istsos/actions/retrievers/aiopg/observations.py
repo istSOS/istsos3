@@ -11,15 +11,15 @@ from istsos.entity.observation import Observation
 
 class Observations(Observations):
     """Query an SOS to retrieve observation data structured according to the
-    O&M specification.
+O&M specification.
 
-    istSOS supports this filters:
+istSOS supports this filters:
 
-    temporalFilter:
-    - during: om:phenomenonTime,
-              2012-11-19T14:00:00+01:00/2012-11-19T14:15:00+01:00
-    - equals: om:phenomenonTime,
-              2012-11-19T14:00:00.000+01:00
+temporalFilter:
+- during: om:phenomenonTime,
+          2012-11-19T14:00:00+01:00/2012-11-19T14:15:00+01:00
+- equals: om:phenomenonTime,
+          2012-11-19T14:00:00.000+01:00
     """
 
     filter_map = {
@@ -48,7 +48,14 @@ class Observations(Observations):
 
                 columns = []
                 columns_qi = []
+                op_filter = request.get_filter('observedProperties')
                 for op in offering['observable_property']:
+                    # observedProperty filters are applied here excluding
+                    # the observed properties columns from the query
+                    if op_filter is not None and (
+                            op['definition'] not in op_filter):
+                        continue
+
                     data["type"].append(op['type'])
                     data["observedProperty"].append(op['definition'])
                     data["uom"].append(op['uom'])
@@ -56,13 +63,13 @@ class Observations(Observations):
                     columns_qi.append('%s_qi' % op['column'])
 
                 sql = """
-                    SELECT event_time, array[%s], array[%s]
-                """ % (
+SELECT
+    event_time, array[%s], array[%s]""" % (
                     ", ".join(columns),
                     ", ".join(columns_qi)
                 ) + """
-                    FROM %s
-                """ % table_name
+FROM %s
+""" % table_name
                 temporal = []
                 where = []
                 params = []
@@ -78,10 +85,10 @@ class Observations(Observations):
                                     "end": fltr['period'][1]
                                 }
                                 temporal.append("""
-                                    event_time > %s::timestamp with time zone
-                                    AND
-                                    event_time <= %s::timestamp with time zone
-                                """)
+    event_time > %s::timestamp with time zone
+AND
+    event_time <= %s::timestamp with time zone
+""")
                                 params.extend(fltr['period'])
                             elif fltr['fes'] == 'equals':
                                 data["phenomenonTime"] = {
@@ -89,8 +96,8 @@ class Observations(Observations):
                                     "instant": fltr['instant']
                                 }
                                 temporal.append("""
-                                    event_time = %s::timestamp with time zone
-                                """)
+event_time = %s::timestamp with time zone
+""")
                                 params.append(fltr['instant'])
 
                             where.append(
@@ -103,6 +110,11 @@ class Observations(Observations):
                     )
 
                 sql += " ORDER BY event_time;"
+                '''istsos.debug(
+                    (
+                        yield from cur.mogrify(sql, tuple(params))
+                    ).decode("utf-8")
+                )'''
                 yield from cur.execute(sql, tuple(params))
                 recs = yield from cur.fetchall()
 
