@@ -13,6 +13,7 @@ Contents:
 
     insertsensor
     insertobservation
+    speciment
     getobservation
 
 Developers corner:

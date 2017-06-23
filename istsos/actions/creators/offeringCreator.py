@@ -4,10 +4,10 @@
 # Version: v3.0.0
 
 import asyncio
-from istsos.actions.action import Proxy
+from istsos.actions.action import Action
 
 
-class OfferingCreator(Proxy):
+class OfferingCreator(Action):
     """Query an SOS to retrieve observation data structured according to the
     O&M specification.
     """

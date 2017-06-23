@@ -48,11 +48,14 @@ https://gist.github.com/drgarcia1986/6b666c05ccb03e9525b4
     return decorator
 
 
-class SosHandler(RequestHandler):
+class BaseHandler(RequestHandler):
 
     @property
     def istsos(self):
         return self.settings['istsos']
+
+
+class SosHandler(BaseHandler):
 
     @coroutine
     def get(self, *args, **kwargs):
@@ -60,9 +63,10 @@ class SosHandler(RequestHandler):
         parameters = {
             k: self.get_argument(k) for k in self.request.arguments
         }
+        print(self.request.path)
         request = HttpRequest(
             "GET",
-            "sos",
+            self.request.path,
             parameters=parameters
         )
         yield from self.istsos.execute_http_request(
@@ -107,7 +111,8 @@ if __name__ == "__main__":
     )
 
     app = Application([
-        (r'/sos', SosHandler)
+        (r'/sos', SosHandler),
+        (r'/rest/.*', SosHandler)
     ], **settings)
 
     app.listen(8888)

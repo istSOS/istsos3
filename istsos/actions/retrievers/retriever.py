@@ -4,10 +4,10 @@
 # Version: v3.0.0
 
 import asyncio
-from istsos.actions.action import ProxyCache
+from istsos.actions.action import Action
 
 
-class Retriever(ProxyCache):
+class Retriever(Action):
 
     filter_map = None
 

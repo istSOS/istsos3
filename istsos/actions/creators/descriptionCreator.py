@@ -5,10 +5,10 @@
 
 import asyncio
 from lxml import etree
-from istsos.actions.action import Proxy
+from istsos.actions.action import Action
 
 
-class DescriptionCreator(Proxy):
+class DescriptionCreator(Action):
     """Query an SOS to retrieve observation data structured according to the
     O&M specification.
     """

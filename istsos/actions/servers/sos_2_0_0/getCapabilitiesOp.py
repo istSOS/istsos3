@@ -5,7 +5,9 @@
 
 import asyncio
 from istsos.actions.action import CompositeAction
-from istsos.actions.servers.sos_2_0_0.requirement.gcRequirement import GCRequirement
+from istsos.actions.servers.sos_2_0_0.requirement.gcRequirement import (
+    GCRequirement
+)
 from istsos.actions.retrievers.offerings import Offerings
 
 
@@ -21,7 +23,7 @@ class GetCapabilities(CompositeAction):
         self.add(GCRequirement())
 
         # Data retriever
-        self.add(Offerings())
+        yield from self.add_retriever('Offerings')
 
     @asyncio.coroutine
     def after(self, request):

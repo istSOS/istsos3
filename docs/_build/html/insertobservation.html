@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="istSOS 3.0.0 documentation" href="index.html" />
-    <link rel="next" title="List of all istSOS.entity" href="entities.html" />
+    <link rel="next" title="Inserting new speciments" href="speciment.html" />
     <link rel="prev" title="Registration of new sensors" href="insertsensor.html" /> 
   </head>
   <body>
@@ -35,7 +35,7 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="entities.html" title="List of all istSOS.entity"
+          <a href="speciment.html" title="Inserting new speciments"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="insertsensor.html" title="Registration of new sensors"
@@ -103,13 +103,13 @@ type definition, measurements can be sent as:</p>
 <p><a class="reference external" href="http://www.opengis.net/def/observationType/OGC-OM/2.0/">http://www.opengis.net/def/observationType/OGC-OM/2.0/</a></p>
 <blockquote>
 <div><ul class="simple">
+<li>OM_Observation</li>
+<li>OM_Measurement</li>
 <li>OM_CategoryObservation</li>
 <li>OM_ComplexObservation</li>
 <li>OM_CountObservation</li>
 <li>OM_DiscreteCoverageObservation</li>
 <li>OM_GeometryObservation</li>
-<li>OM_Measurement</li>
-<li>OM_Observation</li>
 <li>OM_PointCoverageObservation</li>
 <li>OM_TemporalObservation</li>
 <li>OM_TimeSeriesObservation</li>
@@ -124,6 +124,113 @@ type) shall be supported by the SOS server (and hence listed in the
 InsertionCapabilities section) AND shall be one of the types defined for
 (each of) the ObservationOffering (s) to which the observation is added.
 [<a class="reference external" href="http://www.opengis.net/spec/SOS/2.0/req/obsInsertion/property-constellation">http://www.opengis.net/spec/SOS/2.0/req/obsInsertion/property-constellation</a>]</p>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="46%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">O&amp;M v2.0</th>
+<th class="head">OMXML</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>OM_CategoryObservation</td>
+<td>om:OM_Observation</td>
+</tr>
+<tr class="row-odd"><td>OM_ComplexObservation</td>
+<td>om:OM_Observation</td>
+</tr>
+<tr class="row-even"><td>OM_CountObservation</td>
+<td>om:OM_Observation</td>
+</tr>
+<tr class="row-odd"><td>OM_DiscreteCoverageObservation</td>
+<td>om:OM_Observation</td>
+</tr>
+<tr class="row-even"><td>OM_GeometryObservation*</td>
+<td>om:OM_Observation</td>
+</tr>
+<tr class="row-odd"><td>OM_Measurement*</td>
+<td>om:OM_Observation</td>
+</tr>
+<tr class="row-even"><td>OM_Observation</td>
+<td>om:OM_Observation</td>
+</tr>
+<tr class="row-odd"><td>OM_PointCoverageObservation</td>
+<td>om:OM_Observation</td>
+</tr>
+<tr class="row-even"><td>OM_TemporalObservation</td>
+<td>om:OM_Observation</td>
+</tr>
+<tr class="row-odd"><td>OM_TimeSeriesObservation</td>
+<td>om:OM_Observation</td>
+</tr>
+<tr class="row-even"><td>OM_TruthObservation</td>
+<td>om:OM_Observation</td>
+</tr>
+<tr class="row-odd"><td>OM_SWEArrayObservation*</td>
+<td>om:OM_Observation</td>
+</tr>
+<tr class="row-even"><td>ObservationContext</td>
+<td>om:ObservationContext</td>
+</tr>
+<tr class="row-odd"><td>PreparationStep</td>
+<td>spec:PreparationStep</td>
+</tr>
+<tr class="row-even"><td>SamplingFeatureComplex</td>
+<td>sam:SamplingFeatureComplex</td>
+</tr>
+<tr class="row-odd"><td>SF_SamplingCurve</td>
+<td>sams:SF_SpatialSamplingFeature</td>
+</tr>
+<tr class="row-even"><td>SF_SamplingFeature</td>
+<td>sam:SF_SamplingFeature</td>
+</tr>
+<tr class="row-odd"><td>SF_SamplingFeatureCollection</td>
+<td>sam:SF_SamplingFeatureCollection</td>
+</tr>
+<tr class="row-even"><td>SF_SamplingPoint</td>
+<td>sams:SF_SpatialSamplingFeature</td>
+</tr>
+<tr class="row-odd"><td>SF_SamplingSolid</td>
+<td>sams:SF_SpatialSamplingFeature</td>
+</tr>
+<tr class="row-even"><td>SF_SamplingSurface</td>
+<td>sams:SF_SpatialSamplingFeature</td>
+</tr>
+<tr class="row-odd"><td>SF_SpatialSamplingFeature</td>
+<td>sams:SF_SpatialSamplingFeature</td>
+</tr>
+<tr class="row-even"><td>SF_Specimen*</td>
+<td>spec:SF_Specimen</td>
+</tr>
+</tbody>
+</table>
+<p><a href="#id1"><span class="problematic" id="id2">*</span></a>Supported in actual istSOS3 version</p>
+<div class="section" id="om-observation-generic-observation-data">
+<h3>OM_Observation: Generic observation data<a class="headerlink" href="#om-observation-generic-observation-data" title="Permalink to this headline">¶</a></h3>
+<p>XML representation of observation data requires use of the element
+om:OM_Observation or a member of its substitution group.</p>
+<div class="admonition-requirements-class-generic-observation-data-ogc-10-025r1 admonition">
+<p class="first admonition-title">Requirements Class: Generic observation data (OGC 10-025r1)</p>
+<p class="last">The content model of any om:result element SHALL be consistent with
+the value of the xlink:href attribute of the om:type element if one is
+present as a sub-element of the parent om:OM_Observation, according to
+the mapping given in the previous table.
+[http://www.opengis.net/spec/OMXML/2.0/req/observation/result-type-consistent]</p>
+</div>
+</div>
+<div class="section" id="om-measurement-measurement-data">
+<h3>OM_Measurement: Measurement data<a class="headerlink" href="#om-measurement-measurement-data" title="Permalink to this headline">¶</a></h3>
+<p>XML representation of measurement data requires that it satisfies the core
+requirements class for observation data, and adds the requirement that the
+observation result is a scaled number.</p>
+</div>
+<div class="section" id="sf-specimen-specimen-data">
+<h3>SF_Specimen: Specimen data<a class="headerlink" href="#sf-specimen-specimen-data" title="Permalink to this headline">¶</a></h3>
+<p>XML representation of specimen data requires use of the element
+spec:SF_Specimen or a member of its substitution group.</p>
 </div>
 </div>
 <div class="section" id="usage-of-the-swe-array-observation-type">
@@ -160,7 +267,12 @@ offering name.</p>
   <ul>
 <li><a class="reference internal" href="#">Inserting new observations</a><ul>
 <li><a class="reference internal" href="#the-observation-id">The observation id</a></li>
-<li><a class="reference internal" href="#observation-types">Observation types</a></li>
+<li><a class="reference internal" href="#observation-types">Observation types</a><ul>
+<li><a class="reference internal" href="#om-observation-generic-observation-data">OM_Observation: Generic observation data</a></li>
+<li><a class="reference internal" href="#om-measurement-measurement-data">OM_Measurement: Measurement data</a></li>
+<li><a class="reference internal" href="#sf-specimen-specimen-data">SF_Specimen: Specimen data</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#usage-of-the-swe-array-observation-type">Usage of the SWE Array Observation Type</a></li>
 </ul>
 </li>
@@ -170,8 +282,8 @@ offering name.</p>
   <p class="topless"><a href="insertsensor.html"
                         title="previous chapter">Registration of new sensors</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="entities.html"
-                        title="next chapter">List of all istSOS.entity</a></p>
+  <p class="topless"><a href="speciment.html"
+                        title="next chapter">Inserting new speciments</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/insertobservation.txt"
@@ -201,7 +313,7 @@ offering name.</p>
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="entities.html" title="List of all istSOS.entity"
+          <a href="speciment.html" title="Inserting new speciments"
              >next</a> |</li>
         <li class="right" >
           <a href="insertsensor.html" title="Registration of new sensors"

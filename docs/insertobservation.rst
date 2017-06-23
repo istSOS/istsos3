@@ -70,13 +70,13 @@ type definition, measurements can be sent as:
 
 http://www.opengis.net/def/observationType/OGC-OM/2.0/
 
+ - OM_Observation
+ - OM_Measurement
  - OM_CategoryObservation
  - OM_ComplexObservation
  - OM_CountObservation
  - OM_DiscreteCoverageObservation
  - OM_GeometryObservation
- - OM_Measurement
- - OM_Observation
  - OM_PointCoverageObservation
  - OM_TemporalObservation
  - OM_TimeSeriesObservation
@@ -90,6 +90,67 @@ http://www.opengis.net/def/observationType/OGC-OM/2.0/
     InsertionCapabilities section) AND shall be one of the types defined for
     (each of) the ObservationOffering (s) to which the observation is added.
     [http://www.opengis.net/spec/SOS/2.0/req/obsInsertion/property-constellation]
+
+===============================  ====================================
+O&M v2.0                         OMXML
+===============================  ====================================
+OM_CategoryObservation           om:OM_Observation
+OM_ComplexObservation            om:OM_Observation
+OM_CountObservation              om:OM_Observation
+OM_DiscreteCoverageObservation   om:OM_Observation
+OM_GeometryObservation*          om:OM_Observation
+OM_Measurement*                  om:OM_Observation
+OM_Observation                   om:OM_Observation
+OM_PointCoverageObservation      om:OM_Observation
+OM_TemporalObservation           om:OM_Observation
+OM_TimeSeriesObservation         om:OM_Observation
+OM_TruthObservation              om:OM_Observation
+OM_SWEArrayObservation*          om:OM_Observation
+ObservationContext               om:ObservationContext
+PreparationStep                  spec:PreparationStep
+SamplingFeatureComplex           sam:SamplingFeatureComplex
+SF_SamplingCurve                 sams:SF_SpatialSamplingFeature
+SF_SamplingFeature               sam:SF_SamplingFeature
+SF_SamplingFeatureCollection     sam:SF_SamplingFeatureCollection
+SF_SamplingPoint                 sams:SF_SpatialSamplingFeature
+SF_SamplingSolid                 sams:SF_SpatialSamplingFeature
+SF_SamplingSurface               sams:SF_SpatialSamplingFeature
+SF_SpatialSamplingFeature        sams:SF_SpatialSamplingFeature
+SF_Specimen*                     spec:SF_Specimen
+===============================  ====================================
+
+*Supported in actual istSOS3 version
+
+----------------------------------------
+OM_Observation: Generic observation data
+----------------------------------------
+
+XML representation of observation data requires use of the element
+om:OM_Observation or a member of its substitution group.
+
+.. admonition:: Requirements Class: Generic observation data (OGC 10-025r1)
+
+    The content model of any om:result element SHALL be consistent with
+    the value of the xlink:href attribute of the om:type element if one is
+    present as a sub-element of the parent om:OM_Observation, according to
+    the mapping given in the previous table.
+    [http://www.opengis.net/spec/OMXML/2.0/req/observation/result-type-consistent]
+
+---------------------------------
+OM_Measurement: Measurement data
+---------------------------------
+
+XML representation of measurement data requires that it satisfies the core
+requirements class for observation data, and adds the requirement that the
+observation result is a scaled number.
+
+---------------------------
+SF_Specimen: Specimen data
+---------------------------
+
+XML representation of specimen data requires use of the element
+spec:SF_Specimen or a member of its substitution group.
+
 
 ***************************************
 Usage of the SWE Array Observation Type

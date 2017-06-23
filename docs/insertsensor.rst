@@ -126,13 +126,8 @@ traverses, etc. The shape is a gml:Polygon element.
 
 http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_Specimen
 
-This type is usually used to represent physical samples.
-
-
-
-
-
-
+A Specimen is a physical sample, obtained for observation(s) carried out ex
+situ, sometimes in a laboratory. OGC 10-026 (ISO 19156:2011) Clause 10.1
 
 
 ===============

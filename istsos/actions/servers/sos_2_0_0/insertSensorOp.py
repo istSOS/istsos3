@@ -6,10 +6,6 @@
 import asyncio
 from istsos.actions.action import CompositeAction
 from istsos.actions.builders.sos_2_0_0.offeringBuilder import OfferingBuilder
-from istsos.actions.creators.offeringcreator import OfferingCreator
-from istsos.actions.creators.descriptioncreator import (
-    DescriptionCreator
-)
 from lxml import etree
 
 
@@ -24,10 +20,9 @@ class InsertSensor(CompositeAction):
         """
         # @todo > Add XML Validation with XSD
         self.add(OfferingBuilder())
-        # @todo add a DescriptionBuilder that can build a generic description
-        #  if it is not given during the insertSensor operation
-        self.add(OfferingCreator())
-        self.add(DescriptionCreator())
+
+        yield from self.add_creator('OfferingCreator')
+        yield from self.add_creator('DescriptionCreator')
 
     @asyncio.coroutine
     def after(self, request):

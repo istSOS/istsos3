@@ -9,10 +9,11 @@ import pickle
 import os.path
 import json
 import uuid
+import importlib
+import traceback
 
 import istsos
-
-from istsos.actions.servers.rule import Rule
+from istsos.actions.servers.rest.rule import Rule
 from istsos.actions.servers.sos_2_0_0.requirement.core.requestRequest import (
     RequestRequest
 )
@@ -33,19 +34,14 @@ from istsos.actions.servers.sos_2_0_0.insertObservationOp import (
 )
 
 
-ISTSOS_API = [
-    (r'/procedures', 'GET', {}),
-    (r'/procedure/(\w*)', 'GET', {})
-]
-
-
 @asyncio.coroutine
 def get_state(path='config.pickle', config=None):
     state = State(path, config)
     if not state.is_ready():
         yield from state.init_connections()
-        if state.is_cache_active():
-            yield from state.init_cache()
+        # #todo to be emproved
+        '''if state.is_cache_active():
+            yield from state.init_cache()'''
         state.set_ready()
     return state
 
@@ -136,14 +132,22 @@ like this:
 
     @asyncio.coroutine
     def init_cache(self):
-        istsos.info("Init cache")
+        istsos.info("Initializing cache")
+
+        # Importing dynamically the retriever depending on the config loader
+        module = 'istsos.actions.retrievers.%s.offerings' % (
+            self.instance.config["loader"]["type"]
+        )
+        m = importlib.import_module(module)
+        m = getattr(m, 'Offerings')
+        offeringRetriever = m()
+
         from istsos.entity.httpRequest import HttpRequest
-        from istsos.actions.retrievers.offerings import Offerings
         request = HttpRequest()
         request.update({
             "state": self
         })
-        yield from (Offerings()).execute(request)
+        yield from offeringRetriever.execute(request)
         self.instance.cache = {
             "offerings": {
                 "entities": {}
@@ -190,14 +194,24 @@ like this:
         return self.instance.requests
 
 
+REST_API = [
+    (r'config/uom', 'Uom')
+]
+
+
 class Server():
     """docstring for Server."""
     def __init__(self, state):
         self.state = state
         self.rules = []
-        for rule in ISTSOS_API:
+        for rule in REST_API:
+            module = 'istsos.actions.servers.rest.%s' % (
+                rule[0].replace('/', '.')
+            )
+            m = importlib.import_module(module)
+            action = getattr(m, rule[1])
             self.rules.append(
-                Rule(rule[0], rule[2], rule[1])
+                Rule(rule[0], action)
             )
 
     @classmethod
@@ -217,6 +231,9 @@ The HTTPRequest shall be prepared by the web framework used.
         """
         path = request["uri"].replace(
             self.state.get_proxy(), '').split('/')
+
+        if path[0] == '':
+            path.pop(0)
 
         request.update(
             self.state.init_request()
@@ -259,51 +276,53 @@ The HTTPRequest shall be prepared by the web framework used.
                             # @todo some comments here
                             action.register(self.state)
 
-            # Executing the requested action
-            if action:
+        elif path[0] == 'rest':
+            try:
+                path.pop(0)
+                path = "/".join(path)
+                for rule in self.rules:
+                    action = rule.match(path)
+            except Exception:
+                traceback.print_exc()
 
-                yield from action.execute(request)
+        # Executing the requested action
+        if action:
 
-                if stats:
-                    # Show response
-                    if "response" in request:
-                        print("\n")
-                        if len(request['response']) > 100:
-                            print(request['response'][:100])
-                        else:
-                            print(request['response'])
-                        print("\n")
+            yield from action.execute(request)
 
-                    # Print statistics
-                    from istsos.actions.action import (
-                        Action, CompositeAction
-                    )
+            if stats:
+                # Show response
+                if "response" in request:
+                    print("\n")
+                    if len(request['response']) > 100:
+                        print(request['response'][:100])
+                    else:
+                        print(request['response'])
+                    print("\n")
 
-                    def show_stats(action, depth=0):
-                        if action.time is not None:
-                            print("%s%s: %s ms" % (
-                                "%s-" % ("  "*depth),
-                                action.__class__.__name__,
-                                action.time * 1000
-                            ))
-                        if isinstance(action, CompositeAction):
-                            for child_action in action.actions:
-                                show_stats(child_action, depth+1)
+                # Print statistics
+                from istsos.actions.action import (
+                    Action, CompositeAction
+                )
 
-                    show_stats(action)
+                def show_stats(action, depth=0):
+                    if action.time is not None:
+                        print("%s%s: %s ms" % (
+                            "%s-" % ("  "*depth),
+                            action.__class__.__name__,
+                            action.time * 1000
+                        ))
+                    if isinstance(action, CompositeAction):
+                        for child_action in action.actions:
+                            show_stats(child_action, depth+1)
+
+                show_stats(action)
 
             # Free memory
             action = None
 
             request['status'] = "200"
             return request
-
-        elif path[0] == 'api':
-            # @todo think about something pluggable
-            for rule in self.rules:
-                builder = rule.match(request)
-                if builder is not None:
-                    return builder
 
         request['status'] = "400"
         raise Exception("Requested action unknown")

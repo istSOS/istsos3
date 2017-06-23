@@ -47,6 +47,7 @@ class Action(object):
     @asyncio.coroutine
     def execute(self, request):
         # print("Executing: %s" % self.__class__.__name__)
+        istsos.info("Executing: %s" % self.__class__.__name__)
         start = time.time()
         yield from self.before(request)
         yield from self.process(request)
@@ -66,6 +67,7 @@ class Action(object):
         return m
 
 
+"""
 class Proxy(Action):
     def get_proxy(self, storage, action_name):
         parts = ('%s.%s.%s' % (
@@ -107,6 +109,7 @@ class ProxyCache(Proxy):
                 )
             )(**self._kwargs)
         ).process(request)
+"""
 
 
 class CompositeAction(Action):
@@ -114,6 +117,7 @@ class CompositeAction(Action):
 
     def __init__(self):
         super(CompositeAction, self).__init__()
+        istsos.debug("Constructing %s" % self.__class__.__name__)
         self.actions = []
 
     def add(self, action):
@@ -147,7 +151,6 @@ class CompositeAction(Action):
         yield from self.before(request)
         yield from self.process(request)
         for action in self.actions:
-            istsos.debug("Executing %s" % action.__class__.__name__)
             yield from action.execute(request)
         yield from self.after(request)
         self.time = time.time() - start

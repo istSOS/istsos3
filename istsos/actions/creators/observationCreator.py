@@ -4,10 +4,10 @@
 # Version: v3.0.0
 
 import asyncio
-from istsos.actions.action import Proxy
+from istsos.actions.action import Action
 
 
-class ObservationCreator(Proxy):
+class ObservationCreator(Action):
 
     @asyncio.coroutine
     def before(self, request):

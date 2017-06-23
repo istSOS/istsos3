@@ -1,4 +1,5 @@
 *.py[cod]
+.cache/
 docs/_build/
 istsos/__pycache__/
 istsos/entity/__pycache__/

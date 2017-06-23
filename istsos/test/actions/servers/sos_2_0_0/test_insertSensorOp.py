@@ -100,7 +100,7 @@ class TestInsertSensor:
     def test_execute(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(
-            asyncio.gather(self.execute_all())
+            asyncio.gather(self.execute_1())
         )
         loop.close()
         assert True is True

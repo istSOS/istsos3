@@ -4,7 +4,7 @@
 # Version: v3.0.0
 
 import asyncio
-from istsos.actions.creators.offeringcreator import OfferingCreator
+from istsos.actions.creators.offeringCreator import OfferingCreator
 
 
 class OfferingCreator(OfferingCreator):
