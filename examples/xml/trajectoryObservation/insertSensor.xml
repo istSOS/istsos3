@@ -1,0 +1,59 @@
+<swes:InsertSensor
+    xmlns:swes="http://www.opengis.net/swes/2.0"
+    xmlns:sos="http://www.opengis.net/sos/2.0"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    service="SOS"
+    version="2.0.0">
+    <swes:procedureDescriptionFormat>http://www.opengis.net/sensorML/1.0.1</swes:procedureDescriptionFormat>
+    <swes:procedureDescription>
+        <sml:SensorML version="1.0.1">
+            <sml:member>
+                <sml:System>
+                    <sml:identification>
+                        <sml:IdentifierList>
+                            <sml:identifier name="uniqueID">
+                                <sml:Term definition="urn:ogc:def:identifier:OGC:uniqueID">
+                                    <sml:value>rally_car</sml:value>
+                                </sml:Term>
+                            </sml:identifier>
+                        </sml:IdentifierList>
+                    </sml:identification>
+                    <sml:classification>
+                        <sml:ClassifierList>
+                            <sml:classifier name="systemType">
+                                <sml:Term definition="urn:ogc:def:classifier:x-istsos:1.0:systemType">
+                                    <sml:value>pointTimeSeriesObservation</sml:value>
+                                </sml:Term>
+                            </sml:classifier>
+                        </sml:ClassifierList>
+                    </sml:classification>
+                    <sml:capabilities name="offering">
+                        <swe:SimpleDataRecord>
+                            <swe:field name="offeringID">
+                                <swe:Text>
+                                    <swe:value>rally_car</swe:value>
+                                </swe:Text>
+                            </swe:field>
+                        </swe:SimpleDataRecord>
+                    </sml:capabilities>
+                </sml:System>
+            </sml:member>
+        </sml:SensorML>
+    </swes:procedureDescription>
+    <swes:observableProperty>urn:ogc:def:parameter:x-istsos:1.0:vehicle:speed</swes:observableProperty>
+    <swes:observableProperty>urn:ogc:def:parameter:x-istsos:1.0:track:linear:reference</swes:observableProperty>
+    <swes:metadata>
+        <sos:SosInsertionMetadata>
+            <sos:observationType>
+                http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement
+            </sos:observationType>
+            <sos:featureOfInterestType>
+                http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingCurve
+            </sos:featureOfInterestType>
+        </sos:SosInsertionMetadata>
+    </swes:metadata>
+</swes:InsertSensor>

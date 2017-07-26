@@ -4,6 +4,7 @@
 # Version: v3.0.0
 
 import asyncio
+import istsos
 from istsos.actions.action import Action
 
 
@@ -14,7 +15,7 @@ class OfferingCreator(Action):
     @asyncio.coroutine
     def after(self, request):
         if "offering" in request and "id" not in request['offering']:
-            print(
+            istsos.debug(
                 "OfferingCreator shall set the id in the Offering entity, "
                 "but it looks like it is not."
             )

@@ -81,6 +81,10 @@ AND
 
             recs = yield from cur.fetchall()
             for rec in recs:
+                pt_begin = rec[4].isoformat() if rec[4] else None
+                pt_end = rec[5].isoformat() if rec[5] else None
+                rt_begin = rec[6].isoformat() if rec[6] else None
+                rt_end = rec[7].isoformat() if rec[7] else None
                 data = {
                     "id": rec[0],
                     "results": rec[9],
@@ -91,6 +95,14 @@ AND
                     ],
                     "observable_property": [],
                     "observation_type": [],
+                    "phenomenon_time": {
+                        "begin_position": pt_begin,
+                        "end_position": pt_end
+                    },
+                    "result_time": {
+                        "begin_position": rt_begin,
+                        "end_position": rt_end
+                    },
                     "foi_type": rec[8]
                 }
                 # Load Observable Property

@@ -29,10 +29,13 @@ class ObservationCreator(ObservationCreator):
 
                     for idx in range(
                             0, len(observation['observedProperty'])):
+
                         observed_property = offering.get_observed_property(
                                 observation['observedProperty'][idx])
+
                         observation_type = offering.get_observation_type(
                             observation['type'][idx])
+
                         uom = observation['uom'][idx]
 
                         id_obp = observed_property['id']
@@ -158,7 +161,8 @@ class ObservationCreator(ObservationCreator):
                             "%s_qi" % observed_property['column']
                         ])
 
-                for timeInstant in list(observation['result'].keys()):
+                timeInstants = list(observation['result'].keys())
+                for timeInstant in timeInstants:
                     # And now it's time to insert measurements :)
                     row = [timeInstant]
                     for val in observation['result'][timeInstant]:
@@ -180,6 +184,41 @@ class ObservationCreator(ObservationCreator):
                 """ % (offering['name'], ",".join(columns)) + """
                     VALUES %s
                 """ % str_measures)
+
+                # Updating the offering phenomenon time
+                columns = []
+                vals = []
+                if offering['phenomenon_time']['begin_position'] is None:
+                    columns.append("pt_begin=%s::TIMESTAMPTZ")
+                    vals.append(timeInstants[0])
+                else:
+                    current = istsos.str2date(
+                        offering['phenomenon_time']['begin_position']
+                    )
+                    new = istsos.str2date(timeInstants[0])
+                    if current > new:
+                        columns.append("pt_begin=%s::TIMESTAMPTZ")
+                        vals.append(timeInstants[0])
+
+                if offering['phenomenon_time']['end_position'] is None:
+                    columns.append("pt_end=%s::TIMESTAMPTZ")
+                    vals.append(timeInstants[-1])
+                else:
+                    current = istsos.str2date(
+                        offering['phenomenon_time']['end_position']
+                    )
+                    new = istsos.str2date(timeInstants[-1])
+                    if current < new:
+                        columns.append("pt_end=%s::TIMESTAMPTZ")
+                        vals.append(timeInstants[-1])
+
+                if len(columns) > 0:
+                    vals.append(offering['id'])
+                    yield from cur.execute("""
+                        UPDATE public.offerings
+                        SET %s """ % ", ".join(columns) + """
+                        WHERE id = %s;
+                    """, tuple(vals))
 
                 yield from cur.execute("COMMIT;")
 

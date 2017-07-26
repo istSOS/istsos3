@@ -1,0 +1,43 @@
+{
+    "proxy": "http://localhost",
+    "cache": false,
+    "loader": {
+        "type": "aiopg",
+        "host": "localhost",
+        "port": "5432",
+        "user": "postgres",
+        "password": "postgres",
+        "database": "istsos3"
+    },
+    "identification": {
+        "title": "IST Sensor Observation Service",
+        "abstract": "monitoring network",
+        "keywords": [
+            "SOS",
+            "SENSOR",
+            "NETWORK"
+        ],
+        "fees": "NONE",
+        "accessConstraints": "NONE"
+    },
+    "provider": {
+        "providerName": "Istitute Of Earth Science - SUPSI",
+        "providerSite": "http://www.supsi.ch/ist",
+        "serviceContact": {
+            "individualName": "Team Geomatica",
+            "positionName": "Data manager",
+            "contactInfo": {
+                "phone": "+41586666200",
+                "fax": "+41586666209"
+            },
+            "address": {
+                "deliveryPoint": "Campus Trevano",
+                "city": "Canobbio",
+                "administrativeArea": "Canton Ticino",
+                "postalCode": "6952",
+                "country": "Switzerland",
+                "email": "geoservice@supsi.ch"
+            }
+        }
+    }
+}

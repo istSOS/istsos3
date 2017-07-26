@@ -1,0 +1,93 @@
+<sos:InsertObservation service="SOS" version="2.0.0"
+    xmlns:sos="http://www.opengis.net/sos/2.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:swe="http://www.opengis.net/swe/2.0"
+    xmlns:swes="http://www.opengis.net/swes/2.0"
+    xmlns:gml="http://www.opengis.net/gml/3.2"
+    xmlns:ogc="http://www.opengis.net/ogc"
+    xmlns:om="http://www.opengis.net/om/2.0"
+    xmlns:sams="http://www.opengis.net/samplingSpatial/2.0"
+    xmlns:sam="http://www.opengis.net/sampling/2.0"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+    <sos:offering>rally_car</sos:offering>
+    <sos:observation>
+        <om:OM_Observation id="f1">
+            <om:type
+                xlink:href="http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_SWEArrayObservation"/>
+            <om:phenomenonTime>
+                <gml:TimePeriod gml:id="phenomenonTime">
+                    <gml:beginPosition>2017-05-08T17:20:00.000+00:00</gml:beginPosition>
+                    <gml:endPosition>2017-05-08T17:52:00.000+00:00</gml:endPosition>
+                </gml:TimePeriod>
+            </om:phenomenonTime>
+            <om:resultTime>
+                <gml:TimeInstant gml:id="resultTime">
+                    <gml:timePosition>2017-05-08T18:00:00.000+00:00</gml:timePosition>
+                </gml:TimeInstant>
+            </om:resultTime>
+            <om:procedure
+                xlink:href="rally_car"/>
+            <om:observedProperty xsi:nil='true'/>
+            <om:featureOfInterest>
+                <sams:SF_SpatialSamplingFeature>
+                    <gml:identifier codeSpace="">valcolla</gml:identifier>
+                    <sam:type xlink:href="http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingCurve"/>
+                    <sam:sampledFeature xlink:href="http://www.opengis.net/def/nil/OGC/0/unknown"/>
+                    <sams:shape>
+                        <gml:LineString srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                            <gml:posList>
+                                46.059635780296801 8.994412092552219 46.060223825774337 8.997433745462159 46.061954461930128 9.000778955031786 46.06495448547475 9.005033244195106 46.066509521680928 9.008050796801951 46.065846643737828 9.010422990575318 46.065912236333581 9.012169847132256 46.06592614850306 9.012784218735879 46.066923672693697 9.008999831286239 46.067917033510746 9.008737565812728 46.068673414212633 9.007725212298796 46.070999153792634 9.010312802428976 46.072772201831029 9.012205991986022 46.074170109016421 9.015187329520275 46.074700400369935 9.019080982349889 46.076601642069143 9.023046826918122 46.077825485555252 9.027187168534967 46.07929559015394 9.031399530717648 46.079326028609522 9.034018529337294 46.078700654662896 9.035293130598477 46.078959935115314 9.036044124675852 46.078540561804964 9.037066152953063 46.077856870654962 9.037692562337673 46.077980771506844 9.038471910437849 46.077860094099819 9.039050161054439 46.07779309353549 9.040599628752972 46.078389159353407 9.039809076068785 46.078906753937488 9.039791937317942 46.079274302086354 9.039253238709604 46.079697371159966 9.039556548771477 46.080512766293474 9.039160264513486</gml:posList>
+                        </gml:LineString>
+                    </sams:shape>
+                </sams:SF_SpatialSamplingFeature>
+            </om:featureOfInterest>
+            <om:result
+                xsi:type="swe:DataArrayPropertyType">
+                <swe:DataArray>
+                    <swe:elementCount>
+                        <swe:Count>
+                            <swe:value>10</swe:value>
+                        </swe:Count>
+                    </swe:elementCount>
+                    <swe:elementType name="defs">
+                        <swe:DataRecord>
+                            <swe:field name="phenomenonTime">
+                                <swe:Time definition="http://www.opengis.net/def/property/OGC/0/PhenomenonTime">
+                                    <swe:uom xlink:href="http://www.opengis.net/def/uom/ISO-8601/0/Gregorian"/>
+                                </swe:Time>
+                            </swe:field>
+                            <swe:field>
+                                <swe:Quantity definition="urn:ogc:def:parameter:x-istsos:1.0:track:linear:reference">
+                                    <swe:uom code="m"/>
+                                </swe:Quantity>
+                            </swe:field>
+                            <swe:field>
+                                <swe:Quantity definition="urn:ogc:def:parameter:x-istsos:1.0:vehicle:speed">
+                                    <swe:uom code="km/h"/>
+                                </swe:Quantity>
+                            </swe:field>
+                        </swe:DataRecord>
+                    </swe:elementType>
+                    <swe:encoding>
+                        <swe:TextEncoding
+                            decimalSeparator="."
+                            tokenSeparator=","
+                            blockSeparator="@"/>
+                    </swe:encoding>
+                    <swe:values>
+                        2017-05-08T17:23:46.146+00:00,500,154.2@
+                        2017-05-08T17:28:10.234+00:00,1000,84.1@
+                        2017-05-08T17:30:23.765+00:00,1500,184.15@
+                        2017-05-08T17:34:11.432+00:00,2000,123.4@
+                        2017-05-08T17:36:43.534+00:00,2500,40.3@
+                        2017-05-08T17:39:23.653+00:00,3000,80.23@
+                        2017-05-08T17:45:43.853+00:00,3500,75.21@
+                        2017-05-08T17:46:25.833+00:00,4000,98.2@
+                        2017-05-08T17:49:35.734+00:00,4500,140.4@
+                        2017-05-08T17:52:12.657+00:00,5629.4,189.8 
+                    </swe:values>
+                </swe:DataArray>
+            </om:result>
+        </om:OM_Observation>
+    </sos:observation>
+</sos:InsertObservation>

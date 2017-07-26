@@ -7,6 +7,7 @@ from istsos import *
 from istsos.application import (
     get_state
 )
+from dateutil import parser
 import sys
 import logging
 log = logging.getLogger('istSOS')
@@ -35,6 +36,10 @@ def debug(msg):
 
 def warning(msg):
     log.warning(msg)
+
+
+def str2date(isodate):
+    return parser.parse(isodate)
 
 
 __typdef = (

@@ -21,8 +21,10 @@ class InsertSensor(CompositeAction):
         # @todo > Add XML Validation with XSD
         self.add(OfferingBuilder())
 
+        # yield from self.add_creator('TransactionBegin')
         yield from self.add_creator('OfferingCreator')
         yield from self.add_creator('DescriptionCreator')
+        # yield from self.add_creator('TransactionCommit')
 
     @asyncio.coroutine
     def after(self, request):

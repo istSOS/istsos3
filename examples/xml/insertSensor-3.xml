@@ -33,11 +33,17 @@
                             </sml:classifier>
                         </sml:ClassifierList>
                     </sml:classification>
-                    <sml:capabilities>
-                        <swe:DataRecord/>
+                    <sml:capabilities name="featuresOfInterest">
+                        <swe:SimpleDataRecord>
+                            <swe:field name="featureOfInterestID">
+                                <swe:Text>
+                                    <swe:value>https://istsos.org/istsos3/fois/lugano</swe:value>
+                                </swe:Text>
+                            </swe:field>
+                        </swe:SimpleDataRecord>
                     </sml:capabilities>
                     <sml:location>
-                        <gml:Point srsName="EPSG:4326" gml:id="loc_LUGANO">
+                        <gml:Point srsName="EPSG:4326">
                             <gml:coordinates>46.02785,8.96128,341.9</gml:coordinates>
                         </gml:Point>
                     </sml:location>
