@@ -6,9 +6,9 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Registration of new sensors &mdash; istSOS 3.0.0 documentation</title>
+    <title>Registration of new sensors &#8212; istSOS 3.0.0 documentation</title>
     
-    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -17,18 +17,20 @@
         VERSION:     '3.0.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="istSOS 3.0.0 documentation" href="index.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Inserting new observations" href="insertobservation.html" />
     <link rel="prev" title="Welcome to istSOS3’s documentation!" href="index.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -40,14 +42,14 @@
         <li class="right" >
           <a href="index.html" title="Welcome to istSOS3’s documentation!"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">istSOS 3.0.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">istSOS 3.0.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="registration-of-new-sensors">
 <span id="insertsensor"></span><h1>Registration of new sensors<a class="headerlink" href="#registration-of-new-sensors" title="Permalink to this headline">¶</a></h1>
@@ -108,7 +110,7 @@ polygon,</p>
 <p>This type is usually used to represent an in-situ fixed procedure. For instance
 a fixed monitoring sensors, like a weather station.  The shape is a
 gml:Point element.</p>
-<div class="highlight-xml"><div class="highlight"><pre><span class="nt">&lt;gml:Point</span>
+<div class="highlight-xml"><div class="highlight"><pre><span></span><span class="nt">&lt;gml:Point</span>
     <span class="na">gml:id=</span><span class="s">&quot;st2p&quot;</span><span class="nt">&gt;</span>
     <span class="nt">&lt;gml:pos&gt;</span>-30.706 134.196 272.<span class="nt">&lt;/gml:pos&gt;</span>
 <span class="nt">&lt;/gml:Point&gt;</span>
@@ -118,7 +120,7 @@ gml:Point element.</p>
 <p><a class="reference external" href="http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingCurve">http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingCurve</a></p>
 <p>This type is usually used to represent observation boreholes, trajectories,
 traverses, etc. The shape is a gml:LineString element.</p>
-<div class="highlight-xml"><div class="highlight"><pre><span class="nt">&lt;gml:LineString</span>
+<div class="highlight-xml"><div class="highlight"><pre><span></span><span class="nt">&lt;gml:LineString</span>
     <span class="na">gml:id=</span><span class="s">&quot;pr1_ls1&quot;</span>
     <span class="na">srsName=</span><span class="s">&quot;urn:ogc:def:crs:EPSG:6.8:4347&quot;</span><span class="nt">&gt;</span>
     <span class="nt">&lt;gml:pos&gt;</span>-30.711 134.205 321.<span class="nt">&lt;/gml:pos&gt;</span>
@@ -135,7 +137,7 @@ traverses, etc. The shape is a gml:LineString element.</p>
 <p><a class="reference external" href="http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingSurface">http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingSurface</a></p>
 <p>This type is usually used to represent observation boreholes, trajectories,
 traverses, etc. The shape is a gml:Polygon element.</p>
-<div class="highlight-xml"><div class="highlight"><pre><span class="nt">&lt;gml:Polygon</span> <span class="na">gml:id=</span><span class="s">&quot;Polygon_ssf_094D1FDB65BC787B8AC339F4029B622A86EED5EC&quot;</span><span class="nt">&gt;</span>
+<div class="highlight-xml"><div class="highlight"><pre><span></span><span class="nt">&lt;gml:Polygon</span> <span class="na">gml:id=</span><span class="s">&quot;Polygon_ssf_094D1FDB65BC787B8AC339F4029B622A86EED5EC&quot;</span><span class="nt">&gt;</span>
   <span class="nt">&lt;gml:exterior&gt;</span>
     <span class="nt">&lt;gml:LinearRing</span> <span class="na">xsi:type=</span><span class="s">&quot;gml:LinearRingType&quot;</span><span class="nt">&gt;</span>
       <span class="nt">&lt;gml:posList</span> <span class="na">srsName=</span><span class="s">&quot;http://www.opengis.net/def/crs/EPSG/0/4326&quot;</span><span class="nt">&gt;</span>7.52 7.32 7.52 52.7 52.7 52.7 52.7 7.32 7.52 7.32<span class="nt">&lt;/gml:posList&gt;</span>
@@ -153,28 +155,28 @@ situ, sometimes in a laboratory. OGC 10-026 (ISO 19156:2011) Clause 10.1</p>
 <div class="section" id="python-examples">
 <h1>Python examples<a class="headerlink" href="#python-examples" title="Permalink to this headline">¶</a></h1>
 <p>Here an example on how manually register a new sensor using Python 3.</p>
-<div class="highlight-python3"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">asyncio</span>
+<div class="highlight-python3"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">asyncio</span>
 <span class="kn">from</span> <span class="nn">istsos.application</span> <span class="k">import</span> <span class="n">Server</span>
 <span class="kn">from</span> <span class="nn">istsos.entity.httpRequest</span> <span class="k">import</span> <span class="n">HttpRequest</span>
 <span class="kn">from</span> <span class="nn">istsos.actions.servers.sos_2_0_0.insertSensorOp</span> <span class="k">import</span> <span class="n">InsertSensor</span>
 
 <span class="nd">@asyncio</span><span class="o">.</span><span class="n">coroutine</span>
 <span class="k">def</span> <span class="nf">execute</span><span class="p">():</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;examples/xml/insertSensor-1.xml&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">xml_file</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;examples/xml/insertSensor-1.xml&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">xml_file</span><span class="p">:</span>
 
-        <span class="c"># Installation of the istSOS server</span>
+        <span class="c1"># Installation of the istSOS server</span>
         <span class="n">server</span> <span class="o">=</span> <span class="k">yield from</span> <span class="n">Server</span><span class="o">.</span><span class="n">create</span><span class="p">()</span>
 
-        <span class="c"># Preparing the Request object</span>
+        <span class="c1"># Preparing the Request object</span>
         <span class="n">request</span> <span class="o">=</span> <span class="n">HttpRequest</span><span class="p">(</span>
-            <span class="s">&quot;POST&quot;</span><span class="p">,</span>
-            <span class="s">&quot;sos&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;POST&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;sos&quot;</span><span class="p">,</span>
             <span class="n">body</span><span class="o">=</span><span class="n">xml_file</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span>
-            <span class="n">content_type</span><span class="o">=</span><span class="s">&quot;application/xml&quot;</span>
+            <span class="n">content_type</span><span class="o">=</span><span class="s2">&quot;application/xml&quot;</span>
         <span class="p">)</span>
 
         <span class="n">response</span> <span class="o">=</span> <span class="k">yield from</span> <span class="n">server</span><span class="o">.</span><span class="n">execute_http_request</span><span class="p">(</span>
-            <span class="n">request</span><span class="p">,</span> <span class="n">stats</span><span class="o">=</span><span class="k">True</span>
+            <span class="n">request</span><span class="p">,</span> <span class="n">stats</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
 
 <span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
@@ -190,7 +192,7 @@ situ, sometimes in a laboratory. OGC 10-026 (ISO 19156:2011) Clause 10.1</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
@@ -210,29 +212,28 @@ situ, sometimes in a laboratory. OGC 10-026 (ISO 19156:2011) Clause 10.1</p>
   <h4>Next topic</h4>
   <p class="topless"><a href="insertobservation.html"
                         title="next chapter">Inserting new observations</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/insertsensor.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/insertsensor.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -244,12 +245,12 @@ situ, sometimes in a laboratory. OGC 10-026 (ISO 19156:2011) Clause 10.1</p>
         <li class="right" >
           <a href="index.html" title="Welcome to istSOS3’s documentation!"
              >previous</a> |</li>
-        <li><a href="index.html">istSOS 3.0.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">istSOS 3.0.0 documentation</a> &#187;</li> 
       </ul>
     </div>
-    <div class="footer">
-        &copy; Copyright Institute of Eath Science - SUPSI 2017.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    <div class="footer" role="contentinfo">
+        &#169; Copyright Institute of Eath Science - SUPSI 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.5.
     </div>
   </body>
 </html>
