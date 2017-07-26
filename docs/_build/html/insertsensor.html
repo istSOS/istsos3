@@ -1,0 +1,434 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+<<<<<<< HEAD
+    <title>Registration of new sensors &#8212; istSOS 3.0.0 documentation</title>
+=======
+    <title>Inserting new sensors &mdash; istSOS 3.0.0 documentation</title>
+>>>>>>> upstream/master
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '3.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Inserting new observations" href="insertobservation.html" />
+    <link rel="prev" title="System Types classification" href="systemtypes.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="insertobservation.html" title="Inserting new observations"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="systemtypes.html" title="System Types classification"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">istSOS 3.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="inserting-new-sensors">
+<span id="insertsensor"></span><h1>Inserting new sensors<a class="headerlink" href="#inserting-new-sensors" title="Permalink to this headline">¶</a></h1>
+<p>With regards to the OGC SOS 2.0.0 Transactional Extension istSOS supports the
+insertSensor request.
+The database will be created on the go. During an InsertSensor the minimal
+info will be stored. Later when the InsertObservation will be done, the
+rest of the data store will be built.</p>
+<img alt="_images/flow_insert_sensor.png" src="_images/flow_insert_sensor.png" />
+<p>This is an example of a minimal insertSensor request:</p>
+<div class="highlight-xml"><div class="highlight"><pre><span class="nt">&lt;swes:InsertSensor</span>
+    <span class="na">xmlns:swes=</span><span class="s">&quot;http://www.opengis.net/swes/2.0&quot;</span>
+    <span class="na">xmlns:sos=</span><span class="s">&quot;http://www.opengis.net/sos/2.0&quot;</span>
+    <span class="na">xmlns:swe=</span><span class="s">&quot;http://www.opengis.net/swe/1.0.1&quot;</span>
+    <span class="na">xmlns:sml=</span><span class="s">&quot;http://www.opengis.net/sensorML/1.0.1&quot;</span>
+    <span class="na">xmlns:gml=</span><span class="s">&quot;http://www.opengis.net/gml&quot;</span>
+    <span class="na">xmlns:xsi=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>
+    <span class="na">xmlns:xlink=</span><span class="s">&quot;http://www.w3.org/1999/xlink&quot;</span>
+    <span class="na">service=</span><span class="s">&quot;SOS&quot;</span>
+    <span class="na">version=</span><span class="s">&quot;2.0.0&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;swes:procedureDescriptionFormat&gt;</span>http://www.opengis.net/sensorML/1.0.1<span class="nt">&lt;/swes:procedureDescriptionFormat&gt;</span>
+    <span class="nt">&lt;swes:procedureDescription&gt;</span>
+        <span class="nt">&lt;sml:SensorML/&gt;</span>
+    <span class="nt">&lt;/swes:procedureDescription&gt;</span>
+    <span class="nt">&lt;swes:observableProperty&gt;</span>urn:ogc:def:parameter:x-istsos:1.0:meteo:air:temperature<span class="nt">&lt;/swes:observableProperty&gt;</span>
+    <span class="nt">&lt;swes:metadata&gt;</span>
+        <span class="nt">&lt;sos:SosInsertionMetadata&gt;</span>
+            <span class="nt">&lt;sos:observationType&gt;</span>http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement<span class="nt">&lt;/sos:observationType&gt;</span>
+            <span class="nt">&lt;sos:featureOfInterestType&gt;</span>http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint<span class="nt">&lt;/sos:featureOfInterestType&gt;</span>
+        <span class="nt">&lt;/sos:SosInsertionMetadata&gt;</span>
+    <span class="nt">&lt;/swes:metadata&gt;</span>
+<span class="nt">&lt;/swes:InsertSensor&gt;</span>
+</pre></div>
+</div>
+<p>The procedure and the offering id will be generated automatically by istSOS. If
+you want some more control over the sensor insertion then you should describe
+the sensor (or process) using the SensorML 1.0.1 specification into the
+procedureDescription block.</p>
+<div class="section" id="usage-of-the-insertsensor-xml">
+<h2>Usage of the InsertSensor XML<a class="headerlink" href="#usage-of-the-insertsensor-xml" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="swes-observableproperty">
+<h3>swes:observableProperty<a class="headerlink" href="#swes-observableproperty" title="Permalink to this headline">¶</a></h3>
+<p>The swes:observableProperty elements (one or more) are used to configure the
+actual observable properties of this new offering. This is the declaration of
+how the O&amp;M Observation will be when the sensor (or process) will produce
+the actual measurements.</p>
+</div>
+<div class="section" id="sos-observationtype">
+<h3>sos:observationType<a class="headerlink" href="#sos-observationtype" title="Permalink to this headline">¶</a></h3>
+<p>IstSOS supports various observation types, with regards to the observation
+type definition, measurements can be sent as:</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The final relation between observed properties and the observation types will
+be done later during the transmission of an O&amp;M Observation within the first
+insertObservation request.</p>
+</div>
+<p><a class="reference external" href="http://www.opengis.net/def/observationType/OGC-OM/2.0/">http://www.opengis.net/def/observationType/OGC-OM/2.0/</a></p>
+<blockquote>
+<div><ul class="simple">
+<li>OM_Observation</li>
+<li>OM_Measurement</li>
+<li>OM_CategoryObservation</li>
+<li>OM_ComplexObservation</li>
+<li>OM_CountObservation</li>
+<li>OM_DiscreteCoverageObservation</li>
+<li>OM_GeometryObservation</li>
+<li>OM_PointCoverageObservation</li>
+<li>OM_TemporalObservation</li>
+<li>OM_TimeSeriesObservation</li>
+<li>OM_TruthObservation</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="sos-featureofinteresttype">
+<h3>sos:featureOfInterestType<a class="headerlink" href="#sos-featureofinteresttype" title="Permalink to this headline">¶</a></h3>
+<p>With the &lt;sos:featureOfInterestType/&gt; definition, offerings are configured to
+handle different kind of the geometry representing the feature of interest.</p>
+<p>Take a look here at the schema:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="http://schemas.opengis.net/samplingSpatial">http://schemas.opengis.net/samplingSpatial</a></li>
+<li><a class="reference external" href="http://schemas.opengis.net/samplingSpecimen">http://schemas.opengis.net/samplingSpecimen</a></li>
+</ul>
+</div></blockquote>
+<p><strong>SF_SamplingPoint</strong></p>
+<p><a class="reference external" href="http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint">http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint</a></p>
+<p>This type is usually used to represent an in-situ fixed procedure. For instance
+a fixed monitoring sensors, like a weather station.  The shape is a
+gml:Point element.</p>
+<div class="highlight-xml"><div class="highlight"><pre><span></span><span class="nt">&lt;gml:Point</span>
+    <span class="na">gml:id=</span><span class="s">&quot;st2p&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;gml:pos&gt;</span>-30.706 134.196 272.<span class="nt">&lt;/gml:pos&gt;</span>
+<span class="nt">&lt;/gml:Point&gt;</span>
+</pre></div>
+</div>
+<p><strong>SF_SamplingCurve</strong></p>
+<p><a class="reference external" href="http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingCurve">http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingCurve</a></p>
+<p>This type is usually used to represent observation boreholes, trajectories,
+traverses, etc. The shape is a gml:LineString element.</p>
+<div class="highlight-xml"><div class="highlight"><pre><span></span><span class="nt">&lt;gml:LineString</span>
+    <span class="na">gml:id=</span><span class="s">&quot;pr1_ls1&quot;</span>
+    <span class="na">srsName=</span><span class="s">&quot;urn:ogc:def:crs:EPSG:6.8:4347&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;gml:pos&gt;</span>-30.711 134.205 321.<span class="nt">&lt;/gml:pos&gt;</span>
+    <span class="nt">&lt;gml:pos&gt;</span>-30.710 134.204 315.<span class="nt">&lt;/gml:pos&gt;</span>
+    <span class="nt">&lt;gml:pos&gt;</span>-30.709 134.203 303.<span class="nt">&lt;/gml:pos&gt;</span>
+    <span class="nt">&lt;gml:pos&gt;</span>-30.708 134.201 296.<span class="nt">&lt;/gml:pos&gt;</span>
+    <span class="nt">&lt;gml:pos&gt;</span>-30.706 134.196 272.<span class="nt">&lt;/gml:pos&gt;</span>
+    <span class="nt">&lt;gml:pos&gt;</span>-30.703 134.197 271.<span class="nt">&lt;/gml:pos&gt;</span>
+    <span class="nt">&lt;gml:pos&gt;</span>-30.702 134.199 280.<span class="nt">&lt;/gml:pos&gt;</span>
+<span class="nt">&lt;/gml:LineString&gt;</span>
+</pre></div>
+</div>
+<p><strong>SF_SamplingSurface</strong></p>
+<p><a class="reference external" href="http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingSurface">http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingSurface</a></p>
+<p>This type is usually used to represent observation boreholes, trajectories,
+traverses, etc. The shape is a gml:Polygon element.</p>
+<div class="highlight-xml"><div class="highlight"><pre><span></span><span class="nt">&lt;gml:Polygon</span> <span class="na">gml:id=</span><span class="s">&quot;Polygon_ssf_094D1FDB65BC787B8AC339F4029B622A86EED5EC&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;gml:exterior&gt;</span>
+    <span class="nt">&lt;gml:LinearRing</span> <span class="na">xsi:type=</span><span class="s">&quot;gml:LinearRingType&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;gml:posList</span> <span class="na">srsName=</span><span class="s">&quot;http://www.opengis.net/def/crs/EPSG/0/4326&quot;</span><span class="nt">&gt;</span>7.52 7.32 7.52 52.7 52.7 52.7 52.7 7.32 7.52 7.32<span class="nt">&lt;/gml:posList&gt;</span>
+    <span class="nt">&lt;/gml:LinearRing&gt;</span>
+  <span class="nt">&lt;/gml:exterior&gt;</span>
+<span class="nt">&lt;/gml:Polygon&gt;</span>
+</pre></div>
+</div>
+<p><strong>SF_Specimen</strong></p>
+<p><a class="reference external" href="http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_Specimen">http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_Specimen</a></p>
+<p>A Specimen is a physical sample, obtained for observation(s) carried out ex
+situ, sometimes in a laboratory. OGC 10-026 (ISO 19156:2011) Clause 10.1</p>
+</div>
+</div>
+<<<<<<< HEAD
+<div class="section" id="python-examples">
+<h1>Python examples<a class="headerlink" href="#python-examples" title="Permalink to this headline">¶</a></h1>
+<p>Here an example on how manually register a new sensor using Python 3.</p>
+<div class="highlight-python3"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">from</span> <span class="nn">istsos.application</span> <span class="k">import</span> <span class="n">Server</span>
+<span class="kn">from</span> <span class="nn">istsos.entity.httpRequest</span> <span class="k">import</span> <span class="n">HttpRequest</span>
+<span class="kn">from</span> <span class="nn">istsos.actions.servers.sos_2_0_0.insertSensorOp</span> <span class="k">import</span> <span class="n">InsertSensor</span>
+
+<span class="nd">@asyncio</span><span class="o">.</span><span class="n">coroutine</span>
+<span class="k">def</span> <span class="nf">execute</span><span class="p">():</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;examples/xml/insertSensor-1.xml&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">xml_file</span><span class="p">:</span>
+
+        <span class="c1"># Installation of the istSOS server</span>
+        <span class="n">server</span> <span class="o">=</span> <span class="k">yield from</span> <span class="n">Server</span><span class="o">.</span><span class="n">create</span><span class="p">()</span>
+
+        <span class="c1"># Preparing the Request object</span>
+        <span class="n">request</span> <span class="o">=</span> <span class="n">HttpRequest</span><span class="p">(</span>
+            <span class="s2">&quot;POST&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;sos&quot;</span><span class="p">,</span>
+            <span class="n">body</span><span class="o">=</span><span class="n">xml_file</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span>
+            <span class="n">content_type</span><span class="o">=</span><span class="s2">&quot;application/xml&quot;</span>
+        <span class="p">)</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="k">yield from</span> <span class="n">server</span><span class="o">.</span><span class="n">execute_http_request</span><span class="p">(</span>
+            <span class="n">request</span><span class="p">,</span> <span class="n">stats</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+
+<span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+<span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span>
+   <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">execute</span><span class="p">())</span>
+<span class="p">)</span>
+<span class="n">loop</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+=======
+<div class="section" id="describing-the-sensor-with-sensorml-1-0-1">
+<h2>Describing the sensor with SensorML 1.0.1<a class="headerlink" href="#describing-the-sensor-with-sensorml-1-0-1" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="swes-proceduredescription">
+<h3>swes:procedureDescription<a class="headerlink" href="#swes-proceduredescription" title="Permalink to this headline">¶</a></h3>
+<p>According to the SOS standard, sensors (or processes) are described using the
+SensorML (1.0.1) specification. In istSOS the main purposes of SensorML
+[OGC 07-000] are to:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Provide descriptions of sensors and sensor systems for inventory management</li>
+<li>Provide sensor and process information in support of resource and observation
+discovery</li>
+<li>Support the processing and analysis of the sensor observations</li>
+<li>Support the geolocation of observed values (measured data)</li>
+<li>Provide performance characteristics (e.g., accuracy, threshold, etc.)</li>
+<li>Provide an explicit description of the process by which an observation was
+obtained</li>
+<li>Archive fundamental properties and assumptions regarding sensor systems</li>
+</ul>
+</div></blockquote>
+<p>You can feel free to use the SensorML specification as you want, mainly because
+the SML document will be saved as is. And will be returned when a describeSensor
+request is done.</p>
+<p>Most of the metadata contained in the SML are not used for operational purpuses,
+but some elements if present will be parsed and used by istSOS in support of
+resource and observation discovery. In particular if you want to use a
+predefined system type (see <a class="reference internal" href="systemtypes.html#systemtypes"><em>System Types classification</em></a>). A well formatted SensorML is
+necessary.</p>
+<p>The next picture shows which elements are parsed in istSOS extracted from the
+procedureDescription element during an insertSensor request.</p>
+<img alt="_images/sml_overview.jpg" src="_images/sml_overview.jpg" />
+</div>
+<div class="section" id="identification">
+<h3>Identification<a class="headerlink" href="#identification" title="Permalink to this headline">¶</a></h3>
+<p>In the identification block you can define the procedure identifier that will
+be used to filter SOS requests. According to the standard defining the uniqueID is not mandatory and in the
+case an insertSensor without a uniqueID is sent, then istSOS will generate
+automatically an identifier.</p>
+<div class="highlight-xml"><div class="highlight"><pre><span class="nt">&lt;sml:identification&gt;</span>
+    <span class="nt">&lt;sml:IdentifierList&gt;</span>
+        <span class="nt">&lt;sml:identifier</span> <span class="na">name=</span><span class="s">&quot;uniqueID&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;sml:Term</span> <span class="na">definition=</span><span class="s">&quot;urn:ogc:def:identifier:OGC:uniqueID&quot;</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;sml:value&gt;</span>urn:ogc:def:procedure:x-istsos:1.0:LUGANO<span class="nt">&lt;/sml:value&gt;</span>
+            <span class="nt">&lt;/sml:Term&gt;</span>
+        <span class="nt">&lt;/sml:identifier&gt;</span>
+    <span class="nt">&lt;/sml:IdentifierList&gt;</span>
+<span class="nt">&lt;/sml:identification&gt;</span>
+>>>>>>> upstream/master
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">According to the OGC SWES [OGC 09-001], on each InsertSensor request istSOS
+will assign an auto generated name if a procedure identifier is not defined
+within the SensorML (OGC 09-001, REQ 50).</p>
+</div>
+</div>
+<div class="section" id="classification">
+<h3>Classification<a class="headerlink" href="#classification" title="Permalink to this headline">¶</a></h3>
+<p>In the classification block the System Type is used to adopt some predefined
+operational behaviours (see <a class="reference internal" href="systemtypes.html#systemtypes"><em>System Types classification</em></a>).</p>
+<div class="highlight-xml"><div class="highlight"><pre><span class="nt">&lt;sml:classification&gt;</span>
+    <span class="nt">&lt;sml:ClassifierList&gt;</span>
+        <span class="nt">&lt;sml:classifier</span> <span class="na">name=</span><span class="s">&quot;System Type&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;sml:Term</span> <span class="na">definition=</span><span class="s">&quot;urn:ogc:def:classifier:x-istsos:1.0:systemType&quot;</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;sml:value&gt;</span>pointObservation<span class="nt">&lt;/sml:value&gt;</span>
+            <span class="nt">&lt;/sml:Term&gt;</span>
+        <span class="nt">&lt;/sml:classifier&gt;</span>
+    <span class="nt">&lt;/sml:ClassifierList&gt;</span>
+<span class="nt">&lt;/sml:classification&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="capabilities">
+<h3>Capabilities<a class="headerlink" href="#capabilities" title="Permalink to this headline">¶</a></h3>
+<p>The capabilities blocks can be used to assign the feature of interest and the
+offering id. The feature of interest id can be specified using an uri linking
+an existing feature of interest if a location is not given, otherwise a new
+feature of interest will be created.</p>
+<div class="highlight-xml"><div class="highlight"><pre><span class="nt">&lt;sml:capabilities</span> <span class="na">name=</span><span class="s">&quot;offering&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;swe:SimpleDataRecord&gt;</span>
+        <span class="nt">&lt;swe:field</span> <span class="na">name=</span><span class="s">&quot;offeringID&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;swe:Text&gt;</span>
+                <span class="nt">&lt;swe:value&gt;</span>breganzona<span class="nt">&lt;/swe:value&gt;</span>
+            <span class="nt">&lt;/swe:Text&gt;</span>
+        <span class="nt">&lt;/swe:field&gt;</span>
+    <span class="nt">&lt;/swe:SimpleDataRecord&gt;</span>
+<span class="nt">&lt;/sml:capabilities&gt;</span>
+<span class="nt">&lt;sml:capabilities</span> <span class="na">name=</span><span class="s">&quot;featuresOfInterest&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;swe:DataRecord&gt;</span>
+        <span class="nt">&lt;swe:field</span> <span class="na">name=</span><span class="s">&quot;featureOfInterestID&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;swe:Text&gt;</span>
+                <span class="nt">&lt;swe:value&gt;</span>breganzona<span class="nt">&lt;/swe:value&gt;</span>
+            <span class="nt">&lt;/swe:Text&gt;</span>
+        <span class="nt">&lt;/swe:field&gt;</span>
+    <span class="nt">&lt;/swe:DataRecord&gt;</span>
+<span class="nt">&lt;/sml:capabilities&gt;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">According to the OGC SWES [OGC 09-001] on each InsertSensor request a new
+Offering shall be created (OGC 09-001, REQ 49). IstSOS will generate a
+unique identifier if not given as in the capabilities part.</p>
+</div>
+</div>
+<div class="section" id="location">
+<h3>Location<a class="headerlink" href="#location" title="Permalink to this headline">¶</a></h3>
+<p>The location is used to save the coordinates of where the sensor will be
+positionioned as his feature of interest if the sensor type is defined as
+in-situ-fixed.</p>
+<div class="highlight-xml"><div class="highlight"><pre><span class="nt">&lt;sml:location&gt;</span>
+    <span class="nt">&lt;gml:Point</span> <span class="na">srsName=</span><span class="s">&quot;EPSG:4326&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;gml:coordinates&gt;</span>46.001470,8.919284,510.3<span class="nt">&lt;/gml:coordinates&gt;</span>
+    <span class="nt">&lt;/gml:Point&gt;</span>
+<span class="nt">&lt;/sml:location&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="outputs">
+<h3>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h3>
+<p>The outputs defined within the SensorML are not used to initialize the
+new offerings. According to the OGC SensorML Implementation Specification
+[OGC 07-000], SensorML is not intended to provide the framework for
+encoding the actual observation values. Within the SWE framework, the
+actual observation results should be encoded and transmitted within an
+O&amp;M Observation instance or as a TML data stream. (OGC 07-000, 8.12.2).</p>
+<p>The actual observable properties are defined within the swes:observableProperty
+elements.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/logo-banner-index.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Inserting new sensors</a><ul>
+<li><a class="reference internal" href="#usage-of-the-insertsensor-xml">Usage of the InsertSensor XML</a><ul>
+<li><a class="reference internal" href="#swes-observableproperty">swes:observableProperty</a></li>
+<li><a class="reference internal" href="#sos-observationtype">sos:observationType</a></li>
+<li><a class="reference internal" href="#sos-featureofinteresttype">sos:featureOfInterestType</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#describing-the-sensor-with-sensorml-1-0-1">Describing the sensor with SensorML 1.0.1</a><ul>
+<li><a class="reference internal" href="#swes-proceduredescription">swes:procedureDescription</a></li>
+<li><a class="reference internal" href="#identification">Identification</a></li>
+<li><a class="reference internal" href="#classification">Classification</a></li>
+<li><a class="reference internal" href="#capabilities">Capabilities</a></li>
+<li><a class="reference internal" href="#location">Location</a></li>
+<li><a class="reference internal" href="#outputs">Outputs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="systemtypes.html"
+                        title="previous chapter">System Types classification</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="insertobservation.html"
+                        title="next chapter">Inserting new observations</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/insertsensor.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="insertobservation.html" title="Inserting new observations"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="systemtypes.html" title="System Types classification"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">istSOS 3.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright Institute of Eath Science - SUPSI 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.5.
+    </div>
+  </body>
+</html>

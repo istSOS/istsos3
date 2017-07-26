@@ -13,7 +13,7 @@ import asyncio
 import json
 import sys
 
-sys.path.append('../src/')
+sys.path.append('/home/maxi/GIT/istsos3')
 
 
 # Python>3.4.3
@@ -115,5 +115,5 @@ if __name__ == "__main__":
         (r'/rest/.*', SosHandler)
     ], **settings)
 
-    app.listen(8888)
+    app.listen(8887)
     ioloop.run_forever()

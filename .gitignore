@@ -4,3 +4,4 @@ docs/_build/
 istsos/__pycache__/
 istsos/entity/__pycache__/
 istsos/action/__pycache__/
+config.json
