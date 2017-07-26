@@ -76,6 +76,45 @@ INSERT INTO uoms VALUES
 
 SELECT pg_catalog.setval('uoms_id_uom_seq', 9, true);
 
+CREATE SEQUENCE material_classes_id_mcl_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+CREATE TABLE public.material_classes
+(
+    id integer NOT NULL default nextval('material_classes_id_mcl_seq'),
+    name character varying NOT NULL,
+    description character varying,
+    PRIMARY KEY (id)
+);
+
+INSERT INTO material_classes VALUES
+    (1, 'soil', ''),
+    (2, 'water,', ''),
+    (3, 'rock,', ''),
+    (4, 'tissue,', '');
+
+SELECT pg_catalog.setval('material_classes_id_mcl_seq', 4, true);
+
+
+CREATE SEQUENCE methods_id_met_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+CREATE TABLE public.methods
+(
+    id integer NOT NULL default nextval('methods_id_met_seq'),
+    name character varying NOT NULL,
+    description character varying,
+    PRIMARY KEY (id)
+);
+
+SELECT pg_catalog.setval('methods_id_met_seq', 1, true);
+
 CREATE TABLE public.observation_types
 (
     id integer NOT NULL,

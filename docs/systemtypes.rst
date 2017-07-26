@@ -109,6 +109,15 @@ systemType: **specimenObservation**
 An example of such case would be a sample or specimen taken from the sampled
 feature and analysed once ex situ in an external laboratory.
 
+InsertSensor example:
+
+.. literalinclude:: ../examples/xml/specimenTimeSeriesObservation/insertSensor.xml
+   :language: xml
+
+InsertObservation example:
+
+.. literalinclude:: ../examples/xml/specimenTimeSeriesObservation/insertObservation-1.xml
+ :language: xml
 -------------------------------
 Specimen TimeSeries Observation
 -------------------------------

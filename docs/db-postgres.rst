@@ -96,3 +96,13 @@ feature of interest representing the profile in which the measurements has
 been done.
 
 .. image:: images/postgresql-database-profile-observation.jpg
+
+--------------------
+Specimen Observation
+--------------------
+
+The specimen observation O&M pattern differs from others because the feature of
+interest is a physical sample taken off at specific location. The data are sent
+with a reference to the specimen. The specimen is inserted previously.
+
+.. image:: images/postgresql-database-specimen-observation.jpg
