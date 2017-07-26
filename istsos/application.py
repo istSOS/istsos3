@@ -5,7 +5,6 @@
 
 import asyncio
 import re
-import pickle
 import os.path
 import json
 import uuid
@@ -35,7 +34,7 @@ from istsos.actions.servers.sos_2_0_0.insertObservationOp import (
 
 
 @asyncio.coroutine
-def get_state(path='config.pickle', config=None):
+def get_state(path='config.json', config=None):
     state = State(path, config)
     if not state.is_ready():
         yield from state.init_connections()
@@ -68,7 +67,7 @@ like this:
     """
 
     class __State():
-        def __init__(self, path='config.pickle', config=None):
+        def __init__(self, path='config.json', config=None):
             self.requests = {}
             self.cache = None
             self.request_counter = 0
@@ -76,19 +75,19 @@ like this:
             if config is None:
                 if not os.path.isfile(path):
                     raise Exception("config file not found")
-                with open(path, 'rb') as f:
-                    self.config = pickle.load(f)
+                with open(path, 'r') as f:
+                    self.config = json.load(f)
             else:
                 self.config = config
-                with open(path, 'wb') as f:
-                    pickle.dump(config, f, pickle.HIGHEST_PROTOCOL)
+                with open(path, 'w') as f:
+                    json.dump(self.config, f)
 
     instance = None
 
-    def __init__(self, path='config.pickle', config=None):
+    def __init__(self, path='config.json', config=None):
         if not State.instance:
             State.instance = State.__State(
-                path='config.pickle', config=config)
+                path='config.json', config=config)
 
     def __getattr__(self, name):
         return getattr(self.instance, name)
@@ -112,6 +111,8 @@ like this:
             self.instance.cache['offerings']['entities'][
                 request['offering']['id']
             ] = request['offering']
+
+        # Update temporalFilter on insertObservation op.
 
     @asyncio.coroutine
     def init_connections(self):
@@ -164,6 +165,12 @@ like this:
 
     def get_proxy(self):
         return self.instance.config['proxy']
+
+    def get_identification(self):
+        return self.instance.config['identification']
+
+    def get_provider(self):
+        return self.instance.config['provider']
 
     def get_procedure_loader(self, assigned_id):
         if assigned_id not in self.instance.json["procedures"]:
@@ -287,9 +294,7 @@ The HTTPRequest shall be prepared by the web framework used.
 
         # Executing the requested action
         if action:
-
             yield from action.execute(request)
-
             if stats:
                 # Show response
                 if "response" in request:

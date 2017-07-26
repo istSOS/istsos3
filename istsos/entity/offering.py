@@ -154,10 +154,24 @@ class Offering(BaseEntity):
                 "type": "object",
                 "properties": {
                     "begin_position": {
-                        "type": "string"
+                        "oneOf": [
+                            {
+                                "type": "null"
+                            },
+                            {
+                                "type": "string"
+                            }
+                        ]
                     },
                     "end_position": {
-                        "type": "string"
+                        "oneOf": [
+                            {
+                                "type": "null"
+                            },
+                            {
+                                "type": "string"
+                            }
+                        ]
                     }
                 }
             },
@@ -165,10 +179,24 @@ class Offering(BaseEntity):
                 "type": "object",
                 "properties": {
                     "begin_position": {
-                        "type": "string"
+                        "oneOf": [
+                            {
+                                "type": "null"
+                            },
+                            {
+                                "type": "string"
+                            }
+                        ]
                     },
                     "end_position": {
-                        "type": "string"
+                        "oneOf": [
+                            {
+                                "type": "null"
+                            },
+                            {
+                                "type": "string"
+                            }
+                        ]
                     }
                 }
             },

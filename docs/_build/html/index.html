@@ -6,7 +6,11 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
+<<<<<<< HEAD
     <title>Welcome to istSOS3’s documentation! &#8212; istSOS 3.0.0 documentation</title>
+=======
+    <title>Welcome to istSOS3’s documentation &mdash; istSOS 3.0.0 documentation</title>
+>>>>>>> upstream/master
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -24,9 +28,14 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+<<<<<<< HEAD
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Registration of new sensors" href="insertsensor.html" /> 
+=======
+    <link rel="top" title="istSOS 3.0.0 documentation" href="#" />
+    <link rel="next" title="System Types classification" href="systemtypes.html" /> 
+>>>>>>> upstream/master
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -36,7 +45,7 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="insertsensor.html" title="Registration of new sensors"
+          <a href="systemtypes.html" title="System Types classification"
              accesskey="N">next</a> |</li>
         <li class="nav-item nav-item-0"><a href="#">istSOS 3.0.0 documentation</a> &#187;</li> 
       </ul>
@@ -48,18 +57,26 @@
           <div class="body" role="main">
             
   <div class="section" id="welcome-to-istsos3-s-documentation">
-<h1>Welcome to istSOS3&#8217;s documentation!<a class="headerlink" href="#welcome-to-istsos3-s-documentation" title="Permalink to this headline">¶</a></h1>
+<h1>Welcome to istSOS3&#8217;s documentation<a class="headerlink" href="#welcome-to-istsos3-s-documentation" title="Permalink to this headline">¶</a></h1>
+<img alt="_images/logo-banner.png" src="_images/logo-banner.png" />
+<p>IstSOS is an OGC SOS 2.0 server implementation written in Python.</p>
 <p>Contents:</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="insertsensor.html">Registration of new sensors</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="insertsensor.html#offering-name">Offering name</a></li>
-<li class="toctree-l2"><a class="reference internal" href="insertsensor.html#procedure-name">Procedure name</a></li>
-<li class="toctree-l2"><a class="reference internal" href="insertsensor.html#observed-properties">Observed properties</a></li>
-<li class="toctree-l2"><a class="reference internal" href="insertsensor.html#feature-of-interest-type">Feature of Interest Type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="systemtypes.html">System Types classification</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="systemtypes.html#point-timeseries-observation">Point TimeSeries Observation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="systemtypes.html#mobile-timeseries-observation">Mobile TimeSeries Observation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="systemtypes.html#trajectory-observation">Trajectory Observation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="systemtypes.html#profile-observation">Profile Observation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="systemtypes.html#specimen-observation">Specimen Observation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="systemtypes.html#specimen-timeseries-observation">Specimen TimeSeries Observation</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="insertsensor.html#python-examples">Python examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="insertsensor.html">Inserting new sensors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="insertsensor.html#usage-of-the-insertsensor-xml">Usage of the InsertSensor XML</a></li>
+<li class="toctree-l2"><a class="reference internal" href="insertsensor.html#describing-the-sensor-with-sensorml-1-0-1">Describing the sensor with SensorML 1.0.1</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="insertobservation.html">Inserting new observations</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="insertobservation.html#the-observation-id">The observation id</a></li>
 <li class="toctree-l2"><a class="reference internal" href="insertobservation.html#observation-types">Observation types</a></li>
@@ -76,23 +93,32 @@
 </li>
 </ul>
 </div>
-<p>Developers corner:</p>
+<div class="section" id="rest-api">
+<h2>Rest API<a class="headerlink" href="#rest-api" title="Permalink to this headline">¶</a></h2>
+<p>istSOS implements a certain amount of API that offer some extra features that
+cannot be accessed throught the core SOS 2.0 standard.</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="actions.html">istsos.actions</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="actions.html#builders">Builders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Extra API</a></li>
 </ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="entities.html">istsos.entity</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="entities.html#offering-offering">offering.Offering</a></li>
-<li class="toctree-l2"><a class="reference internal" href="entities.html#observation-observation">observation.Observation</a></li>
+</div>
+</div>
+<div class="section" id="developer-corner">
+<h2>Developer corner<a class="headerlink" href="#developer-corner" title="Permalink to this headline">¶</a></h2>
+<p>Thanks for your interest in contributing to istSOS 3.</p>
+<p>istSOS 3 is written in Python 3, bla bla bla. When contributing you shall
+follow the <a class="reference external" href="https://www.python.org/dev/peps/pep-0008/">PEP8 Style Guide for Python Code</a>.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="entities.html">Entities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="filters.html">Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="actions.html">Actions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="db.html">Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Unit testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pythonexamples.html">Python examples</a></li>
 </ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="filters.html">The filters entities</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="filters.html#registered-filters">Registered filters</a></li>
-</ul>
-</li>
-</ul>
+</div>
 </div>
 </div>
 
@@ -102,7 +128,20 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="#">
+              <img class="logo" src="_static/logo-banner-index.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Welcome to istSOS3&#8217;s documentation</a><ul>
+<li><a class="reference internal" href="#rest-api">Rest API</a></li>
+<li><a class="reference internal" href="#developer-corner">Developer corner</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Next topic</h4>
+<<<<<<< HEAD
   <p class="topless"><a href="insertsensor.html"
                         title="next chapter">Registration of new sensors</a></p>
   <div role="note" aria-label="source link">
@@ -113,6 +152,16 @@
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
+=======
+  <p class="topless"><a href="systemtypes.html"
+                        title="next chapter">System Types classification</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/index.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+>>>>>>> upstream/master
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
       <div><input type="text" name="q" /></div>
@@ -133,7 +182,7 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="insertsensor.html" title="Registration of new sensors"
+          <a href="systemtypes.html" title="System Types classification"
              >next</a> |</li>
         <li class="nav-item nav-item-0"><a href="#">istSOS 3.0.0 documentation</a> &#187;</li> 
       </ul>

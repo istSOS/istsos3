@@ -1,8 +1,8 @@
 .. _filters:
 
-====================
-The filters entities
-====================
+=======
+Filters
+=======
 
 A Filter is used to crete conditions on which da will be retrived.
 

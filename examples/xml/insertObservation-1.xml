@@ -24,7 +24,7 @@
             <om:observedProperty
                 xlink:href="urn:ogc:def:parameter:x-istsos:1.0:meteo:air:temperature"/>
             <om:featureOfInterest
-                xlink:href="http://istsos.org/istsos3/foi/loc_BREGANZONA"/>
+                xlink:href="http://istsos.org/istsos3/foi/BREGANZONA"/>
             <om:result
                 xsi:type="gml:MeasureType"
                 uom="°C">22.4</om:result>
@@ -46,7 +46,7 @@
             <om:observedProperty
                 xlink:href="urn:ogc:def:parameter:x-istsos:1.0:meteo:air:temperature"/>
             <om:featureOfInterest
-                xlink:href="http://istsos.org/istsos3/foi/loc_BREGANZONA"/>
+                xlink:href="http://istsos.org/istsos3/foi/BREGANZONA"/>
             <om:result
                 xsi:type="gml:MeasureType"
                 uom="°C">22.1</om:result>
@@ -68,7 +68,7 @@
             <om:observedProperty
                 xlink:href="urn:ogc:def:parameter:x-istsos:1.0:meteo:air:temperature"/>
             <om:featureOfInterest
-                xlink:href="http://istsos.org/istsos3/foi/loc_BREGANZONA"/>
+                xlink:href="http://istsos.org/istsos3/foi/BREGANZONA"/>
             <om:result
                 xsi:type="gml:MeasureType"
                 uom="°C">20.8</om:result>

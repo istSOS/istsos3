@@ -44,6 +44,43 @@ Example of a speciment (to be expanded)
 .. code-block:: xml
 
     <?xml version="1.0"?>
+    <sp:SF_Specimen
+        gml:id="pr1_s1"
+        xmlns:sf="http://www.opengis.net/sampling/2.0"
+        xmlns:sp="http://www.opengis.net/samplingSpecimen/2.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        xmlns:gml="http://www.opengis.net/gml/3.2"
+        xsi:schemaLocation="http://www.opengis.net/samplingSpecimen/2.0 http://schemas.opengis.net/samplingSpecimen/2.0/specimen.xsd">
+        <gml:description>Rock sample collected on traverse</gml:description>
+        <gml:name
+            codeSpace="http://my.geology.example.org/samples/2007">pr1_s1</gml:name>
+        <sf:type xlink:href="http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_Specimen"/>
+        <sf:sampledFeature
+            xlink:href="http://my.geology.example.org/unit/g345"/>
+        <sp:materialClass xlink:href="http://www.opengis.net/def/material/OGC-OM/2.0/rock"/>
+        <sp:samplingTime>
+            <gml:TimeInstant
+                gml:id="pr1_s1_t">
+                <gml:timePosition>2007-01-24T12:14:50.00+09:00</gml:timePosition>
+            </gml:TimeInstant>
+        </sp:samplingTime>
+        <sp:samplingLocation>
+            <gml:Point
+                gml:id="pr1_s1_p">
+                <gml:pos
+                    srsName="http://www.opengis.net/def/crs/EPSG/0/4347">-30.706 134.196 272.</gml:pos>
+            </gml:Point>
+        </sp:samplingLocation>
+        <sp:size
+            uom="kg">2.16</sp:size>
+        <sp:currentLocation
+            xlink:href="http://my.geology.example.org/storage/shelf/s234_8"/>
+    </sp:SF_Specimen>
+
+.. code-block:: xml
+
+    <?xml version="1.0"?>
     <sp:SF_Specimen xmlns:sf="http://www.opengis.net/sampling/2.0"
             xmlns:sp="http://www.opengis.net/samplingSpecimen/2.0"
             xmlns:xsi="http://www.w3.org/2001/XMLSchema‐instance"

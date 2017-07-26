@@ -1,0 +1,4 @@
+<swes:InsertSensorResponse>
+    <swes:assignedProcedure>taxi_42</swes:assignedProcedure>
+    <swes:assignedOffering>taxi_42</swes:assignedOffering>
+</swes:InsertSensorResponse>

@@ -1,39 +1,46 @@
 .. _actions:
 
-==============
-istsos.actions
-==============
+=======
+Actions
+=======
 
-With istSOS every process is made by an actions chain. Following the Chain of
-Responsibility Design Pattern concept when a client execute a request a single
-Action or a chain of Actions is executed. The request is an entity, which means
-that is simply a python dictionary. This object contains the configurations
-needed to complete the processing bubt also the results. Some actions can
-generate the input for the next action and so on.
+**Actions** can be identified as single processing units, where each action is
+specialized in a specific task. For instance the **uoms action retriever** is
+able uniquely to load all the Uoms data entities.
 
-In addition to the pattern istSOS add the possibility to implement before and
-after processing sequentially:
+istSOS architecture is thought to be modular in terms of data storage.
+In facts creational and retrieval actions can be easyly implemented for
+different data storage.
 
-.. image:: images/chain_of_composite_actions.png
-
-That can be useful when extending some actions overwriting only some part of
-the process like in the case of data retrieval from different databases.
-
-
+Actions are splitted in four cathegories: builders, creators, retrievers and
+servers.
 
 ********
 Builders
 ********
 
-Builder actions used to build the entities.
+Builder actions general aim is to parse request inputs (XML, JSON, HTTP
+Parameters, etc) and create data or filter entities. For instance the
+**sectionsFilter builder action** create the an entity filter that will
+be used by the GetCapabilities actions to decide which XML section return as
+in the response.
 
----------
-sos_2_0_0
----------
+********
+Creators
+********
 
-In the sos_2_0_0 folder there some action builders that are able to parse
-inputs of SOS requests.
+The creators actions aim is to store entities into the database.
 
-"""""""""""""""""
-getCapabilitiesOp
-"""""""""""""""""
+**********
+Retrievers
+**********
+
+The retrievers actions aim is to retrieve entities from the database.
+
+*******
+Servers
+*******
+
+The servers actions can be identified as the engine of istSOS, these actions
+are always composite actions that use a combination of builders, creators and
+retrievers to execute incoming requests.

@@ -144,8 +144,7 @@ from istsos.application import State
 state = State(
     config={
         "proxy": "http://localhost/istsos3/",
-        "state": "pickle",
-        "cache": True,
+        "cache": False,
         "loader": {
             "type": "aiopg",
             "host": "localhost",

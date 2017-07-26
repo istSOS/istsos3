@@ -33,11 +33,65 @@
                             </sml:classifier>
                         </sml:ClassifierList>
                     </sml:classification>
+                    <sml:characteristics>
+                        <swe:DataRecord definition="urn:ogc:def:property:OGC:physicalProperties">
+                            <swe:field name="physicalProperties">
+                                <swe:DataRecord>
+                                    <swe:field name="weight">
+                                        <swe:Quantity definition="urn:ogc:def:property:OGC:weight">
+                                            <swe:uom code="g"/>
+                                            <swe:value>128</swe:value>
+                                        </swe:Quantity>
+                                    </swe:field>
+                                    <swe:field name="diameter">
+                                        <swe:Quantity definition="urn:ogc:def:property:OGC:diameter">
+                                            <swe:uom code="mm"/>
+                                            <swe:value>6.5</swe:value>
+                                        </swe:Quantity>
+                                    </swe:field>
+                                    <swe:field name="length">
+                                        <swe:Quantity definition="urn:ogc:def:property:OGC:length">
+                                            <swe:uom code ="mm"/>
+                                            <swe:value>32</swe:value>
+                                        </swe:Quantity>
+                                    </swe:field>
+                                </swe:DataRecord>
+                            </swe:field>
+                        </swe:DataRecord>
+                    </sml:characteristics>
+                    <sml:capabilities name="featuresOfInterest">
+                        <swe:DataRecord>
+                            <swe:field name="featureOfInterestID">
+                                <swe:Text>
+                                    <swe:value>breganzona</swe:value>
+                                </swe:Text>
+                            </swe:field>
+                        </swe:DataRecord>
+                    </sml:capabilities>
                     <sml:capabilities>
-                        <swe:DataRecord/>
+                        <swe:DataRecord definition="urn:ogc:def:property:OGC:measurementProperties">
+                            <swe:field name="resolution" xlink:arcrole="urn:ogc:def:property:OGC:resolution">
+                                <swe:Quantity definition="urn:ogc:def:property:OGC:temperature">
+                                    <swe:uom code="cel"/>
+                                    <swe:value>0.1</swe:value>
+                                </swe:Quantity>
+                            </swe:field>
+                            <swe:field name="range" xlink:arcrole="urn:ogc:def:property:OGC:dynamicRange">
+                                <swe:QuantityRange definition="urn:ogc:def:property:OGC:temperature">
+                                    <swe:uom code="cel"/>
+                                    <swe:value>-45 60</swe:value>
+                                </swe:QuantityRange>
+                            </swe:field>
+                            <swe:field name="accuracy" xlink:arcrole="urn:ogc:def:property:OGC:accuracy">
+                                <swe:QuantityRange definition="urn:ogc:def:property:OGC:absoluteAccuracy">
+                                    <swe:uom xlink:href="urn:ogc:unit:percent"/>
+                                    <swe:value>-0.5 0.5</swe:value>
+                                </swe:QuantityRange>
+                            </swe:field>
+                        </swe:DataRecord>
                     </sml:capabilities>
                     <sml:location>
-                        <gml:Point srsName="EPSG:4326" gml:id="loc_BREGANZONA">
+                        <gml:Point srsName="EPSG:4326">
                             <gml:coordinates>46.001470,8.919284,510.3</gml:coordinates>
                         </gml:Point>
                     </sml:location>
