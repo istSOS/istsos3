@@ -114,3 +114,27 @@ Example of a speciment (to be expanded)
         <sp:size uom="kg">2.16</sp:size>
         <sp:currentLocation xlink:href="http://www.opengis.net/def/nil/OGC-OM/2.0/destroyed"/>
     </sp:SF_Specimen>
+
+  --------------------------
+  json_schema
+  --------------------------
+  15-100r1_OGC_Observations_and_Measurements_-_JSON_implementation.pdf
+
+  --------------------------
+  Inserting new observations
+  --------------------------
+
+  When inserting new observations related to specimens, istSOS promote a
+  two-step procedure which follow the field work work-flow:
+
+  1. In the field the sample is collected and its metadata are registered
+  2. The operator insert the specimen information into the database
+     (using the WAlib)
+  3. The specimen is sent to laboratory for specific analyses
+  4. when results of analyses are available the operator insert the values of
+     desired observedProperties to the database (using the istsoslib)
+
+
+  Alternatively, the operator can store all the information locally and insert
+  into the database all at once both the specimen metadata and the analyses results.
+  Beware that this approach may prevent the registration of other

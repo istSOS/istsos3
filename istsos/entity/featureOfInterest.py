@@ -4,13 +4,13 @@
 # Version: v3.0.0
 
 from istsos.entity.baseEntity import BaseEntity
-
+from istsos.entity.om_base_entity.geoJson import Point
 
 class FeatureOfInterest(BaseEntity):
     """ObservationOffering entity: an ObservationOffering groups collections
     of observations produced by one procedure.
 
-    Struture:
+    Structure:
     {
         "id": integer,
         "name": string,
@@ -30,22 +30,6 @@ class FeatureOfInterest(BaseEntity):
             "name": {
                 "type": "string"
             },
-            "geom": {
-                "type": "object",
-                "properties": {
-                    "type": {
-                        "type": "string",
-                        "enum": [
-                            "Point"
-                        ]
-                    },
-                    "coordinates": {
-                        "type": "array",
-                        "items": {
-                            "type": "number"
-                        }
-                    }
-                }
-            }
+            "geom": Point.json_schema
         }
     }
