@@ -26,7 +26,7 @@ Entities
 ********
 
 **Entities** are the data containers. Each entity class is an extesion of the
-dictionary class. So it behave as a dict. Each Entity shall implement a JSON
+dictionary class. So it behaves as a dict. Each Entity shall implement a JSON
 schema that will be used when initializing it.
 
 see :ref:`entities` for more information.
