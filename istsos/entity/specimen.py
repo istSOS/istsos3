@@ -98,7 +98,7 @@ class Specimen(BaseEntity):
             },
             "size": Measure.json_schema,
             "currentLocation": Link.json_schema,
-            "specimenType": Link.json_schema,
+            "specimenType": {"oneOf": [Link.json_schema, {type: "null"}]}
         },
         "required": [
             "description",

@@ -45,9 +45,7 @@
       "rel": "http://www.onu.org/offices",
       "title": "Ufficio Monitoraggio Ambientale - Canton Ticino"
     },
-    "specimenType": {
-      "href": "http://www.istsos.org/specimenType/core"
-    }
+    "specimenType": null
 
 
 }
