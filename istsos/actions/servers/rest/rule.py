@@ -15,7 +15,12 @@ class Rule():
         self.regex = re.compile(path)
 
     def match(self, path):
-        match = self.regex.match(path)
+        match = self.regex.search(path)  # match(path)
+
+        match = re.search(path, self.path)
+
+        print(match)
+
         if match is None:
             return None
         else:
