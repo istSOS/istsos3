@@ -87,7 +87,7 @@ like this:
     def __init__(self, path='config.json', config=None):
         if not State.instance:
             State.instance = State.__State(
-                path='config.json', config=config)
+                path=path, config=config)
 
     def __getattr__(self, name):
         return getattr(self.instance, name)
@@ -172,6 +172,9 @@ like this:
     def get_provider(self):
         return self.instance.config['provider']
 
+    def get_loader(self):
+        return self.instance.config['loader']
+
     def get_procedure_loader(self, assigned_id):
         if assigned_id not in self.instance.json["procedures"]:
             raise Exception("Procedure not found")
@@ -202,7 +205,10 @@ like this:
 
 
 REST_API = [
-    (r'config/uom', 'Uom')
+    (r'config/uom', 'Uom'),
+    (r'config/configurations/identification', 'Identification'),
+    (r'config/configurations/provider', 'Provider'),
+    (r'config/configurations/loader', 'Loader')
 ]
 
 
@@ -223,11 +229,11 @@ class Server():
 
     @classmethod
     @asyncio.coroutine
-    def create(self, state=None):
+    def create(cls, state=None):
         # Initialize PostgreSQL connection pool
         if state is None:
             state = yield from get_state()
-        return Server(state)
+        return cls(state)  # Server(state)
 
     @asyncio.coroutine
     def execute_http_request(self, request, stats=False):
@@ -289,6 +295,8 @@ The HTTPRequest shall be prepared by the web framework used.
                 path = "/".join(path)
                 for rule in self.rules:
                     action = rule.match(path)
+                    if action:
+                        break
             except Exception:
                 traceback.print_exc()
 
