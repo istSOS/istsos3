@@ -13,10 +13,12 @@ class Loader(CompositeAction):
 
     @asyncio.coroutine
     def before(self, request):
-        yield from self.add_retriever('Loader')
+        if request['method'] == "GET":
+            yield from self.add_retriever('Loader')
 
     @asyncio.coroutine
     def after(self, request):
         """Render the result of the request following the OGC:SOS 2.0.0 standard.
         """
-        request['response'] = {"data": request['loader']}
+        if request['method'] == "GET":
+            request['response'] = {"data": request['loader']}

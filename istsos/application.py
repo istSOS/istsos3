@@ -205,10 +205,12 @@ like this:
 
 
 REST_API = [
-    (r'config/uom', 'Uom'),
-    (r'config/configurations/identification', 'Identification'),
-    (r'config/configurations/provider', 'Provider'),
-    (r'config/configurations/loader', 'Loader')
+    (r'uom', r'uom', 'Uom'),
+    (r'configurations/identification', r'configurations/identification', 'Identification'),
+    (r'configurations/provider', r'configurations/provider', 'Provider'),
+    (r'configurations/loader', r'configurations/loader', 'Loader'),
+    (r'observedProperties', r'observedProperties', 'ObservedProperties'),
+    (r'offering', r'offering', 'Offering')
 ]
 
 
@@ -216,16 +218,14 @@ class Server():
     """docstring for Server."""
     def __init__(self, state):
         self.state = state
-        self.rules = []
+        self.rules = {}
         for rule in REST_API:
             module = 'istsos.actions.servers.rest.%s' % (
-                rule[0].replace('/', '.')
+                rule[1].replace('/', '.')
             )
             m = importlib.import_module(module)
-            action = getattr(m, rule[1])
-            self.rules.append(
-                Rule(rule[0], action)
-            )
+            action = getattr(m, rule[2])
+            self.rules[rule[0]] = action
 
     @classmethod
     @asyncio.coroutine
@@ -293,10 +293,16 @@ The HTTPRequest shall be prepared by the web framework used.
             try:
                 path.pop(0)
                 path = "/".join(path)
-                for rule in self.rules:
-                    action = rule.match(path)
-                    if action:
-                        break
+
+                print(path)
+
+                action = self.rules[path]()
+
+                # for rule in self.rules:
+                #     action = rule.match(path)
+                #     if action:
+                #         break
+
             except Exception:
                 traceback.print_exc()
 
