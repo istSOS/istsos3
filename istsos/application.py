@@ -210,7 +210,8 @@ REST_API = [
     (r'configurations/provider', r'configurations/provider', 'Provider'),
     (r'configurations/loader', r'configurations/loader', 'Loader'),
     (r'observedProperties', r'observedProperties', 'ObservedProperties'),
-    (r'offering', r'offering', 'Offering')
+    (r'offering', r'offering', 'Offering'),
+    (r'observation', r'observation', 'Observation')
 ]
 
 

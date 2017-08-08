@@ -17,7 +17,6 @@ class OfferingFilterBuilder(OfferingFilterBuilder):
         """
 
         offerings_filter = request.get_parameter('offering')
-        print(offerings_filter)
         if offerings_filter is not None:
             tmpl = OfferingsFilter.get_template()
             offerings_filter = offerings_filter.split(',')

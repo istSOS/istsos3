@@ -18,4 +18,4 @@ class Loader(Retriever):
             ).get_loader()
         )
 
-        request['loader']['password'] = '********';
+        request['loader']['password'] = '********'
