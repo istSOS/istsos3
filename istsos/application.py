@@ -211,7 +211,8 @@ REST_API = [
     (r'configurations/loader', r'configurations/loader', 'Loader'),
     (r'observedProperties', r'observedProperties', 'ObservedProperties'),
     (r'offering', r'offering', 'Offering'),
-    (r'observation', r'observation', 'Observation')
+    (r'observation', r'observation', 'Observation'),
+    (r'specimen', r'specimen', 'Specimen')
 ]
 
 

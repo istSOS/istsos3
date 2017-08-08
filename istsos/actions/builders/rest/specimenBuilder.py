@@ -4,12 +4,11 @@
 # Version: v3.0.0
 
 import asyncio
-import uuid
-from istsos.actions.builders.offeringBuilder import OfferingBuilder
-from istsos.entity.offering import Offering
+from istsos.actions.action import Action
+from istsos.entity.specimen import Specimen
 
 
-class OfferingBuilder(OfferingBuilder):
+class SpecimenBuilder(Action):
     """Query an SOS to retrieve observation data structured according to the
     O&M specification.
     """
@@ -17,8 +16,6 @@ class OfferingBuilder(OfferingBuilder):
     @asyncio.coroutine
     def process(self, request):
 
-        offering = request['body']
+        specimen = request['body']
 
-        offering['name'] = str(uuid.uuid1()).replace('-', '')
-
-        request['offering'] = Offering(json_source=offering)
+        request['specimen'] = Specimen(json_source=specimen)

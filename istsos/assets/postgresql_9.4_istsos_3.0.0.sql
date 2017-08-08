@@ -92,9 +92,9 @@ CREATE TABLE public.material_classes
 
 INSERT INTO material_classes VALUES
     (1, 'soil', ''),
-    (2, 'water,', ''),
-    (3, 'rock,', ''),
-    (4, 'tissue,', '');
+    (2, 'water', ''),
+    (3, 'rock', ''),
+    (4, 'tissue', '');
 
 SELECT pg_catalog.setval('material_classes_id_mcl_seq', 4, true);
 
@@ -240,3 +240,20 @@ CREATE TABLE public.off_obs_type
 
 CREATE INDEX
    ON public.off_obs_type USING btree (id_off ASC NULLS LAST);
+
+CREATE TABLE public.specimen(
+    id SERIAL,
+    description text,
+    identifier text,
+    name text,
+    type text,
+    sampled_feat text,
+    id_mat_fk integer references material_classes(id),
+    id_met_fk integer references methods(id),
+    sampling_time timestamp with time zone,
+    sampling_location geometry,
+    processing_details jsonb,
+    sampling_size_uom text,
+    sampling_size double precision,
+    current_location jsonb
+);
