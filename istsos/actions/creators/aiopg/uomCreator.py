@@ -20,7 +20,7 @@ class UomCreator(UomCreator):
 
             uom = request['uom']
 
-            if uom['id']:
+            if 'id' in uom.keys():
                 yield from cur.execute("""
                                     UPDATE uoms SET
                                         name=%s, description=%s

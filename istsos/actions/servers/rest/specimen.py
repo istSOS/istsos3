@@ -7,6 +7,7 @@ import asyncio
 from istsos.actions.action import CompositeAction
 
 from istsos.actions.builders.rest.specimenBuilder import SpecimenBuilder
+from istsos.actions.builders.rest.specimenFilterBuilder import SpecimenFilterBuilder
 
 
 class Specimen(CompositeAction):
@@ -22,6 +23,7 @@ class Specimen(CompositeAction):
             """
 
             # self.add()
+            self.add(SpecimenFilterBuilder())
             yield from self.add_retriever('Specimen')
 
         elif request['method'] == 'POST':

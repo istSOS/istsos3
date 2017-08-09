@@ -241,19 +241,33 @@ CREATE TABLE public.off_obs_type
 CREATE INDEX
    ON public.off_obs_type USING btree (id_off ASC NULLS LAST);
 
-CREATE TABLE public.specimen(
-    id SERIAL,
-    description text,
-    identifier text,
-    name text,
-    type text,
-    sampled_feat text,
-    id_mat_fk integer references material_classes(id),
-    id_met_fk integer references methods(id),
-    sampling_time timestamp with time zone,
-    sampling_location geometry,
-    processing_details jsonb,
-    sampling_size_uom text,
-    sampling_size double precision,
-    current_location jsonb
-);
+CREATE SEQUENCE specimen_id_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+CREATE TABLE public.specimen
+(
+  id integer NOT NULL DEFAULT nextval('specimen_id_seq'),
+  description text,
+  identifier text NOT NULL UNIQUE,
+  name text,
+  type text,
+  sampled_feat text,
+  id_mat_fk integer,
+  id_met_fk integer,
+  sampling_time timestamp with time zone,
+  sampling_location geometry,
+  processing_details jsonb,
+  sampling_size_uom text,
+  sampling_size double precision,
+  current_location jsonb,
+  specimen_type text,
+  CONSTRAINT specimen_id_mat_fk_fkey FOREIGN KEY (id_mat_fk)
+      REFERENCES public.material_classes (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT specimen_id_met_fk_fkey FOREIGN KEY (id_met_fk)
+      REFERENCES public.methods (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+)

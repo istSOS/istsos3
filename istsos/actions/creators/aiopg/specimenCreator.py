@@ -22,12 +22,17 @@ class SpecimenCreator(SpecimenCreator):
             mat_name = specimen['materialClass']['href'].split('/')[-1]
             mat_id = yield from self.__check_material(cur, mat_name)
 
-            print(mat_id)
-
             met_name = specimen['samplingMethod']['href'].split('/')[-1]
             met_id = yield from self.__check_method(cur, met_name)
 
-            print(met_id)
+            samp_loc = specimen['samplingLocation']
+            coord = samp_loc['coordinates']
+            geom_var = "ST_GeomFromText('SRID={};POINT({} {})')".format(samp_loc['epsg'], coord[0], coord[1])
+
+            spec_type = None
+
+            if specimen['specimenType']:
+                spec_type = specimen['specimenType']['href']
 
             yield from cur.execute("""
                                         INSERT INTO specimen(
@@ -42,10 +47,12 @@ class SpecimenCreator(SpecimenCreator):
                                             sampling_size,
                                             current_location,
                                             id_mat_fk,
-                                            id_met_fk
+                                            id_met_fk,
+                                            sampling_location,
+                                            specimen_type
                                         )
-                                        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s, %s) RETURNING id;
-                                            """, (
+                                        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s, {},%s) RETURNING id;
+                                            """.format(geom_var), (
                 specimen['description'],
                 specimen['identifier'],
                 specimen['name'],
@@ -56,14 +63,15 @@ class SpecimenCreator(SpecimenCreator):
                 specimen['size']['uom'],
                 specimen['size']['value'],
                 json.dumps(specimen['currentLocation']),
-                mat_id, met_id
+                mat_id, met_id, spec_type
             ))
 
-            rec = yield from cur.fetchone()
-
-            request['response'] = {"message": "new specimen id: {}".format(rec[0])};
+            # rec = yield from cur.fetchone()
 
             yield from cur.execute("COMMIT;")
+
+            link = 'http://istsos.org/specimen/{}'.format(specimen['identifier'])
+            request['response'] = {"message": 'new specimen link: {}'.format(link)}
 
     @asyncio.coroutine
     def __check_material(self, cur, mat_name):
@@ -76,14 +84,10 @@ class SpecimenCreator(SpecimenCreator):
             yield from cur.execute("""INSERT INTO material_classes(name, description) VALUES (%s,%s) RETURNING id;""",
                                    (mat_name, ''))
 
-            mat = yield from cur.fetchone()
-
-            mat_id = mat[0]
-
+            mat = yield from cur.fetchone()[0]
+            return mat
         else:
-            mat_id = res[0]
-
-        return mat_id
+            return res[0]
 
     @asyncio.coroutine
     def __check_method(self, cur, met_name):
@@ -96,9 +100,8 @@ class SpecimenCreator(SpecimenCreator):
             yield from cur.execute("""INSERT INTO methods(name, description) VALUES (%s,%s) RETURNING id;""",
                                    (met_name, ''))
 
-            met_id = yield from cur.fetchone()[0]
+            met = yield from cur.fetchone()[0]
+            return met
 
         else:
-            met_id = res[0]
-
-        return met_id
+            return res[0]

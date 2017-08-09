@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
-from istsos.actions.retrievers.retriever import Retriever
 # istSOS. See https://istsos.org/
 # License: https://github.com/istSOS/istsos3/master/LICENSE.md
 # Version: v3.0.0
 
 import asyncio
-import json
 from istsos.actions.retrievers.specimen import Specimen
 from istsos.entity.specimen import Specimen as ESpecimen
 
@@ -17,9 +15,14 @@ class Specimen(Specimen):
 
     @asyncio.coroutine
     def process(self, request):
-        pass
 
         with (yield from request['state'].pool.cursor()) as cur:
+
+            ident = None
+
+            if request.get_filters() is not None:
+
+                ident = request.get_filter('identifier')
 
             sql = """
                     SELECT 
@@ -34,29 +37,37 @@ class Specimen(Specimen):
                         specimen.processing_details,
                         specimen.sampling_size_uom,
                         specimen.sampling_size,
-                        specimen.current_location
-                    
+                        specimen.current_location,
+                        ST_X(specimen.sampling_location),
+                        ST_Y(specimen.sampling_location),
+                        ST_SRID(specimen.sampling_location),
+                        specimen.specimen_type
                     FROM
                         specimen,
                         material_classes,
                         methods
-                        
                     WHERE
-                        specimen.id=%s
+                        specimen.identifier=%s
                     AND
                         specimen.id_mat_fk=material_classes.id
                     AND
                         specimen.id_met_fk=methods.id
-                    
             """
 
-            params = (1,)
+            params = (ident,)
 
             yield from cur.execute(sql, params)
 
             res = yield from cur.fetchone()
 
-            print(res)
+            # print(res)
+
+            spec_type = None
+
+            if res[15]:
+                spec_type = {
+                    'href': res[15]
+                }
 
             specimen = {
                 'description': res[0],
@@ -87,11 +98,10 @@ class Specimen(Specimen):
                 'currentLocation': res[11],
                 'samplingLocation': {
                     "type": "point",
-                    "coordinates": [100.0, 0.0],
-                    "epsg": 4326
+                    "coordinates": [res[12], res[13]],
+                    "epsg": res[14]
                 },
-                "specimenType": None
+                "specimenType": spec_type
             }
 
             request['specimen'].append(ESpecimen(specimen))
-
