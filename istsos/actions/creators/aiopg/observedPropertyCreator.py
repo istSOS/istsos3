@@ -26,7 +26,7 @@ class ObservedPropertyCreator(ObservedPropertyCreator):
                                     def,
                                     description
                                 )
-                                VALUES (%s,%s) RETURNING id;
+                                VALUES (%s,%s,%s) RETURNING id;
                             """, (
                 op['name'],
                 op['def'],

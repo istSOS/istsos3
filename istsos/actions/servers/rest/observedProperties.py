@@ -19,10 +19,7 @@ class ObservedProperties(CompositeAction):
             yield from self.add_retriever('ObservedProperties')
         elif request['method'] == 'POST':
             self.add(ObservedPropertyBulder())
-            yield from self.add_cretor('ObservedProperty')
-        elif request['method'] == 'PUT':
-            self.add(ObservedPropertyBulder())
-            yield from self.add_cretor('ObservedProperty')
+            yield from self.add_creator('ObservedPropertyCreator')
 
     @asyncio.coroutine
     def after(self, request):
