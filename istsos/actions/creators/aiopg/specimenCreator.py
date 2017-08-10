@@ -35,7 +35,7 @@ class SpecimenCreator(SpecimenCreator):
                 spec_type = specimen['specimenType']['href']
 
             yield from cur.execute("""
-                                        INSERT INTO specimen(
+                                        INSERT INTO specimens(
                                             description,
                                             identifier,
                                             name,

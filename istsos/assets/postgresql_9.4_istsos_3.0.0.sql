@@ -247,7 +247,7 @@ CREATE SEQUENCE specimen_id_seq
     NO MINVALUE
     CACHE 1;
 
-CREATE TABLE public.specimen
+CREATE TABLE public.specimens
 (
   id integer NOT NULL DEFAULT nextval('specimen_id_seq'),
   description text,

@@ -35,6 +35,6 @@ class ObservedPropertyCreator(ObservedPropertyCreator):
 
             rec = yield from cur.fetchone()
 
-            request['response'] = {"message": "new observed property id: {}".format(rec[0])};
+            request['response'] = {"message": "new observed property id: {}".format(rec[0])}
 
             yield from cur.execute("COMMIT;")

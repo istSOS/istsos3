@@ -212,7 +212,9 @@ REST_API = [
     (r'observedProperties', r'observedProperties', 'ObservedProperties'),
     (r'offering', r'offering', 'Offering'),
     (r'observation', r'observation', 'Observation'),
-    (r'specimen', r'specimen', 'Specimen')
+    (r'specimen', r'specimen', 'Specimen'),
+    (r'material', r'materials', 'Materials'),
+    (r'method', r'methods', 'Methods')
 ]
 
 

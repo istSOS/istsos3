@@ -20,16 +20,15 @@ class TemporalFilterBuilder(TemporalFilterBuilder):
             temporalFilter = request.get_parameter('temporalFilter')
             if temporalFilter is not None:
                 tmpl = TemporalFilter.get_template()
-                temporalFilter = temporalFilter.split(',')
-                tmpl['temporal']['reference'] = temporalFilter.pop(0)
-                if "/" in temporalFilter[0]:
+                tmpl['temporal']['reference'] = 'om:phenomenonTime'
+                if "/" in temporalFilter:
                     tmpl['temporal'][
-                        'period'] = temporalFilter[0].split("/")
+                        'period'] = temporalFilter.split("/")
                     tmpl['temporal'][
                         'fes'] = 'during'
                 else:
                     tmpl['temporal'][
-                        'instant'] = temporalFilter[0]
+                        'instant'] = temporalFilter
                     tmpl['temporal'][
                         'fes'] = 'equals'
                 request.set_filter(TemporalFilter(json_source=tmpl))

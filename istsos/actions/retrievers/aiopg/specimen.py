@@ -26,32 +26,32 @@ class Specimen(Specimen):
 
             sql = """
                     SELECT 
-                        specimen.description, 
-                        specimen.identifier,
-                        specimen.name,
-                        specimen.type,
-                        specimen.sampled_feat,
+                        specimens.description, 
+                        specimens.identifier,
+                        specimens.name,
+                        specimens.type,
+                        specimens.sampled_feat,
                         material_classes.name,
-                        specimen.sampling_time,
+                        specimens.sampling_time,
                         methods.name,
-                        specimen.processing_details,
-                        specimen.sampling_size_uom,
-                        specimen.sampling_size,
-                        specimen.current_location,
-                        ST_X(specimen.sampling_location),
-                        ST_Y(specimen.sampling_location),
-                        ST_SRID(specimen.sampling_location),
-                        specimen.specimen_type
+                        specimens.processing_details,
+                        specimens.sampling_size_uom,
+                        specimens.sampling_size,
+                        specimens.current_location,
+                        ST_X(specimens.sampling_location),
+                        ST_Y(specimens.sampling_location),
+                        ST_SRID(specimens.sampling_location),
+                        specimens.specimen_type
                     FROM
-                        specimen,
+                        specimens,
                         material_classes,
                         methods
                     WHERE
-                        specimen.identifier=%s
+                        specimens.identifier=%s
                     AND
-                        specimen.id_mat_fk=material_classes.id
+                        specimens.id_mat_fk=material_classes.id
                     AND
-                        specimen.id_met_fk=methods.id
+                        specimens.id_met_fk=methods.id
             """
 
             params = (ident,)
