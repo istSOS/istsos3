@@ -214,7 +214,8 @@ REST_API = [
     (r'observation', r'observation', 'Observation'),
     (r'specimen', r'specimen', 'Specimen'),
     (r'material', r'materials', 'Materials'),
-    (r'method', r'methods', 'Methods')
+    (r'method', r'methods', 'Methods'),
+    (r'offeringlist', r'offeringsList', 'OfferingList')
 ]
 
 

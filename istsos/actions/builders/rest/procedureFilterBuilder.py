@@ -11,6 +11,7 @@ from istsos.actions.builders.procedureFilterBuilder import (
 
 
 class ProcedureFilterBuilder(ProcedureFilterBuilder):
+
     @asyncio.coroutine
     def process(self, request):
         if request['method'] == 'GET':

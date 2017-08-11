@@ -21,8 +21,6 @@ class Specimen(CompositeAction):
             """
                 Retrieve specimen
             """
-
-            # self.add()
             self.add(SpecimenFilterBuilder())
             yield from self.add_retriever('Specimen')
 
