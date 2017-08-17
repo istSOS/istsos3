@@ -5,7 +5,9 @@
 
 import asyncio
 from istsos.entity.filters.offeringsFilter import OfferingsFilter
+
 from istsos.actions.builders.offeringFilterBuilder import OfferingFilterBuilder
+from istsos.entity.filters.proceduresFilter import ProceduresFilter
 
 
 class OfferingFilterBuilder(OfferingFilterBuilder):
@@ -23,3 +25,13 @@ class OfferingFilterBuilder(OfferingFilterBuilder):
             if len(offerings_filter) > 0:
                 tmpl['offerings'] = offerings_filter
                 request.set_filter(OfferingsFilter(json_source=tmpl))
+        else:
+            procedure_filter = request.get_parameter('procedure')
+            print(procedure_filter)
+
+            if procedure_filter is not None:
+                tmpl = ProceduresFilter.get_template()
+                procedure_filter = procedure_filter.split(',')
+                if len(procedure_filter) > 0:
+                    tmpl['procedures'] = procedure_filter
+                    request.set_filter(ProceduresFilter(json_source=tmpl))

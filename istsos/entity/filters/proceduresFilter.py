@@ -11,7 +11,7 @@ class ProceduresFilter(BaseEntity):
     json_schema = {
         "type": "object",
         "properties": {
-            "procedure": {
+            "procedures": {
                 "type": "array",
                 "minItems": 1,
                 "items": {

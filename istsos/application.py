@@ -206,16 +206,17 @@ like this:
 
 REST_API = [
     (r'uom', r'uom', 'Uom'),
-    (r'configurations/identification', r'configurations/identification', 'Identification'),
-    (r'configurations/provider', r'configurations/provider', 'Provider'),
-    (r'configurations/loader', r'configurations/loader', 'Loader'),
+    (r'configurations/identification', r'configurations.identification', 'Identification'),
+    (r'configurations/provider', r'configurations.provider', 'Provider'),
+    (r'configurations/loader', r'configurations.loader', 'Loader'),
     (r'observedProperties', r'observedProperties', 'ObservedProperties'),
     (r'offering', r'offering', 'Offering'),
     (r'observation', r'observation', 'Observation'),
-    (r'specimen', r'specimen', 'Specimen'),
-    (r'material', r'materials', 'Materials'),
-    (r'method', r'methods', 'Methods'),
-    (r'offeringlist', r'offeringsList', 'OfferingList')
+    (r'specimen', r'specimen.specimen', 'Specimen'),
+    (r'material', r'specimen.materials', 'Materials'),
+    (r'method', r'specimen.methods', 'Methods'),
+    (r'offeringlist', r'utilities.offeringsList', 'OfferingList'),
+    (r'observationType', r'utilities.observationType', 'ObservationType')
 ]
 
 
@@ -298,8 +299,6 @@ The HTTPRequest shall be prepared by the web framework used.
             try:
                 path.pop(0)
                 path = "/".join(path)
-
-                print(path)
 
                 action = self.rules[path]()
 

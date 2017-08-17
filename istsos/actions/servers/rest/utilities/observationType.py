@@ -5,10 +5,9 @@
 
 import asyncio
 from istsos.actions.action import CompositeAction
-from istsos.actions.builders.rest.observedPropertyBuilder import ObservedPropertyBulder
 
 
-class ObservedProperties(CompositeAction):
+class ObservationType(CompositeAction):
     """Rest api used to manage unit of measures
     """
 
@@ -16,19 +15,16 @@ class ObservedProperties(CompositeAction):
     def before(self, request):
 
         if request['method'] == 'GET':
-            yield from self.add_retriever('ObservedProperties')
 
-        elif request['method'] == 'POST':
-            self.add(ObservedPropertyBulder())
-            yield from self.add_creator('ObservedPropertyCreator')
+            yield from self.add_retriever('ObservationType')
 
         else:
             raise Exception('Method {} not supported'.format(request['method']))
 
     @asyncio.coroutine
     def after(self, request):
-        """Render the result of the request following the OGC:SOS 2.0.0
-standard.
+        """Render the result of the request following the OGC:SOS 2.0.0 standard.
         """
+
         if request['method'] == 'GET':
-            request['response'] = {"data": request['observedProperties']}
+            request['response'] = {'data': request['observationType']}

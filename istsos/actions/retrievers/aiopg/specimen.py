@@ -60,8 +60,6 @@ class Specimen(Specimen):
 
             res = yield from cur.fetchone()
 
-            # print(res)
-
             spec_type = None
 
             if res[15]:
@@ -84,7 +82,7 @@ class Specimen(Specimen):
                 },
                 'samplingTime': {
                     'timeInstant': {
-                        'instant': res[6].strftime('%Y-%m-%dT%H:%M:%S%z')
+                        'instant': res[6].isoformat() if res[3] else None
                     }
                 },
                 'samplingMethod': {
