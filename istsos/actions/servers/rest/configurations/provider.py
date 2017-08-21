@@ -13,10 +13,14 @@ class Provider(CompositeAction):
 
     @asyncio.coroutine
     def before(self, request):
-        yield from self.add_retriever('Provider')
+        if request['method'] == 'GET':
+            yield from self.add_retriever('Provider')
+        else:
+            raise Exception('Method {} not supported'.format(request['method']))
 
     @asyncio.coroutine
     def after(self, request):
         """Render the result of the request following the OGC:SOS 2.0.0 standard.
         """
-        request['response'] = {"data": request['provider']}
+        if request['method'] == 'GET':
+            request['response'] = {"data": request['provider']}

@@ -22,6 +22,10 @@ class ObservedProperties(CompositeAction):
             self.add(ObservedPropertyBulder())
             yield from self.add_creator('ObservedPropertyCreator')
 
+        elif request['method'] == 'PUT':
+            self.add(ObservedPropertyBulder())
+            yield from self.add_creator('ObservedPropertyCreator')
+
         else:
             raise Exception('Method {} not supported'.format(request['method']))
 

@@ -4,6 +4,7 @@
 # Version: v3.0.0
 
 import asyncio
+import istsos
 from istsos.actions.retrievers.offeringsList import OfferingsList
 
 
@@ -36,8 +37,6 @@ class OfferingsList(OfferingsList):
             recs = yield from cur.fetchall()
 
             for res in recs:
-
-                print(res)
 
                 table = res[5]
 
@@ -73,14 +72,16 @@ class OfferingsList(OfferingsList):
                     for obs_prop in r_obs:
                         off['observable_property'].append({
                             "name": obs_prop[0],
-                            # "definition": obs_prop[1],
+                            "definition": obs_prop[1],
                             "uom": obs_prop[2],
                             # "type": obs_prop[3]
                         })
 
-                    # sql = "SELECT reltuples FROM pg_class WHERE relname = 'data.{}';".format(res[0])
+                    # this value is updated on VACUUM
+                    # sql = "SELECT reltuples FROM pg_class WHERE relname = '_{}';".format(res[4])
                     # yield from cur.execute(sql)
-                    # est = yield from cur.fetchone()[0]
-                    # off['estimated'] = est
+                    # est = yield from cur.fetchone()
+                    # if len(est) > 0:
+                    #     off['estimated'] = int(est[0])
 
                 request['offeringsList'].append(off)

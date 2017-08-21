@@ -20,21 +20,41 @@ class ObservedPropertyCreator(ObservedPropertyCreator):
 
             op = request['observedProperty']
 
-            yield from cur.execute("""
-                                INSERT INTO observed_properties(
-                                    name,
-                                    def,
-                                    description
-                                )
-                                VALUES (%s,%s,%s) RETURNING id;
-                            """, (
-                op['name'],
-                op['def'],
-                op['description']
-            ))
+            if 'id' in op.keys():
+                yield from cur.execute("""
+                                            UPDATE 
+                                                observed_properties
+                                            SET
+                                                name=%s,
+                                                def=%s,
+                                                description=%s
+                                            WHERE
+                                                id=%s;
+                                        """, (
+                    op['name'],
+                    op['def'],
+                    op['description'],
+                    op['id']
+                ))
 
-            rec = yield from cur.fetchone()
+                request['response'] = {"message": "Observed property updated"}
+            else:
 
-            request['response'] = {"message": "new observed property id: {}".format(rec[0])}
+                yield from cur.execute("""
+                                            INSERT INTO observed_properties(
+                                                name,
+                                                def,
+                                                description
+                                            )
+                                            VALUES (%s,%s,%s) RETURNING id;
+                                        """, (
+                    op['name'],
+                    op['def'],
+                    op['description']
+                ))
+
+                rec = yield from cur.fetchone()
+
+                request['response'] = {"message": "new observed property id: {}".format(rec[0])}
 
             yield from cur.execute("COMMIT;")

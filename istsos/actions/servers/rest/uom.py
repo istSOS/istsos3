@@ -26,7 +26,8 @@ class Uom(CompositeAction):
         elif request['method'] == 'PUT':
             self.add((UomBuilder()))
             yield from self.add_creator('UomCreator')
-
+        else:
+            raise Exception('Method {} not supported'.format(request['method']))
 
     @asyncio.coroutine
     def after(self, request):
@@ -37,4 +38,3 @@ standard.
             request['response'] = request['uoms']
         # if request['method'] == "POST":
         #     request['response'] = {"message": "ok"}
-

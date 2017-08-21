@@ -22,9 +22,13 @@ class UomCreator(UomCreator):
 
             if 'id' in uom.keys():
                 yield from cur.execute("""
-                                    UPDATE uoms SET
-                                        name=%s, description=%s
-                                    WHERE id=%s;
+                                    UPDATE 
+                                        uoms 
+                                    SET
+                                        name=%s, 
+                                        description=%s
+                                    WHERE i
+                                        d=%s;
                                 """, (
                     uom['name'],
                     uom['description'],
