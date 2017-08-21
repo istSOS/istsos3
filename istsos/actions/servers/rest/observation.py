@@ -10,6 +10,9 @@ from istsos.actions.builders.rest.offeringFilterBuilder import OfferingFilterBui
 from istsos.actions.builders.rest.procedureFilterBuilder import ProcedureFilterBuilder
 from istsos.actions.builders.rest.observedPropertyFilterBuilder import ObservedPropertyFilterBuilder
 from istsos.actions.builders.rest.temporalFilterBuilder import TemporalFilterBuilder
+from istsos.actions.builders.rest.observationsBuilder import ObservationsBuilder
+
+from istsos.actions.servers.sos_2_0_0.requirement.transactional.ioRequirement import IORequirement
 
 
 class Observation(CompositeAction):
@@ -29,6 +32,21 @@ class Observation(CompositeAction):
             yield from self.add_retriever('Offerings')
             yield from self.add_retriever('Observations')
 
+        elif request['method'] == 'POST':
+
+            # ObservationBuilder parses the JSON POST request into
+            # an Observation entity
+            self.add(ObservationsBuilder())
+
+            # Adding action Offering retriever
+            yield from self.add_retriever('Offerings')
+
+            self.add(IORequirement())
+
+            # Add the Observation action creator that will insert the new
+            # observation in the database
+            yield from self.add_creator('ObservationCreator')
+
         else:
             raise Exception('Method {} not supported'.format(request['method']))
 
@@ -39,3 +57,5 @@ class Observation(CompositeAction):
 
         if request['method'] == 'GET':
             request['response'] = {'data': request['observations']}
+        elif request['method'] == 'POST':
+            request['response'] = {'data': "new Data!!!"}
