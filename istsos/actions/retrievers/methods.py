@@ -16,4 +16,4 @@ class Methods(Retriever):
     def before(self, request):
         """Load all the materials relative to the given filter.
         """
-        request['methods'] = []
+        request['specimenMethods'] = []

@@ -16,7 +16,7 @@ class MethodCreator(MethodCreator):
         with (yield from request['state'].pool.cursor()) as cur:
             yield from cur.execute("BEGIN;")
 
-            method = request['method']
+            method = request['specimenMethod']
 
             yield from cur.execute("""
                         INSERT INTO methods(
@@ -27,7 +27,6 @@ class MethodCreator(MethodCreator):
                     """, (
                 method['name'],
                 method['description']
-
             ))
 
             yield from cur.execute("COMMIT;")

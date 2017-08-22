@@ -32,7 +32,7 @@ standard.
         """
 
         if request['method'] == 'GET':
-            request['response'] = {'data': request['methods']}
+            request['response'] = {'data': request['specimenMethods']}
         elif request['method'] == 'POST':
-            link = 'http://istsos.org/istsos3/method/{}'.format(request['method']['name'])
+            link = 'http://istsos.org/istsos3/method/{}'.format(request['specimenMethod']['name'])
             request['response'] = {"message": 'new method link: {}'.format(link)}

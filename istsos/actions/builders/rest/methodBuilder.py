@@ -18,4 +18,4 @@ class MethodBuilder(Action):
 
         method = request['body']
 
-        request['method'] = Method(json_source=method)
+        request['specimenMethod'] = Method(json_source=method)

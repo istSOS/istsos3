@@ -13,6 +13,7 @@ class Methods(Methods):
     @asyncio.coroutine
     def process(self, request):
         with (yield from request['state'].pool.cursor()) as cur:
+
             sql = """
                 SELECT 
                     id,
@@ -24,7 +25,7 @@ class Methods(Methods):
             yield from cur.execute(sql)
             recs = yield from cur.fetchall()
             for rec in recs:
-                request['methods'].append(Method({
+                request['specimenMethods'].append(Method({
                     "id": rec[0],
                     "name": rec[1],
                     "description": rec[2]
