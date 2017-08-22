@@ -35,7 +35,6 @@ class UomCreator(UomCreator):
                     uom['id']
                 ))
 
-                request['response'] = {"message": "uom [{}] updated".format(uom['id'])};
             else:
 
                 yield from cur.execute("""
@@ -51,6 +50,6 @@ class UomCreator(UomCreator):
 
                 rec = yield from cur.fetchone()
 
-                request['response'] = {"message": "new uom id: {}".format(rec[0])};
+                request['uom']['id'] = rec[0]
 
             yield from cur.execute("COMMIT;")

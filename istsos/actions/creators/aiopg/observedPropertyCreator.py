@@ -37,7 +37,6 @@ class ObservedPropertyCreator(ObservedPropertyCreator):
                     op['id']
                 ))
 
-                request['response'] = {"message": "Observed property updated"}
             else:
 
                 yield from cur.execute("""
@@ -55,6 +54,8 @@ class ObservedPropertyCreator(ObservedPropertyCreator):
 
                 rec = yield from cur.fetchone()
 
-                request['response'] = {"message": "new observed property id: {}".format(rec[0])}
+                request['observedProperty']['id'] = rec[0]
+
+
 
             yield from cur.execute("COMMIT;")

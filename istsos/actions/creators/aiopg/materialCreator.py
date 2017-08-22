@@ -30,7 +30,3 @@ class MaterialCreator(MaterialCreator):
             ))
 
             yield from cur.execute("COMMIT;")
-
-            link = 'http://istsos.org/material/{}'.format(material['name'])
-            request['response'] = {"message": 'new method link: {}'.format(link)}
-

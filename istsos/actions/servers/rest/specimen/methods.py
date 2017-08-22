@@ -34,4 +34,5 @@ standard.
         if request['method'] == 'GET':
             request['response'] = {'data': request['methods']}
         elif request['method'] == 'POST':
-            request['response'] = {'data': request['response']}
+            link = 'http://istsos.org/istsos3/method/{}'.format(request['method']['name'])
+            request['response'] = {"message": 'new method link: {}'.format(link)}

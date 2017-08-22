@@ -36,3 +36,7 @@ standard.
         """
         if request['method'] == 'GET':
             request['response'] = {"data": request['observedProperties']}
+        elif request['method'] == 'POST':
+            request['response'] = {"message": "new observed property id: {}".format(request['observedProperty']['id'])}
+        else:
+            request['response'] = {"message": "Observed property updated"}

@@ -66,12 +66,7 @@ class SpecimenCreator(SpecimenCreator):
                 mat_id, met_id, spec_type
             ))
 
-            # rec = yield from cur.fetchone()
-
             yield from cur.execute("COMMIT;")
-
-            link = 'http://istsos.org/specimen/{}'.format(specimen['identifier'])
-            request['response'] = {"message": 'new specimen link: {}'.format(link)}
 
     @asyncio.coroutine
     def __check_material(self, cur, mat_name):

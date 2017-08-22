@@ -36,5 +36,7 @@ standard.
         """
         if request['method'] == 'GET':
             request['response'] = request['uoms']
-        # if request['method'] == "POST":
-        #     request['response'] = {"message": "ok"}
+        elif request['method'] == "POST":
+            request['response'] = {"message": "new uom id: {}".format(request['uom']['id'])}
+        else:
+            request['response'] = {"message": "uom [{}] updated".format(request['uom']['id'])}

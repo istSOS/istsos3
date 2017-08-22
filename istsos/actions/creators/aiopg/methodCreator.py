@@ -32,6 +32,3 @@ class MethodCreator(MethodCreator):
 
             yield from cur.execute("COMMIT;")
 
-            link = 'http://istsos.org/method/{}'.format(method['name'])
-            request['response'] = {"message": 'new method link: {}'.format(link)}
-
