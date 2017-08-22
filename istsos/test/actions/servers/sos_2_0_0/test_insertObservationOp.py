@@ -70,10 +70,31 @@ class TestInsertObservation:
                 request, stats=True
             )
 
+    def execute_5(self):
+        with open('examples/xml/insertObservation-5.xml') as xml_file:
+
+            # Installation of the istSOS server
+            server = yield from Server.create()
+
+            # Preparing the Request object
+            request = HttpRequest(
+                "POST",
+                "sos",
+                body=xml_file.read(),
+                content_type="application/xml"
+            )
+
+            print()
+
+            response = yield from server.execute_http_request(
+                request, stats=True
+            )
+
     def execute_all(self):
-        yield from self.execute_1()
-        yield from self.execute_2()
+        # yield from self.execute_1()
+        # yield from self.execute_2()
         # yield from self.execute_3()
+        yield from self.execute_5()
 
     def test_execute(self):
         loop = asyncio.get_event_loop()

@@ -10,7 +10,7 @@ import collections
 
 class EventTime(BaseEntity):
     json_schema = {
-        "type": "object",
+        "type": ["object", "null"],
         "properties": {
             "timeInstant": TimeInstant.json_schema,
             "timePeriod": TimeInterval.json_schema

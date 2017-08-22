@@ -1,0 +1,80 @@
+<sos:InsertObservation service="SOS" version="2.0.0"
+    xmlns:sos="http://www.opengis.net/sos/2.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:swe="http://www.opengis.net/swe/2.0"
+    xmlns:swes="http://www.opengis.net/swes/2.0"
+    xmlns:gml="http://www.opengis.net/gml/3.2"
+    xmlns:ogc="http://www.opengis.net/ogc"
+    xmlns:om="http://www.opengis.net/om/2.0"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+    <sos:offering>873057087e6811e7a32e000fc9104614</sos:offering>
+    <sos:observation>
+        <om:OM_Observation id="f1">
+            <om:type
+                xlink:href="http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_SWEArrayObservation"/>
+            <om:phenomenonTime>
+              <gml:TimeInstant gml:id="phenomenonTime">
+                  <gml:timePosition>2017-05-08T17:50:10.000+00:00</gml:timePosition>
+              </gml:TimeInstant>
+            </om:phenomenonTime>
+            <om:resultTime>
+                <gml:TimeInstant gml:id="resultTime">
+                    <gml:timePosition>2017-05-08T17:50:10.000+00:00</gml:timePosition>
+                </gml:TimeInstant>
+            </om:resultTime>
+            <om:procedure
+                xlink:href="urn:ogc:def:procedure:x-istsos:1.0:water:chemical:analysis:L1"/>
+            <om:observedProperty xsi:nil='true'/>
+            <om:featureOfInterest
+                xlink:href="http://istsos.org/istsos3/foi/specimen/12345"/>
+            <om:result
+                xsi:type="swe:DataArrayPropertyType">
+                <swe:DataArray>
+                    <swe:elementCount>
+                        <swe:Count>
+                            <swe:value>1</swe:value>
+                        </swe:Count>
+                    </swe:elementCount>
+                    <swe:elementType name="defs">
+                        <swe:DataRecord>
+                          <swe:field name="phenomenonTime">
+                              <swe:Time definition="http://www.opengis.net/def/property/OGC/0/PhenomenonTime">
+                                  <swe:uom xlink:href="http://www.opengis.net/def/uom/ISO-8601/0/Gregorian"/>
+                              </swe:Time>
+                          </swe:field>
+                            <swe:field>
+                                <swe:Quantity definition="urn:ogc:def:parameter:x-istsos:1.0:water:analysis:ph">
+                                    <swe:uom code="pH"/>
+                                </swe:Quantity>
+                            </swe:field>
+                            <swe:field>
+                                <swe:Quantity definition="urn:ogc:def:parameter:x-istsos:1.0:water:analysis:as">
+                                    <swe:uom code="µg/l"/>
+                                </swe:Quantity>
+                            </swe:field>
+                            <swe:field>
+                                <swe:Quantity definition="urn:ogc:def:parameter:x-istsos:1.0:water:analysis:conductibility">
+                                    <swe:uom code="µS/cm"/>
+                                </swe:Quantity>
+                            </swe:field>
+                            <swe:field>
+                                <swe:Quantity definition="urn:ogc:def:parameter:x-istsos:1.0:water:analysis:nh4">
+                                    <swe:uom code="µg/l"/>
+                                </swe:Quantity>
+                            </swe:field>
+                        </swe:DataRecord>
+                    </swe:elementType>
+                    <swe:encoding>
+                        <swe:TextEncoding
+                            decimalSeparator="."
+                            tokenSeparator=","
+                            blockSeparator="@"/>
+                    </swe:encoding>
+                    <swe:values>
+                        2017-05-08T17:50:00.000+02:00,5.5,20.6,78.2,44.21
+                    </swe:values>
+                </swe:DataArray>
+            </om:result>
+        </om:OM_Observation>
+    </sos:observation>
+</sos:InsertObservation>

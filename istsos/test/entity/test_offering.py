@@ -4,13 +4,13 @@
 # Version: v3.0.0
 
 import json
-from istsos.entity.procedure import Procedure
+from istsos.entity.offering import Offering
 
 
-class TestProcedure:
+class TestOffering:
 
     def test_initialization(self):
         with open('examples/json/sensorml_1.0.1-1.json') as data_file:
             data = json.load(data_file)
-            point = Procedure(data)
+            point = Offering(data)
         assert 1 == 1
