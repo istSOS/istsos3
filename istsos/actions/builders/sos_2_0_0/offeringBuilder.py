@@ -27,6 +27,7 @@ class OfferingBuilder(OfferingBuilder):
                 ],
                 "observable_property": [],
                 "observation_type": [],
+                "systemType": 'undefined',
                 "foi_type": None
             }
 
@@ -37,6 +38,13 @@ class OfferingBuilder(OfferingBuilder):
                 if identifier.get('name') == 'uniqueID':
                     value = identifier.find('.//sml_1_0_1:value', request.ns)
                     data['procedure'] = value.text.strip()
+                    break
+
+            for classifier in request.get_xml().iterfind(
+                    './/sml_1_0_1:classifier', request.ns):
+                if classifier.get('name') == 'systemType':
+                    value = classifier.find('.//sml_1_0_1:value', request.ns)
+                    data['systemType'] = value.text.strip()
                     break
 
             # Reading and adding the Observable Properties(s)

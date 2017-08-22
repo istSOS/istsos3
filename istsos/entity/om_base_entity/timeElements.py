@@ -54,7 +54,7 @@ class TimeInterval(BaseEntity):
 
     json_schema = {
                     "type": "object",
-                    "TimePeriod": {
+                    "timePeriod": {
                         "type": "object",
                         "properties": {
                             "begin": Instant.json_schema,

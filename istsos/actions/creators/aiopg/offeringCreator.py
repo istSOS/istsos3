@@ -17,19 +17,37 @@ class OfferingCreator(OfferingCreator):
 
         with (yield from request['state'].pool.cursor()) as cur:
             yield from cur.execute("BEGIN;")
+
+            # get the sensorType id
+            yield from cur.execute("""
+                SELECT id
+                FROM sensor_types
+                WHERE name = %s
+            """, (
+                request['offering']['systemType'],
+            ))
+            sty = yield from cur.fetchone()
+            if sty is None:
+                raise Exception(
+                    "Sorry, %s undefined systemType" %
+                    request['offering']['systemType'])
+
             # Register the new sensor into the offerings table
             yield from cur.execute("""
                 INSERT INTO offerings(
                     offering_name,
                     procedure_name,
                     description_format,
-                    foi_type)
-                VALUES (%s, %s, %s, %s) RETURNING id;
+                    foi_type,
+                    id_sty)
+                VALUES (%s, %s, %s, %s,%s) RETURNING id;
             """, (
                 request['offering']['name'],
                 request['offering']['procedure'],
                 request['offering']['procedure_description_format'],
-                request['offering']['foi_type']
+                request['offering']['foi_type'],
+                sty
+
             ))
             rec = yield from cur.fetchone()
             request['offering']['id'] = rec[0]
@@ -94,17 +112,34 @@ class OfferingCreator(OfferingCreator):
                     id_oty
                 ))
 
-                yield from cur.execute("""
-                    CREATE TABLE data._%s
-                    (
-                       id serial,
-                       event_time timestamp with time zone NOT NULL,
-                       PRIMARY KEY (id),
-                       UNIQUE (event_time)
-                    );
-                """ % request['offering']['name'], (
-                    request['offering']['id'],
-                    id_oty
-                ))
+                if request['offering']['systemType'] == \
+                        "insitu-fixed-specimen":
+                    yield from cur.execute("""
+                        CREATE TABLE data._%s
+                        (
+                           id serial,
+                           event_time timestamp with time zone NOT NULL,
+                           specimen character varying,
+                           PRIMARY KEY (id),
+                           UNIQUE (event_time)
+                        );
+                    """ % request['offering']['name'], (
+                        request['offering']['id'],
+                        id_oty
+                    ))
+
+                else:
+                    yield from cur.execute("""
+                        CREATE TABLE data._%s
+                        (
+                           id serial,
+                           event_time timestamp with time zone NOT NULL,
+                           PRIMARY KEY (id),
+                           UNIQUE (event_time)
+                        );
+                    """ % request['offering']['name'], (
+                        request['offering']['id'],
+                        id_oty
+                    ))
 
             yield from cur.execute("COMMIT;")

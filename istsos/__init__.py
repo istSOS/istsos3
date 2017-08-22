@@ -109,4 +109,46 @@ _component_type = {
     "Text": _observationTypes[4]
 }
 
+_sensor_type = {
+    "insitu-fixed-point": {
+        "id": 1,
+        "description": ("A sensor located in a fixed position in the field"
+                        " that observes a set of values in an instant"),
+        "foi_type": "SF_SamplingPoint"
+    },
+    "insitu-mobile-point": {
+        "id": 2,
+        "description": ("A sensor located on a mobile device in the field"
+                        " that observes a set of values in an instant"),
+        "foi_type": "SF_SamplingPoint"
+    },
+    "insitu-fixed-profile": {
+        "id": 3,
+        "description": ("A sensor ocated in a fixed position in the field"
+                        " that observes a set of values at variable altitudes"
+                        " or depths in an instant"),
+    },
+    "insitu-mobile-profile": {
+        "id": 4,
+        "description": ("A sensor located on a mobile device in the field"
+                        " that observes a set of values at variable altitudes"
+                        " or depths in an instant"),
+    },
+    "insitu-fixed-specimen": {
+        "id": 5,
+        "description": ("A sample collected always in the same fixed position"
+                        " in the field that leads to a set of values"
+                        " in an instant"),
+        "foi_type": "SF_Specimen"
+    },
+    "insitu-mobile-specimen": {
+        "id": 6,
+        "description": ("A sample collected in variable position"
+                        " in the field that leads to a set of values"
+                        " in an instant"),
+        "foi_type": "SF_Specimen"
+    }
+
+}
+
 __all__ = ['actions']

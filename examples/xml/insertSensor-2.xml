@@ -26,7 +26,7 @@
                     </sml:identification>
                     <sml:classification>
                         <sml:ClassifierList>
-                            <sml:classifier name="System Type">
+                            <sml:classifier name="systemType">
                                 <sml:Term definition="urn:ogc:def:classifier:x-istsos:1.0:systemType">
                                     <sml:value>insitu-fixed-point</sml:value>
                                 </sml:Term>

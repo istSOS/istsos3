@@ -4,6 +4,9 @@
 # Version: v3.0.0
 
 from istsos.entity.baseEntity import BaseEntity
+from istsos.entity.om_base_entity.eventTime import EventTime
+from istsos.entity.om_base_entity.observationType import ObservationType
+from istsos.entity.featureOfInterest import SamplingType, FeatureOfInterest
 import collections
 
 
@@ -25,47 +28,9 @@ class Observation(BaseEntity):
                     }
                 ]
             },
-            "phenomenonTime": {
-                "oneOf": [
-                    {
-                        "type": "object",
-                        "properties": {
-                            "type": {
-                                "type": "string",
-                                "enum": ["TimeInstant"]
-                            },
-                            "instant": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    {
-                        "type": "object",
-                        "properties": {
-                            "type": {
-                                "type": "string",
-                                "enum": ["TimePeriod"]
-                            },
-                            "begin": {
-                                "type": "string"
-                            },
-                            "end": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                ]
-            },
+            "phenomenonTime": EventTime.json_schema,
             "resultTime": {
-                "type": "object",
-                "properties": {
-                    "type": {
-                        "type": "string"
-                    },
-                    "time": {
-                        "type": "string"
-                    }
-                }
+                "oneOf": [EventTime.json_schema, {type: "null"}]
             },
             "procedure": {
                 "type": "string"
@@ -78,8 +43,21 @@ class Observation(BaseEntity):
                     }
                 ]
             },
-            "featureOfInterest": {
-                "type": "string"
+            "featureOfInterest": FeatureOfInterest.json_schema,
+            "foi_type": {
+                "oneOf": [
+                    SamplingType.json_schema,
+                    {"type": "null"}
+                ]
+            },
+            "observation_type": {
+                "oneOf": [
+                    {
+                        "type": "array",
+                        "items": [ObservationType.json_schema]
+                    },
+                    {"type": "null"}
+                ]
             },
             "uom": {
                 "type": "array",
@@ -107,7 +85,8 @@ class Observation(BaseEntity):
             "resultTime": {},
             "procedure": "",
             "observedProperty": [],
-            "featureOfInterest": "",
+            "featureOfInterest": {"href": ""},
+            "foi_type": "",
             "uom": [],
             "result": collections.OrderedDict(),
             "quality": collections.OrderedDict()

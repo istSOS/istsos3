@@ -28,13 +28,17 @@ SELECT DISTINCT
     rt_begin,
     rt_end,
     foi_type,
-    data_table_exists
+    data_table_exists,
+    sensor_types.name
 FROM
     offerings,
     off_obs_prop,
-    observed_properties
+    observed_properties,
+    sensor_types
 WHERE
     id_opr = observed_properties.id
+AND
+    id_sty = sensor_types.id
 AND
     id_off = offerings.id
 """
@@ -95,16 +99,33 @@ AND
                     ],
                     "observable_property": [],
                     "observation_type": [],
-                    "phenomenon_time": {
-                        "begin_position": pt_begin,
-                        "end_position": pt_end
-                    },
-                    "result_time": {
-                        "begin_position": rt_begin,
-                        "end_position": rt_end
-                    },
-                    "foi_type": rec[8]
+                    "phenomenon_time": None,
+                    "result_time": None,
+                    "foi_type": rec[8],
+                    "systemType": rec[10]
                 }
+
+                pt_begin = rec[4].isoformat() if rec[4] else None
+                pt_end = rec[5].isoformat() if rec[5] else None
+                rt_begin = rec[6].isoformat() if rec[6] else None
+                rt_end = rec[7].isoformat() if rec[7] else None
+
+                if (pt_begin and pt_end):
+                    data["phenomenon_time"] = {
+                        "timePeriod": {
+                            "begin": pt_begin,
+                            "end": pt_end
+                        }
+                    }
+
+                if (rt_begin and rt_end):
+                    data["result_time"] = {
+                        "timePeriod": {
+                            "begin": rt_begin,
+                            "end": rt_end
+                        }
+                    }
+
                 # Load Observable Property
                 yield from cur.execute("""
 SELECT
