@@ -57,13 +57,37 @@ class ObservationsBuilder(ObservationsBuilder):
 
                 omType = omTypeElement.get("{%s}href" % request.ns['xlink'])
 
+                # Reading featureOfInterest
+                omFfeatureOfInterest = ob.find(
+                    './/om_2_0:featureOfInterest', request.ns)
+                data["featureOfInterest"]["href"] = omFfeatureOfInterest.get(
+                    "{%s}href" % request.ns['xlink'])
+
+                foiLink = data["featureOfInterest"]["href"].split("/")
+                typedef = (
+                    'http://www.opengis.net/def/'
+                    'samplingFeatureType/OGC-OM/2.0/'
+                )
+                if "specimen" in foiLink:
+                    data["foi_type"] = "%sSF_Specimen" % typedef
+                elif "Point" in foiLink:
+                    data["foi_type"] = "%sSF_SamplingPoint" % typedef
+                else:
+                    data["foi_type"] = None
+
+                # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                # NB:
+                # to exactly know the FOI type we should download the resource;
+                # for now we guess from the path .../foi/foiType/specimenName
+                # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
                 if omType == istsos._arrayObservation['definition']:
                     # Looping the DataArray fields we can interpret the
                     # missing informations in the DataArray's metadata
                     for field in ob.iterfind('.//swe_2_0:field', request.ns):
                         componentType = field.getchildren()
                         if len(componentType) == 0:
-                            # The field have not any data definition
+                            # The field have no data definition
                             # This is ahh, wrong!
                             raise Exception("XML wrong :P")
 
@@ -137,15 +161,29 @@ class ObservationsBuilder(ObservationsBuilder):
                         timePosition = timeInstant.find(
                             './/gml_3_2:timePosition', request.ns)
                         timePosition = timePosition.text.strip()
+                        data["phenomenonTime"]["timeInstant"][
+                            "instant"] = timePosition
 
-                        # If this observation time is not yet inserte,
+                        # If this observation time is not yet inserted,
                         # preapre a new array ready to contains measures
                         if timePosition not in data["result"]:
                             data["result"][timePosition] = []
 
                     elif timePeriod is not None:
-                        Exception("timePeriod not yet handled")
+                        beginPosition = timePeriod.find(
+                            './/gml_3_2:beginPosition', request.ns)
+                        beginPosition = beginPosition.text.strip()
+                        endPosition = timePeriod.find(
+                            './/gml_3_2:endPosition', request.ns)
+                        endPosition = endPosition.text.strip()
+                        data["phenomenonTime"]["timePeriod"][
+                            "begin"] = beginPosition
+                        data["phenomenonTime"]["timePeriod"][
+                            "end"] = endPosition
+                        # TODO --- handle time position
+                        # (what is specimen with sampling time?)
 
+                        Exception("timePeriod not yet handled")
                     else:
                         Exception("the phenomenonTime is mandatory")
 
@@ -177,16 +215,29 @@ class ObservationsBuilder(ObservationsBuilder):
             phenomenonTimes = list(data['result'].keys())
             if len(phenomenonTimes) == 1:
                 # This is a time instant
+                # data["phenomenonTime"] = {
+                #     "type": "TimeInstant",
+                #     "instant": phenomenon_time
+                # }
+
                 data["phenomenonTime"] = {
-                    "type": "TimeInstant",
-                    "instant": phenomenon_time
+                    "timeInstant": {
+                        "instant": phenomenonTimes[0]
+                    }
                 }
             else:
                 # This is a time period
+                # data['phenomenonTime'] = {
+                #     "type": "TimePeriod",
+                #     "begin": phenomenonTimes[0],
+                #     "end": phenomenonTimes[-1]
+                # }
+
                 data['phenomenonTime'] = {
-                    "type": "TimePeriod",
-                    "begin": phenomenonTimes[0],
-                    "end": phenomenonTimes[-1]
+                    "timePeriod": {
+                        "begin": phenomenonTimes[0],
+                        "end": phenomenonTimes[-1]
+                    }
                 }
 
             # Adding the Observation entity into the request array

@@ -28,6 +28,27 @@ geometry encoding.
 """
 
 
+class Crs(BaseEntity):
+    json_schema = {
+        "type": "object",
+        "properties": {
+            "type": {
+                "type": "string",
+                "enum": ["name"]
+            },
+            "properties": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "pattern": "^EPSG:([0-9]+)$"
+                    }
+                }
+            }
+        }
+    }
+
+
 class Coordinates2D(BaseEntity):
     json_schema = {
         "type": "array",
@@ -77,8 +98,7 @@ class Point(BaseEntity):
                     Coordinates2D.json_schema,
                     Coordinates3D.json_schema
                 ]
-            },
-            "epsg": {"type": "integer"}
+            }
         },
         "required": ["type", "coordinates"],
         "additionalProperties": False,
@@ -130,4 +150,25 @@ class Polygon(BaseEntity):
         },
         "required": ["type", "coordinates"],
         "additionalProperties": False
+    }
+
+
+class Feature(BaseEntity):
+    json_schema = {
+        "type": "object",
+        "properties": {
+            "type": {
+                "type": "string",
+                "enum": ["Feature"]
+            },
+            "geometry": {
+                "oneOf": [
+                    Point.json_schema,
+                    Linestring.json_schema,
+                    Polygon.json_schema
+                ]
+            },
+            "crs": Crs.json_schema
+        },
+        "required": ["type", "geometry"]
     }

@@ -4,6 +4,10 @@
 # Version: v3.0.0
 
 from istsos.entity.baseEntity import BaseEntity
+from istsos.entity.om_base_entity.timeElements import TimeInterval
+from istsos.entity.om_base_entity.geoJson import Coordinates2D
+from istsos.entity.featureOfInterest import SamplingType
+import collections
 
 
 class Offering(BaseEntity):
@@ -13,18 +17,11 @@ class Offering(BaseEntity):
     json_schema = {
         "type": "object",
         "properties": {
-            "id": {
-                "type": "integer"
-            },
-            "results": {
-                "type": "boolean"
-            },
-            "name": {
-                "type": "string"
-            },
-            "procedure": {
-                "type": "string"
-            },
+            "id": {"type": "integer"},
+            "results": {"type": "boolean"},
+            "name": {"type": "string"},
+            "procedure": {"type": "string"},
+            "systemType": {"type": "string"},
             "procedure_description_format": {
                 "type": "array",
                 "items": [
@@ -128,81 +125,23 @@ class Offering(BaseEntity):
             "observed_area": {
                 "type": "object",
                 "properties": {
-                    "lower_corner": {
-                        "type": "array",
-                        "minItems": 2,
-                        "maxItems": 2,
-                        "items": [
-                            {
-                                "type": "string"
-                            }
-                        ]
-                    },
-                    "upper_corner": {
-                        "type": "array",
-                        "minItems": 2,
-                        "maxItems": 2,
-                        "items": [
-                            {
-                                "type": "string"
-                            }
-                        ]
-                    }
+                    "lower_corner": Coordinates2D.json_schema,
+                    "upper_corner": Coordinates2D.json_schema
                 }
             },
             "phenomenon_time": {
-                "type": "object",
-                "properties": {
-                    "begin_position": {
-                        "oneOf": [
-                            {
-                                "type": "null"
-                            },
-                            {
-                                "type": "string"
-                            }
-                        ]
-                    },
-                    "end_position": {
-                        "oneOf": [
-                            {
-                                "type": "null"
-                            },
-                            {
-                                "type": "string"
-                            }
-                        ]
-                    }
-                }
+                "oneOf": [
+                    TimeInterval.json_schema,
+                    {"type": "null"}
+                ]
             },
             "result_time": {
-                "type": "object",
-                "properties": {
-                    "begin_position": {
-                        "oneOf": [
-                            {
-                                "type": "null"
-                            },
-                            {
-                                "type": "string"
-                            }
-                        ]
-                    },
-                    "end_position": {
-                        "oneOf": [
-                            {
-                                "type": "null"
-                            },
-                            {
-                                "type": "string"
-                            }
-                        ]
-                    }
-                }
+                "oneOf": [
+                    TimeInterval.json_schema,
+                    {"type": "null"}
+                ]
             },
-            "foi_type": {
-                "type": "string"
-            }
+            "foi_type": SamplingType.json_schema
         }
     }
 
