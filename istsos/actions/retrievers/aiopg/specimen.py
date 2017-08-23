@@ -97,7 +97,7 @@ class Specimen(Specimen):
                 'samplingLocation': {
                     "type": "point",
                     "coordinates": [res[12], res[13]],
-                    "epsg": res[14]
+                    # "epsg": res[14]
                 },
                 "specimenType": spec_type
             }

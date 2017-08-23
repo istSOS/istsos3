@@ -27,7 +27,7 @@ class SpecimenCreator(SpecimenCreator):
 
             samp_loc = specimen['samplingLocation']
             coord = samp_loc['coordinates']
-            geom_var = "ST_GeomFromText('SRID={};POINT({} {})')".format(samp_loc['epsg'], coord[0], coord[1])
+            geom_var = "ST_GeomFromText('POINT({} {})')".format(coord[0], coord[1])
 
             spec_type = None
 
