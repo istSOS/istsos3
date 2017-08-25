@@ -129,7 +129,8 @@ JSON body:
         "procedure_description_format": [
             "http://www.opengis.net/sensorML/1.0.1"
         ],
-        "foi_type": "http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint"
+        "foi_type": "http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint",
+        "systemType": "undefined"
     }
 
 

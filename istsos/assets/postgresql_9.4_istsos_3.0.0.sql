@@ -164,11 +164,29 @@ CREATE TABLE public.offerings
     foi_geom geometry,
     observed_area geometry,
     cached jsonb,
-    PRIMARY KEY (id)
+    id_sty integer,
+    PRIMARY KEY (id),
+    CONSTRAINT offerings_id_sty_fkey FOREIGN KEY (id_sty)
+      REFERENCES public.sensor_types (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
 CREATE INDEX
    ON public.offerings USING btree (id ASC NULLS LAST);
+
+CREATE SEQUENCE public.sensor_types_id_seq
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9223372036854775807
+  START 1
+  CACHE 1;
+
+CREATE TABLE public.sensor_types
+(
+  id integer NOT NULL DEFAULT nextval('sensor_types_id_seq'::regclass),
+  name text,
+  CONSTRAINT sensor_types_pkey PRIMARY KEY (id)
+)
 
 
 CREATE SEQUENCE sensor_descriptions_id_seq
@@ -265,9 +283,9 @@ CREATE TABLE public.specimens
   current_location jsonb,
   specimen_type text,
   CONSTRAINT specimen_id_mat_fk_fkey FOREIGN KEY (id_mat_fk)
-      REFERENCES public.material_classes (id) MATCH SIMPLE
+      REFERENCES material_classes (id) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION,
   CONSTRAINT specimen_id_met_fk_fkey FOREIGN KEY (id_met_fk)
-      REFERENCES public.methods (id) MATCH SIMPLE
+      REFERENCES methods (id) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION
 )
