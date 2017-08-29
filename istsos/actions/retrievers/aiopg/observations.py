@@ -95,9 +95,10 @@ temporalFilter:
                     if key == 'temporal':
                         if fltr['fes'] == 'during':
                             data["phenomenonTime"] = {
-                                "type": "TimePeriod",
-                                "begin": fltr['period'][0],
-                                "end": fltr['period'][1]
+                                "timePeriod": {
+                                    "begin": fltr['period'][0],
+                                    "end": fltr['period'][1]
+                                }
                             }
                             temporal.append("""
     event_time > %s::timestamp with time zone
@@ -107,8 +108,9 @@ temporalFilter:
                             params.extend(fltr['period'])
                         elif fltr['fes'] == 'equals':
                             data["phenomenonTime"] = {
-                                "type": "TimeInstant",
-                                "instant": fltr['instant']
+                                "timeInstant": {
+                                    "instant": fltr['instant']
+                                }
                             }
                             temporal.append("""
     event_time = %s::timestamp with time zone
@@ -132,6 +134,21 @@ temporalFilter:
             )'''
             yield from cur.execute(sql, tuple(params))
             recs = yield from cur.fetchall()
+
+            data['foi_type'] = offering['foi_type']
+
+            data['featureOfInterest'] = {
+                "id": 1,
+                "name": "test",  # offering['foi_name'],
+                "geom": {
+                    "geom": {
+                        "coordinates": [0, 0],  # offering['foi_geom'],
+                        "type": "point"
+                    },
+                    "id": 10,
+                    "name": "prova"
+                }
+            }
 
             for rec in recs:
                 data["result"][rec[0].isoformat()] = rec[1]

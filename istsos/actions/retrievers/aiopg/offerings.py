@@ -29,7 +29,10 @@ SELECT DISTINCT
     rt_end,
     foi_type,
     data_table_exists,
-    sensor_types.name
+    sensor_types.name,
+    foi_name,
+    ST_X(foi_geom),
+    ST_Y(foi_geom)
 FROM
     offerings,
     off_obs_prop,
@@ -85,10 +88,11 @@ AND
 
             recs = yield from cur.fetchall()
             for rec in recs:
-                pt_begin = rec[4].isoformat() if rec[4] else None
-                pt_end = rec[5].isoformat() if rec[5] else None
-                rt_begin = rec[6].isoformat() if rec[6] else None
-                rt_end = rec[7].isoformat() if rec[7] else None
+                # pt_begin = rec[4].isoformat() if rec[4] else None
+                # pt_end = rec[5].isoformat() if rec[5] else None
+                # rt_begin = rec[6].isoformat() if rec[6] else None
+                # rt_end = rec[7].isoformat() if rec[7] else None
+
                 data = {
                     "id": rec[0],
                     "results": rec[9],
@@ -102,7 +106,9 @@ AND
                     "phenomenon_time": None,
                     "result_time": None,
                     "foi_type": rec[8],
-                    "systemType": rec[10]
+                    "systemType": rec[10],
+                    "foi_name": rec[11] if rec[11] else "",
+                    "foi_geom": [rec[12] if rec[12] else 0, rec[13] if rec[13] else 0]
                 }
 
                 pt_begin = rec[4].isoformat() if rec[4] else None
@@ -110,7 +116,7 @@ AND
                 rt_begin = rec[6].isoformat() if rec[6] else None
                 rt_end = rec[7].isoformat() if rec[7] else None
 
-                if (pt_begin and pt_end):
+                if pt_begin and pt_end:
                     data["phenomenon_time"] = {
                         "timePeriod": {
                             "begin": pt_begin,
@@ -118,7 +124,7 @@ AND
                         }
                     }
 
-                if (rt_begin and rt_end):
+                if rt_begin and rt_end:
                     data["result_time"] = {
                         "timePeriod": {
                             "begin": rt_begin,
