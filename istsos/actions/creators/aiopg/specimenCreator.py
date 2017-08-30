@@ -79,8 +79,8 @@ class SpecimenCreator(SpecimenCreator):
             yield from cur.execute("""INSERT INTO material_classes(name, description) VALUES (%s,%s) RETURNING id;""",
                                    (mat_name, ''))
 
-            mat = yield from cur.fetchone()[0]
-            return mat
+            mat = yield from cur.fetchone()
+            return mat[0]
         else:
             return res[0]
 
@@ -95,8 +95,8 @@ class SpecimenCreator(SpecimenCreator):
             yield from cur.execute("""INSERT INTO methods(name, description) VALUES (%s,%s) RETURNING id;""",
                                    (met_name, ''))
 
-            met = yield from cur.fetchone()[0]
-            return met
+            met = yield from cur.fetchone()
+            return met[0]
 
         else:
             return res[0]

@@ -4,7 +4,7 @@
 # Version: v3.0.0
 
 import asyncio
-from istsos.application import Server
+from istsos.application import Server, State
 from istsos.entity.httpRequest import HttpRequest
 
 
@@ -12,7 +12,8 @@ class TestObservedProperties:
 
     def execute_get(self):
         # Installation of the istSOS server
-        server = yield from Server.create()
+        state = State('config-test.json')
+        server = yield from Server.create(state)
 
         url = '/rest/observedProperties'
 
@@ -36,7 +37,8 @@ class TestObservedProperties:
         assert False
 
     def execute_post(self):
-        server = yield from Server.create()
+        state = State('config-test.json')
+        server = yield from Server.create(state)
 
         url = '/rest/observedProperties'
 

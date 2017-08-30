@@ -4,16 +4,16 @@
 # Version: v3.0.0
 
 import asyncio
-from istsos.application import Server
+from istsos.application import Server, State
 from istsos.entity.httpRequest import HttpRequest
-from istsos.actions.servers.sos_2_0_0.insertSensorOp import InsertSensor
 
 
 class TestMaterial:
 
     def execute_get(self):
         # Installation of the istSOS server
-        server = yield from Server.create()
+        state = State('config-test.json')
+        server = yield from Server.create(state)
 
         url = '/rest/material'
 
@@ -37,7 +37,8 @@ class TestMaterial:
         assert False
 
     def execute_post(self):
-        server = yield from Server.create()
+        state = State('config-test.json')
+        server = yield from Server.create(state)
 
         url = '/rest/material'
 
