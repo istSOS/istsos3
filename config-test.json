@@ -3,7 +3,7 @@
     "cache": false,
     "loader": {
         "type": "aiopg",
-        "host": "doscio__istsos3-test",
+        "host": "postgres",
         "port": "5432",
         "user": "postgres",
         "password": "postgres",
