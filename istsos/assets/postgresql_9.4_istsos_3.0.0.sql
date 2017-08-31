@@ -140,12 +140,11 @@ INSERT INTO observation_types(id, def, description) VALUES
     (13, 'http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TextObservation', ''),
     (14, 'http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_SWEArrayObservation', '');
 
-CREATE SEQUENCE public.sensor_types_id_seq
-  INCREMENT 1
-  MINVALUE 1
-  MAXVALUE 9223372036854775807
-  START 1
-  CACHE 1;
+CREATE SEQUENCE sensor_types_id_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
 
 CREATE TABLE public.sensor_types
 (
@@ -158,7 +157,7 @@ INSERT INTO public.sensor_types VALUES
 (1, 'undefined'),
 (2, 'insitu-fixes-point');
 
-SELECT pg_catalog.setval('sensor_types', 2, true);
+SELECT pg_catalog.setval('sensor_types_id_seq', 2, true);
 
 
 CREATE SEQUENCE offerings_id_seq
