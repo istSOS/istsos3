@@ -214,7 +214,8 @@ REST_API = [
     (r'material', r'specimen.materials', 'Materials'),
     (r'method', r'specimen.methods', 'Methods'),
     (r'offeringlist', r'utilities.offeringsList', 'OfferingList'),
-    (r'observationType', r'utilities.observationType', 'ObservationType')
+    (r'observationType', r'utilities.observationType', 'ObservationType'),
+    (r'systemType', r'utilities.systemType', 'SystemType')
 ]
 
 
@@ -300,17 +301,13 @@ The HTTPRequest shall be prepared by the web framework used.
 
                 action = self.rules[path]()
 
-                # for rule in self.rules:
-                #     action = rule.match(path)
-                #     if action:
-                #         break
-
             except Exception:
                 traceback.print_exc()
 
         # Executing the requested action
         if action:
             yield from action.execute(request)
+
             if stats:
                 # Show response
                 if "response" in request:
