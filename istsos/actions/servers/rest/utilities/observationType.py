@@ -4,6 +4,7 @@
 # Version: v3.0.0
 
 import asyncio
+from istsos.entity.rest.response import Response
 from istsos.actions.action import CompositeAction
 
 
@@ -26,5 +27,9 @@ class ObservationType(CompositeAction):
         """Render the result of the request following the OGC:SOS 2.0.0 standard.
         """
 
+        response = Response.get_template()
+
         if request['method'] == 'GET':
-            request['response'] = {'data': request['observationType']}
+            response['data'] = request['observationType']
+
+        request['response'] = Response(response)

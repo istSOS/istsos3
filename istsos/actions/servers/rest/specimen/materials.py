@@ -4,6 +4,7 @@
 # Version: v3.0.0
 
 import asyncio
+from istsos.entity.rest.response import Response
 from istsos.actions.action import CompositeAction
 from istsos.actions.builders.rest.materialBuilder import MaterialBuilder
 
@@ -31,8 +32,12 @@ class Materials(CompositeAction):
 standard.
         """
 
+        response = Response.get_template()
+
         if request['method'] == 'GET':
-            request['response'] = {'data': request['materials']}
+            response['data'] = request['materials']
         elif request['method'] == 'POST':
             link = 'http://istsos.org/istsos3/material/{}'.format(request['material']['name'])
-            request['response'] = {"message": 'new method link: {}'.format(link)}
+            request['message'] = "new method: {}".format(link)
+
+        request['response'] = Response(json_source=response)

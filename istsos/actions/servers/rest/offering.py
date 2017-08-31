@@ -7,6 +7,7 @@ import asyncio
 from istsos.actions.action import CompositeAction
 from istsos.actions.builders.rest.offeringFilterBuilder import OfferingFilterBuilder
 from istsos.actions.builders.rest.offeringBuilder import OfferingBuilder
+from istsos.entity.rest.response import Response
 
 
 class Offering(CompositeAction):
@@ -25,14 +26,17 @@ class Offering(CompositeAction):
             yield from self.add_creator('OfferingCreator')
         else:
             raise Exception('Method {} not supported'.format(request['method']))
-
     @asyncio.coroutine
     def after(self, request):
         """
             Render the result of the request following the OGC:SOS 2.0.0 standard.
         """
 
+        response = Response.get_template()
+
         if request['method'] == 'GET':
-            request['response'] = {'data': request['offerings']}
+            response['data'] = request['offerings']
         elif request['method'] == 'POST':
-            request['response'] = {'data': "new procedure id: {}".format(request['offering']['name'])}
+            response['message'] = "new procedure id: {}".format(request['offering']['name'])
+
+        request['response'] = Response(json_source=response)

@@ -5,6 +5,7 @@
 
 import asyncio
 from istsos.actions.action import CompositeAction
+from istsos.entity.rest.response import Response
 
 from istsos.actions.builders.rest.uomBuilder import UomBuilder
 
@@ -34,9 +35,14 @@ class Uom(CompositeAction):
         """Render the result of the request following the OGC:SOS 2.0.0
 standard.
         """
+
+        response = Response.get_template()
+
         if request['method'] == 'GET':
-            request['response'] = request['uoms']
+            response['data'] = request['uoms']
         elif request['method'] == "POST":
-            request['response'] = {"message": "new uom id: {}".format(request['uom']['id'])}
+            response['message'] = "new uom id: {}".format(request['uom']['id'])
         else:
-            request['response'] = {"message": "uom [{}] updated".format(request['uom']['id'])}
+            response['message'] = "uom [{}] updated".format(request['uom']['id'])
+
+        request['response'] = Response(json_source=response)

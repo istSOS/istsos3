@@ -4,6 +4,8 @@
 # Version: v3.0.0
 
 import asyncio
+from istsos.entity.rest.response import Response
+
 from istsos.actions.action import CompositeAction
 
 from istsos.actions.builders.rest.specimenBuilder import SpecimenBuilder
@@ -40,8 +42,12 @@ class Specimen(CompositeAction):
 standard.
         """
 
+        response = Response.get_template()
+
         if request['method'] == 'GET':
-            request['response'] = {'data': request['specimen']}
+            response['data'] = request['specimen']
         elif request['method'] == 'POST':
             link = 'http://istsos.org/istsos3/specimen/{}'.format(request['specimen']['identifier'])
-            request['response'] = {"message": 'new specimen link: {}'.format(link)}
+            response['message'] = 'new specimen link: {}'.format(link)
+
+        request['response'] = Response(json_source=response)

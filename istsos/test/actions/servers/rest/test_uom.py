@@ -27,7 +27,7 @@ class TestUom:
             request, stats=True
         )
 
-        uom_lists = response['response']
+        uom_lists = response['response']['data']
 
         for key in uom_lists.keys():
             if uom_lists[key]['name'] == self.body['name']:

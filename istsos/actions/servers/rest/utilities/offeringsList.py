@@ -4,6 +4,7 @@
 # Version: v3.0.0
 
 import asyncio
+from istsos.entity.rest.response import Response
 from istsos.actions.action import CompositeAction
 
 
@@ -26,5 +27,9 @@ class OfferingList(CompositeAction):
 standard.
         """
 
+        response = Response.get_template()
+
         if request['method'] == 'GET':
-            request['response'] = {'data': request['offeringsList']}
+            response['data'] = request['offeringList']
+
+        request['response'] = Response(json_source=response)

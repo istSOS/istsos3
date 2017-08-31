@@ -4,7 +4,6 @@
 # Version: v3.0.0
 
 import asyncio
-import re
 import os.path
 import json
 import uuid
@@ -12,7 +11,6 @@ import importlib
 import traceback
 
 import istsos
-from istsos.actions.servers.rest.rule import Rule
 from istsos.actions.servers.sos_2_0_0.requirement.core.requestRequest import (
     RequestRequest
 )
