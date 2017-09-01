@@ -16,10 +16,10 @@ class Materials(CompositeAction):
     @asyncio.coroutine
     def before(self, request):
 
-        if request['method'] == 'GET':
+        if request['body']['action'] == 'retrieve':
             yield from self.add_retriever('Materials')
 
-        elif request['method'] == 'POST':
+        elif request['body']['action'] == 'create':
             self.add(MaterialBuilder())
             yield from self.add_creator('MaterialCreator')
 
@@ -34,10 +34,11 @@ standard.
 
         response = Response.get_template()
 
-        if request['method'] == 'GET':
+        if request['body']['action'] == 'retrieve':
             response['data'] = request['materials']
-        elif request['method'] == 'POST':
+
+        elif request['body']['action'] == 'create':
             link = 'http://istsos.org/istsos3/material/{}'.format(request['material']['name'])
-            request['message'] = "new method: {}".format(link)
+            response['message'] = "{}".format(link)
 
         request['response'] = Response(json_source=response)

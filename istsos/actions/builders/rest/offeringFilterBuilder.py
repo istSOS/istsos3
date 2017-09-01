@@ -18,20 +18,22 @@ class OfferingFilterBuilder(OfferingFilterBuilder):
         """ @todo docstring
         """
 
-        offerings_filter = request.get_parameter('offering')
+        offerings_filter = request['body']['params'].get('offerings', None)
+
         if offerings_filter is not None:
             tmpl = OfferingsFilter.get_template()
-            offerings_filter = offerings_filter.split(',')
+
             if len(offerings_filter) > 0:
                 tmpl['offerings'] = offerings_filter
                 request.set_filter(OfferingsFilter(json_source=tmpl))
+
         else:
-            procedure_filter = request.get_parameter('procedure')
-            print(procedure_filter)
+
+            procedure_filter = request['body']['params'].get('procedures', None)
 
             if procedure_filter is not None:
                 tmpl = ProceduresFilter.get_template()
-                procedure_filter = procedure_filter.split(',')
+
                 if len(procedure_filter) > 0:
                     tmpl['procedures'] = procedure_filter
                     request.set_filter(ProceduresFilter(json_source=tmpl))

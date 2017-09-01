@@ -16,6 +16,6 @@ class SpecimenBuilder(Action):
     @asyncio.coroutine
     def process(self, request):
 
-        specimen = request['body']
+        specimen = request['body']['data']
 
         request['specimen'] = Specimen(json_source=specimen)

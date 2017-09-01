@@ -16,6 +16,6 @@ class MaterialBuilder(Action):
     @asyncio.coroutine
     def process(self, request):
 
-        material = request['body']
+        material = request['body']['data']
 
         request['material'] = Material(json_source=material)

@@ -16,19 +16,19 @@ class ObservedProperties(CompositeAction):
     @asyncio.coroutine
     def before(self, request):
 
-        if request['method'] == 'GET':
+        if request['body']['action'] == 'retrieve':
             yield from self.add_retriever('ObservedProperties')
 
-        elif request['method'] == 'POST':
+        elif request['body']['action'] == 'create':
             self.add(ObservedPropertyBulder())
             yield from self.add_creator('ObservedPropertyCreator')
 
-        elif request['method'] == 'PUT':
+        elif request['body']['action'] == 'update':
             self.add(ObservedPropertyBulder())
             yield from self.add_creator('ObservedPropertyCreator')
 
         else:
-            raise Exception('Method {} not supported'.format(request['method']))
+            raise Exception('action {} not supported'.format(request['method']))
 
     @asyncio.coroutine
     def after(self, request):
@@ -38,9 +38,9 @@ standard.
 
         response = Response.get_template()
 
-        if request['method'] == 'GET':
+        if request['body']['action'] == 'retrieve':
             response['data'] = request['observedProperties']
-        elif request['method'] == 'POST':
+        elif request['body']['action'] == 'create':
             response['message'] = "new observed property id: {}".format(request['observedProperty']['id'])
         else:
             response['message'] = "Observed property updated"

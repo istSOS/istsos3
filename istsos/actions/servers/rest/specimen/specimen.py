@@ -19,14 +19,14 @@ class Specimen(CompositeAction):
     @asyncio.coroutine
     def before(self, request):
 
-        if request['method'] == 'GET':
+        if request['body']['action'] == 'retrieve':
             """
                 Retrieve specimen
             """
             self.add(SpecimenFilterBuilder())
             yield from self.add_retriever('Specimen')
 
-        elif request['method'] == 'POST':
+        elif request['body']['action'] == 'create':
             """
                 Create new specimen
             """
@@ -44,9 +44,9 @@ standard.
 
         response = Response.get_template()
 
-        if request['method'] == 'GET':
+        if request['body']['action'] == 'retrieve':
             response['data'] = request['specimen']
-        elif request['method'] == 'POST':
+        elif request['body']['action'] == 'create':
             link = 'http://istsos.org/istsos3/specimen/{}'.format(request['specimen']['identifier'])
             response['message'] = 'new specimen link: {}'.format(link)
 

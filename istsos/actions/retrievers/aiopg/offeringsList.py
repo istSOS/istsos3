@@ -4,7 +4,6 @@
 # Version: v3.0.0
 
 import asyncio
-import istsos
 from istsos.actions.retrievers.offeringsList import OfferingsList
 
 
@@ -46,7 +45,7 @@ class OfferingsList(OfferingsList):
                     'begin_pos': res[2].isoformat() if res[2] else None,
                     'end_pos': res[3].isoformat() if res[3] else None,
                     'offering': res[4],
-                    'observable_property': []
+                    'observable_properties': []
                 }
 
                 if table:
@@ -70,7 +69,7 @@ class OfferingsList(OfferingsList):
                     r_obs = yield from cur.fetchall()
 
                     for obs_prop in r_obs:
-                        off['observable_property'].append({
+                        off['observable_properties'].append({
                             "name": obs_prop[0],
                             "definition": obs_prop[1],
                             "uom": obs_prop[2],
@@ -83,5 +82,6 @@ class OfferingsList(OfferingsList):
                     # est = yield from cur.fetchone()
                     # if len(est) > 0:
                     #     off['estimated'] = int(est[0])
+
 
                 request['offeringsList'].append(off)

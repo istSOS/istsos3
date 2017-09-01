@@ -27,8 +27,8 @@ class UomCreator(UomCreator):
                                     SET
                                         name=%s, 
                                         description=%s
-                                    WHERE i
-                                        d=%s;
+                                    WHERE 
+                                        id=%s;
                                 """, (
                     uom['name'],
                     uom['description'],

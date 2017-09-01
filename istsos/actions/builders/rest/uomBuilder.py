@@ -12,8 +12,8 @@ class UomBuilder(Action):
 
     @asyncio.coroutine
     def process(self, request):
-        request['uom'] = Uom(json_source=request['body'])
+        request['uom'] = Uom(json_source=request['body']['data'])
 
-        if request['method'] == 'PUT':
-            if not request['uom']['id']:
-                pass # raise Exception("missing uom id params")
+        # if request['method'] == 'PUT':
+        #     if not request['uom']['id']:
+        #         pass # raise Exception("missing uom id params")
