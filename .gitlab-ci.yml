@@ -16,7 +16,7 @@ before_script:
 
 test:
     image: doscio/istsos3-test:alpine
-    untrached: true
+    
     script:
         - pytest -s istsos/test/actions/servers/rest/test_uom.py
         - pytest -s istsos/test/actions/servers/rest/test_observedProperties.py
