@@ -15,12 +15,11 @@ class SystemType(CompositeAction):
     @asyncio.coroutine
     def before(self, request):
 
-        if request['method'] == 'GET':
-
+        if request['body']['action'] == 'retrieve':
             yield from self.add_retriever('SystemType')
 
         else:
-            raise Exception('Method {} not supported'.format(request['method']))
+            raise Exception('Method {} not supported'.format(request['body']['action']))
 
     @asyncio.coroutine
     def after(self, request):
@@ -29,7 +28,7 @@ class SystemType(CompositeAction):
 
         response = Response.get_template()
 
-        if request['method'] == 'GET':
+        if request['body']['action'] == 'retrieve':
             response['data'] = request['systemType']
 
         request['response'] = Response(response)
