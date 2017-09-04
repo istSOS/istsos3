@@ -155,9 +155,14 @@ CREATE TABLE public.sensor_types
 
 INSERT INTO public.sensor_types VALUES
 (1, 'undefined'),
-(2, 'insitu-fixes-point');
+(2, 'insitu-fixed-point'),
+(3, 'insitu-mobile-point'),
+(4, 'insitu-fixed-profile'),
+(5, 'insitu-mobile-profile'),
+(6, 'insitu-fixed-specimen'),
+(7, 'insitu-mobile-specimen');
 
-SELECT pg_catalog.setval('sensor_types_id_seq', 2, true);
+SELECT pg_catalog.setval('sensor_types_id_seq', 7, true);
 
 
 CREATE SEQUENCE offerings_id_seq
