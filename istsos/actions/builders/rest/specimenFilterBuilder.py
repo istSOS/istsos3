@@ -15,14 +15,15 @@ class SpecimenFilterBuilder(Action):
     def process(self, request):
         """ @todo docstring
         """
-        if request['method'] == 'GET':
 
-            identifier = request.get_parameter('specimen')
+        identifier = request['body']['params'].get('specimen', None)
 
-            # TODO: check identifier url
+        # TODO: check identifier url
 
-            tmpl = SpecimenFilter.get_template()
+        if not identifier:
+            raise Exception("Specimen identifier missing")
 
-            tmpl['identifier'] = identifier.split('/')[-1]
+        tmpl = SpecimenFilter.get_template()
+        tmpl['identifier'] = identifier.split('/')[-1]
 
-            request.set_filter(SpecimenFilter(json_source=tmpl))
+        request.set_filter(SpecimenFilter(json_source=tmpl))

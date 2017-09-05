@@ -13,8 +13,8 @@ class ObservedPropertyBulder(Action):
     @asyncio.coroutine
     def process(self, request):
 
-        request['observedProperty'] = ObservedProperty(json_source=request['body'])
+        request['observedProperty'] = ObservedProperty(json_source=request['body']['data'])
 
-        if request['method'] == 'PUT':
+        if request['body']['action'] == 'update':
             if not request['observedProperty']['id']:
                 raise Exception("missing id params")

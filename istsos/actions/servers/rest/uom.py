@@ -17,14 +17,14 @@ class Uom(CompositeAction):
     @asyncio.coroutine
     def before(self, request):
 
-        if request['method'] == 'GET':
+        if request['body']['action'] == 'retrieve':
             yield from self.add_retriever('Uoms')
 
-        elif request['method'] == 'POST':
+        elif request['body']['action'] == 'create':
             self.add((UomBuilder()))
             yield from self.add_creator('UomCreator')
 
-        elif request['method'] == 'PUT':
+        elif request['body']['action'] == 'update':
             self.add((UomBuilder()))
             yield from self.add_creator('UomCreator')
         else:
@@ -38,9 +38,9 @@ standard.
 
         response = Response.get_template()
 
-        if request['method'] == 'GET':
+        if request['body']['action'] == 'retrieve':
             response['data'] = request['uoms']
-        elif request['method'] == "POST":
+        elif request['body']['action'] == 'create':
             response['message'] = "new uom id: {}".format(request['uom']['id'])
         else:
             response['message'] = "uom [{}] updated".format(request['uom']['id'])

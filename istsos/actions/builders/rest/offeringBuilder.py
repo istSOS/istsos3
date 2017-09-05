@@ -17,7 +17,7 @@ class OfferingBuilder(OfferingBuilder):
     @asyncio.coroutine
     def process(self, request):
 
-        offering = request['body']
+        offering = request['body']['data']
 
         offering['name'] = str(uuid.uuid1()).replace('-', '')
 

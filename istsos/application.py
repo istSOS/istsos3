@@ -201,9 +201,8 @@ like this:
     def get_current_requests(self):
         return self.instance.requests
 
-
 REST_API = [
-    (r'uom', r'uom', 'Uom'),
+    (r'uoms', r'uom', 'Uom'),
     (r'configurations/identification', r'configurations.identification', 'Identification'),
     (r'configurations/provider', r'configurations.provider', 'Provider'),
     (r'configurations/loader', r'configurations.loader', 'Loader'),
@@ -213,13 +212,13 @@ REST_API = [
     (r'specimen', r'specimen.specimen', 'Specimen'),
     (r'material', r'specimen.materials', 'Materials'),
     (r'method', r'specimen.methods', 'Methods'),
-    (r'offeringlist', r'utilities.offeringsList', 'OfferingList'),
+    (r'offeringList', r'utilities.offeringsList', 'OfferingList'),
     (r'observationType', r'utilities.observationType', 'ObservationType'),
     (r'systemType', r'utilities.systemType', 'SystemType')
 ]
 
 
-class Server():
+class Server:
     """docstring for Server."""
     def __init__(self, state):
         self.state = state
@@ -296,10 +295,9 @@ The HTTPRequest shall be prepared by the web framework used.
 
         elif path[0] == 'rest':
             try:
-                path.pop(0)
-                path = "/".join(path)
+                elem = request['body']['entity']
 
-                action = self.rules[path]()
+                action = self.rules[elem]()
 
             except Exception:
                 traceback.print_exc()

@@ -17,15 +17,15 @@ class Methods(CompositeAction):
     @asyncio.coroutine
     def before(self, request):
 
-        if request['method'] == 'GET':
+        if request['body']['action'] == 'retrieve':
             yield from self.add_retriever('Methods')
 
-        elif request['method'] == 'POST':
+        elif request['body']['action'] == 'create':
             self.add(MethodBuilder())
             yield from self.add_creator('MethodCreator')
 
         else:
-            raise Exception('Method {} not supported'.format(request['method']))
+            raise Exception('Method {} not supported'.format(request['body']['action']))
 
     @asyncio.coroutine
     def after(self, request):
@@ -35,9 +35,9 @@ standard.
 
         response = Response.get_template()
 
-        if request['method'] == 'GET':
+        if request['body']['action'] == 'retrieve':
             response['data'] = request['specimenMethods']
-        elif request['method'] == 'POST':
+        elif request['body']['action'] == 'create':
             link = 'http://istsos.org/istsos3/method/{}'.format(request['specimenMethod']['name'])
 
             response['message'] = "new method: {}".format(link)

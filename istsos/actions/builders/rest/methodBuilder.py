@@ -16,6 +16,6 @@ class MethodBuilder(Action):
     @asyncio.coroutine
     def process(self, request):
 
-        method = request['body']
+        method = request['body']['data']
 
         request['specimenMethod'] = Method(json_source=method)

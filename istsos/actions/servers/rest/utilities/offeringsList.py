@@ -15,7 +15,7 @@ class OfferingList(CompositeAction):
     @asyncio.coroutine
     def before(self, request):
 
-        if request['method'] == 'GET':
+        if request['body']['action'] == 'retrieve':
             yield from self.add_retriever('OfferingsList')
 
         else:
@@ -29,7 +29,7 @@ standard.
 
         response = Response.get_template()
 
-        if request['method'] == 'GET':
-            response['data'] = request['offeringList']
+        if request['body']['action'] == 'retrieve':
+            response['data'] = request['offeringsList']
 
         request['response'] = Response(json_source=response)

@@ -16,63 +16,66 @@ class TestOffering:
         state = State('config-test.json')
         server = yield from Server.create(state)
 
-        url = '/rest/offering'
-
-        params = {
-            "procedure": self.body['procedure']
+        body = {
+            "entity": "offering",
+            "action": "retrieve",
+            "params": {
+                "procedures": [self.body['data']['procedure']]
+            }
         }
 
         # Preparing the Request object
-        request = HttpRequest(
-            "GET",
-            url,
-            parameters=params
-        )
+        request = HttpRequest("POST", '/rest', body=body)
 
         response = yield from server.execute_http_request(
             request, stats=True
         )
+
+        assert response['response']['success']
+
         procedure = response['response']['data'][0]['procedure']
 
-        assert procedure == params['procedure']
+        assert procedure == self.body['data']['procedure']
 
     def execute_post(self):
         state = State('config-test.json')
         server = yield from Server.create(state)
 
-        url = '/rest/offering'
-
         self.body = {
-            "observable_property": [
-                {
-                    "type": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
-                    "name": "air-temperature",
-                    "definition": "urn:ogc:def:parameter:x-istsos:1.0:meteo:air:temperature",
-                    "uom": "°C"
-                }
-            ],
-            "observation_type": [
-                {
-                    "definition": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
-                    "description": ""
-                }
-            ],
-            "procedure": "urn:ogc:def:procedure:x-istsos:1.0:{}".format(uuid.uuid4()),
-            "procedure_description_format": [
-                "http://www.opengis.net/sensorML/1.0.1"
-            ],
-            "foi_type": "http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint",
-            "systemType": "undefined"
+            "entity": "offering",
+            "action": "create",
+            "data": {
+                "observable_property": [
+                    {
+                        "type": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+                        "name": "air-temperature",
+                        "definition": "urn:ogc:def:parameter:x-istsos:1.0:meteo:air:temperature",
+                        "uom": "°C"
+                    }
+                ],
+                "observation_type": [
+                    {
+                        "definition": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+                        "description": ""
+                    }
+                ],
+                "procedure": "urn:ogc:def:procedure:x-istsos:1.0:{}".format(uuid.uuid4()),
+                "procedure_description_format": [
+                    "http://www.opengis.net/sensorML/1.0.1"
+                ],
+                "foi_type": "http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint",
+                "systemType": "undefined"
+            }
         }
 
         # Preparing the Request object
-        request = HttpRequest("POST", url, body=self.body)
+        request = HttpRequest("POST", '/rest', body=self.body)
 
         response = yield from server.execute_http_request(
             request, stats=True
         )
 
-        assert True
+        assert response['response']['success']
 
     def execute_all(self):
         yield from self.execute_post()
