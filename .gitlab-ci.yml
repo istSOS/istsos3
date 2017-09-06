@@ -16,6 +16,7 @@ before_script:
     - psql -h "$POSTGRES_HOST" -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "SELECT 'OK' AS status;"
     - psql -h "$POSTGRES_HOST" -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f istsos/assets/postgresql_9.4_istsos_3.0.0.sql
 
+
 stages:
   - test
 
