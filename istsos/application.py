@@ -203,9 +203,9 @@ like this:
 
 REST_API = [
     (r'uoms', r'uom', 'Uom'),
-    (r'configurations/identification', r'configurations.identification', 'Identification'),
-    (r'configurations/provider', r'configurations.provider', 'Provider'),
-    (r'configurations/loader', r'configurations.loader', 'Loader'),
+    (r'identification', r'configurations.identification', 'Identification'),
+    (r'provider', r'configurations.provider', 'Provider'),
+    (r'loader', r'configurations.loader', 'Loader'),
     (r'observedProperties', r'observedProperties', 'ObservedProperties'),
     (r'offering', r'offering', 'Offering'),
     (r'observation', r'observation', 'Observation'),
