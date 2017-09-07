@@ -13,15 +13,14 @@ from istsos.actions.builders.observedPropertyFilterBuilder import (
 class ObservedPropertyFilterBuilder(ObservedPropertyFilterBuilder):
     @asyncio.coroutine
     def process(self, request):
-        if request['method'] == 'GET':
 
-            _filter = request.get_parameter('observedProperty')
+        _filter = request['body']['params'].get('observedProperty')
 
-            if _filter is not None:
-                tmpl = ObservedPropertyFilter.get_template()
-                _filter = _filter.split(',')
-                if len(_filter) > 0:
-                    tmpl['observedProperties'] = _filter
-                    request.set_filter(
-                        ObservedPropertyFilter(json_source=tmpl)
-                    )
+        if _filter is not None:
+            tmpl = ObservedPropertyFilter.get_template()
+            _filter = _filter.split(',')
+            if len(_filter) > 0:
+                tmpl['observedProperties'] = _filter
+                request.set_filter(
+                    ObservedPropertyFilter(json_source=tmpl)
+                )

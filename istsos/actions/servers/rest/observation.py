@@ -24,7 +24,7 @@ class Observation(CompositeAction):
     @asyncio.coroutine
     def before(self, request):
 
-        if request['method'] == 'GET':
+        if request['body']['action'] == 'retrieve':
 
             self.add(TemporalFilterBuilder())
             self.add(OfferingFilterBuilder())
@@ -34,7 +34,7 @@ class Observation(CompositeAction):
             yield from self.add_retriever('Offerings')
             yield from self.add_retriever('Observations')
 
-        elif request['method'] == 'POST':
+        elif request['body']['action'] == 'create':
 
             # ObservationBuilder parses the JSON POST request into
             # an Observation entity
@@ -59,9 +59,9 @@ class Observation(CompositeAction):
 
         response = Response.get_template()
 
-        if request['method'] == 'GET':
+        if request['body']['action'] == 'retrieve':
             response['data'] = request['observations']
-        elif request['method'] == 'POST':
+        elif request['body']['action'] == 'create':
             response['message'] = "new data added"
 
         request['response'] = Response(json_source=response)

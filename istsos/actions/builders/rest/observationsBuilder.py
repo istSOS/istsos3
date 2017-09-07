@@ -18,7 +18,7 @@ class ObservationsBuilder(ObservationsBuilder):
         """ @todo docstring
         """
 
-        offerings_filter = request['body']['offering']
+        offerings_filter = request['body']['data']['offering']
 
         if offerings_filter is not None:
             tmpl = OfferingsFilter.get_template()
@@ -28,4 +28,4 @@ class ObservationsBuilder(ObservationsBuilder):
                 request.set_filter(OfferingsFilter(json_source=tmpl))
 
         # Adding the Observation entity into the request array
-        request['observation'] = Observation(json_source=request['body'])
+        request['observation'] = Observation(json_source=request['body']['data'])
