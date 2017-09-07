@@ -4,18 +4,13 @@
 # Version: v3.0.0
 
 import asyncio
-from istsos.actions.action import Action
-from istsos.entity.specimen import Specimen
+from istsos.actions.retrievers.retriever import Retriever
 
 
-class SpecimenBuilder(Action):
+class SystemType(Retriever):
     """Query an SOS to retrieve observation data structured according to the
     O&M specification.
     """
-
     @asyncio.coroutine
-    def process(self, request):
-
-        specimen = request['body']['data']
-
-        request['specimen'] = Specimen(json_source=specimen)
+    def before(self, request):
+        request['systemType'] = []

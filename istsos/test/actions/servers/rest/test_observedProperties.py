@@ -4,6 +4,7 @@
 # Version: v3.0.0
 
 import asyncio
+import uuid
 from istsos.application import Server, State
 from istsos.entity.httpRequest import HttpRequest
 
@@ -15,13 +16,13 @@ class TestObservedProperties:
         state = State('config-test.json')
         server = yield from Server.create(state)
 
-        url = '/rest/observedProperties'
+        body = {
+            "entity": "observedProperties",
+            "action": "retrieve"
+        }
 
         # Preparing the Request object
-        request = HttpRequest(
-            "GET",
-            url,
-        )
+        request = HttpRequest("POST", '/rest', body=body)
 
         response = yield from server.execute_http_request(
             request, stats=True
@@ -30,7 +31,7 @@ class TestObservedProperties:
         op_list = response['response']['data']
 
         for op in op_list:
-            if op['def'] == self.body['def']:
+            if op['def'] == self.body['data']['def']:
                 assert True
                 return
 
@@ -40,22 +41,24 @@ class TestObservedProperties:
         state = State('config-test.json')
         server = yield from Server.create(state)
 
-        url = '/rest/observedProperties'
-
         self.body = {
-                    "description": "Air temperature at 2 meters above terrain",
-                    "def": "urn:ogc:def:parameter:x-istsos:1.0:meteo:air:temperature:test",
-                    "name": "air-temperature-test"
+                    "entity": "observedProperties",
+                    "action": "create",
+                    "data": {
+                        "description": "Air temperature at 2 meters above terrain",
+                        "def": "urn:ogc:def:parameter:x-istsos:1.0:meteo:air:temperature:{}".format(uuid.uuid4()),
+                        "name": "air-temperature-test"
+                    }
                 }
 
         # Preparing the Request object
-        request = HttpRequest("POST", url, body=self.body)
+        request = HttpRequest("POST", '/rest', body=self.body)
 
         response = yield from server.execute_http_request(
             request, stats=True
         )
 
-        assert True
+        assert response['response']['success']
 
     def execute_all(self):
         yield from self.execute_post()

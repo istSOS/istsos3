@@ -93,22 +93,6 @@ class SosHandler(BaseHandler):
 
 class RestHandler(BaseHandler):
 
-    @coroutine
-    def get(self, *args, **kwargs):
-        self.set_header("Content-Type", "application/json; charset=utf-8")
-        parameters = {
-            k: self.get_argument(k) for k in self.request.arguments
-        }
-        print(self.request.path)
-        request = HttpRequest(
-            "GET",
-            self.request.path,
-            parameters=parameters
-        )
-        yield from self.istsos.execute_http_request(
-            request, stats=True
-        )
-        self.write(request['response'])
 
     @coroutine
     def post(self, *args, **kwargs):
@@ -117,22 +101,6 @@ class RestHandler(BaseHandler):
 
         request = HttpRequest(
             "POST",
-            self.request.path,
-            body=json.loads(self.request.body.decode('utf-8')),
-            content_type=self.request.headers.get(
-                "content-type", "application/json")
-        )
-        yield from self.istsos.execute_http_request(
-            request, stats=True
-        )
-        self.write(request['response'])
-
-    @coroutine
-    def put(self, *args, **kwargs):
-        self.set_header("Content-Type", "application/json; charset=utf-8")
-
-        request = HttpRequest(
-            "PUT",
             self.request.path,
             body=json.loads(self.request.body.decode('utf-8')),
             content_type=self.request.headers.get(
@@ -166,7 +134,7 @@ if __name__ == "__main__":
 
     app = Application([
         (r'/sos', SosHandler),
-        (r'/rest/.*', RestHandler)
+        (r'/rest', RestHandler)
     ], **settings)
 
     app.listen(8887)

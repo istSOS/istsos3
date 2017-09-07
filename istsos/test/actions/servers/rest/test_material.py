@@ -4,6 +4,7 @@
 # Version: v3.0.0
 
 import asyncio
+import uuid
 from istsos.application import Server, State
 from istsos.entity.httpRequest import HttpRequest
 
@@ -15,13 +16,13 @@ class TestMaterial:
         state = State('config-test.json')
         server = yield from Server.create(state)
 
-        url = '/rest/material'
+        body = {
+            "entity": "material",
+            "action": "retrieve"
+        }
 
         # Preparing the Request object
-        request = HttpRequest(
-            "GET",
-            url,
-        )
+        request = HttpRequest("GET", '/rest', body=body)
 
         response = yield from server.execute_http_request(
             request, stats=True
@@ -30,7 +31,7 @@ class TestMaterial:
         mat_lists = response['response']['data']
 
         for mat in mat_lists:
-            if mat['name'] == self.body['name']:
+            if mat['name'] == self.body['data']['name']:
                 assert True
                 return
 
@@ -40,21 +41,23 @@ class TestMaterial:
         state = State('config-test.json')
         server = yield from Server.create(state)
 
-        url = '/rest/material'
-
         self.body = {
-                        "name": "material-test",
-                        "description": "material test API"
-                    }
+            "entity": "material",
+            "action": "create",
+            "data": {
+                "name": "{}".format(uuid.uuid4()),
+                "description": "test method API"
+            }
+        }
 
         # Preparing the Request object
-        request = HttpRequest("POST", url, body=self.body)
+        request = HttpRequest("POST", '/rest', body=self.body)
 
         response = yield from server.execute_http_request(
             request, stats=True
         )
 
-        assert True
+        assert response['response']['success']
 
     def execute_all(self):
         yield from self.execute_post()

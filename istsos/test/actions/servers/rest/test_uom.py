@@ -4,6 +4,7 @@
 # Version: v3.0.0
 
 import asyncio
+import uuid
 from istsos.application import Server, State
 from istsos.entity.httpRequest import HttpRequest
 
@@ -15,22 +16,23 @@ class TestUom:
         state = State('config-test.json')
         server = yield from Server.create(state)
 
-        url = '/rest/uom'
+
+        body = {
+            "entity": "uoms",
+            "action": "retrieve"
+        }
 
         # Preparing the Request object
-        request = HttpRequest(
-            "GET",
-            url,
-        )
+        request = HttpRequest("POST", 'rest', body=body)
 
         response = yield from server.execute_http_request(
             request, stats=True
         )
 
-        uom_lists = response['response']
+        uom_lists = response['response']['data']
 
         for key in uom_lists.keys():
-            if uom_lists[key]['name'] == self.body['name']:
+            if uom_lists[key]['name'] == self.body['data']['name']:
                 assert True
                 return
 
@@ -40,21 +42,23 @@ class TestUom:
         state = State('config-test.json')
         server = yield from Server.create(state)
 
-        url = '/rest/uom'
-
         self.body = {
-                "name": "prova",
-                "description": "prova"
+                "entity": "uoms",
+                "action": "create",
+                "data": {
+                    "name": "{}".format(uuid.uuid4()),
+                    "description": "prova"
+                }
             }
 
         # Preparing the Request object
-        request = HttpRequest("POST", url, body=self.body)
+        request = HttpRequest("POST", '/rest', body=self.body)
 
         response = yield from server.execute_http_request(
             request, stats=True
         )
 
-        assert True
+        assert response['response']['success']
 
     def execute_all(self):
         yield from self.execute_post()

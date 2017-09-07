@@ -1,20 +1,27 @@
+image: doscio/istsos3-test:alpine
+
 services:
-    - doscio/istsos3-test:alpine
+- name: doscio/istsos3-test:alpine
+  alias: postgres
 
 variables:
   # Configure postgres service (https://hub.docker.com/_/postgres/)
-  POSTGRES_DB: istsos
-  POSTGRES_USER: postgres
-  POSTGRES_PASSWORD: postgres
-  POSTGRES_HOST: doscio__istsos3-test
+    POSTGRES_DB: istsos
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: postgres
+    POSTGRES_HOST: postgres
 
 before_script:
     - export PGPASSWORD=$POSTGRES_PASSWORD
     - psql -h "$POSTGRES_HOST" -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "SELECT 'OK' AS status;"
     - psql -h "$POSTGRES_HOST" -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f istsos/assets/postgresql_9.4_istsos_3.0.0.sql
 
-test:
-    image: doscio/istsos3-test:alpine
+
+stages:
+  - test
+
+rest:
+    stage: test
 
     script:
         - pytest -s istsos/test/actions/servers/rest/test_uom.py
@@ -23,3 +30,5 @@ test:
         - pytest -s istsos/test/actions/servers/rest/test_method.py
         - pytest -s istsos/test/actions/servers/rest/test_offering.py
         - pytest -s istsos/test/actions/servers/rest/test_specimen.py
+        - pytest -s istsos/test/actions/servers/rest/test_systemType.py
+

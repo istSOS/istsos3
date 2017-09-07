@@ -4,6 +4,8 @@
 # Version: v3.0.0
 
 import asyncio
+from istsos.entity.rest.response import Response
+
 from istsos.actions.action import CompositeAction
 from istsos.actions.builders.rest.methodBuilder import MethodBuilder
 
@@ -15,15 +17,15 @@ class Methods(CompositeAction):
     @asyncio.coroutine
     def before(self, request):
 
-        if request['method'] == 'GET':
+        if request['body']['action'] == 'retrieve':
             yield from self.add_retriever('Methods')
 
-        elif request['method'] == 'POST':
+        elif request['body']['action'] == 'create':
             self.add(MethodBuilder())
             yield from self.add_creator('MethodCreator')
 
         else:
-            raise Exception('Method {} not supported'.format(request['method']))
+            raise Exception('Method {} not supported'.format(request['body']['action']))
 
     @asyncio.coroutine
     def after(self, request):
@@ -31,8 +33,13 @@ class Methods(CompositeAction):
 standard.
         """
 
-        if request['method'] == 'GET':
-            request['response'] = {'data': request['specimenMethods']}
-        elif request['method'] == 'POST':
+        response = Response.get_template()
+
+        if request['body']['action'] == 'retrieve':
+            response['data'] = request['specimenMethods']
+        elif request['body']['action'] == 'create':
             link = 'http://istsos.org/istsos3/method/{}'.format(request['specimenMethod']['name'])
-            request['response'] = {"message": 'new method link: {}'.format(link)}
+
+            response['message'] = "new method: {}".format(link)
+
+        request['response'] = Response(json_source=response)

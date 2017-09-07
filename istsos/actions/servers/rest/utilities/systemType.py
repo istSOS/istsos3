@@ -8,19 +8,18 @@ from istsos.entity.rest.response import Response
 from istsos.actions.action import CompositeAction
 
 
-class ObservationType(CompositeAction):
+class SystemType(CompositeAction):
     """Rest api used to manage unit of measures
     """
 
     @asyncio.coroutine
     def before(self, request):
 
-        if request['method'] == 'GET':
-
-            yield from self.add_retriever('ObservationType')
+        if request['body']['action'] == 'retrieve':
+            yield from self.add_retriever('SystemType')
 
         else:
-            raise Exception('Method {} not supported'.format(request['method']))
+            raise Exception('Method {} not supported'.format(request['body']['action']))
 
     @asyncio.coroutine
     def after(self, request):
@@ -29,7 +28,7 @@ class ObservationType(CompositeAction):
 
         response = Response.get_template()
 
-        if request['method'] == 'GET':
-            response['data'] = request['observationType']
+        if request['body']['action'] == 'retrieve':
+            response['data'] = request['systemType']
 
         request['response'] = Response(response)

@@ -4,6 +4,8 @@
 # Version: v3.0.0
 
 import asyncio
+from istsos.entity.rest.response import Response
+
 from istsos.actions.action import CompositeAction
 
 from istsos.actions.builders.rest.specimenBuilder import SpecimenBuilder
@@ -17,14 +19,14 @@ class Specimen(CompositeAction):
     @asyncio.coroutine
     def before(self, request):
 
-        if request['method'] == 'GET':
+        if request['body']['action'] == 'retrieve':
             """
                 Retrieve specimen
             """
             self.add(SpecimenFilterBuilder())
             yield from self.add_retriever('Specimen')
 
-        elif request['method'] == 'POST':
+        elif request['body']['action'] == 'create':
             """
                 Create new specimen
             """
@@ -40,8 +42,12 @@ class Specimen(CompositeAction):
 standard.
         """
 
-        if request['method'] == 'GET':
-            request['response'] = {'data': request['specimen']}
-        elif request['method'] == 'POST':
+        response = Response.get_template()
+
+        if request['body']['action'] == 'retrieve':
+            response['data'] = request['specimen']
+        elif request['body']['action'] == 'create':
             link = 'http://istsos.org/istsos3/specimen/{}'.format(request['specimen']['identifier'])
-            request['response'] = {"message": 'new specimen link: {}'.format(link)}
+            response['message'] = 'new specimen link: {}'.format(link)
+
+        request['response'] = Response(json_source=response)
