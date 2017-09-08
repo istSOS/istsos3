@@ -15,7 +15,7 @@ class ObservationType(CompositeAction):
     @asyncio.coroutine
     def before(self, request):
 
-        if request['method'] == 'GET':
+        if request['body']['action'] == 'retrieve':
 
             yield from self.add_retriever('ObservationType')
 
@@ -29,7 +29,7 @@ class ObservationType(CompositeAction):
 
         response = Response.get_template()
 
-        if request['method'] == 'GET':
+        if request['body']['action'] == 'retrieve':
             response['data'] = request['observationType']
 
         request['response'] = Response(response)
