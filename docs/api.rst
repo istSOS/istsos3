@@ -46,7 +46,7 @@ post example:
     {
         "entity": "entity_name",
         "action": "create",
-        "body": {
+        "data": {
             "param1": "...",
             "param2": "..."
         }
@@ -81,7 +81,7 @@ JSON body:
     {
         "entity": "uoms",
         "action": "create",
-        "body": {
+        "data": {
             "name": "mm",
             "description": "millimenter"
         }
@@ -123,7 +123,7 @@ Request body:
     {
         "entity": "observedProperties",
         "action": "create",
-        "body": {
+        "data": {
             "description": "Air temperature at 2 meters above terrain",
             "def": "urn:ogc:def:parameter:x-istsos:1.0:meteo:air:temperature",
             "name": "air-temperature"
