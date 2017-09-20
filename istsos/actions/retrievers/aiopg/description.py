@@ -34,6 +34,5 @@ class Description(Description):
                         procedure_name = %s;
                 """, (procedures[0],))
                 rec = yield from cur.fetchone()
-                print("Found %s p" % len(rec))
                 if rec is not None:
                     request['procedureDescription'] = rec[0]

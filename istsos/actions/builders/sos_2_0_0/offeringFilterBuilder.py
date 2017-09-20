@@ -4,7 +4,7 @@
 # Version: v3.0.0
 
 import asyncio
-import uuid
+import istsos
 from istsos.entity.filters.offeringsFilter import OfferingsFilter
 from istsos.actions.builders.offeringFilterBuilder import OfferingFilterBuilder
 
@@ -16,6 +16,9 @@ class OfferingFilterBuilder(OfferingFilterBuilder):
     def process(self, request):
         """ @todo docstring
         """
+        offeringFilter = None
+        offeringName = None
+
         if request.is_get_observation():
             if request['method'] == 'GET':
                 offeringsFilter = request.get_parameter('offering')
@@ -24,14 +27,20 @@ class OfferingFilterBuilder(OfferingFilterBuilder):
                     offeringsFilter = offeringsFilter.split(',')
                     if len(offeringsFilter) > 0:
                         tmpl['offerings'] = offeringsFilter
-                        request.set_filter(OfferingsFilter(json_source=tmpl))
+                        offeringFilter = OfferingsFilter(json_source=tmpl)
 
         elif request.is_insert_observation():
             if request['method'] == 'POST':
-                request.set_filter(OfferingsFilter(json_source={
+                offeringFilter = OfferingsFilter(json_source={
                     "offerings": [
                         request.get_xml().find(
                             './/sos_2_0:offering', request.ns
                         ).text.strip()
                     ]
-                }))
+                })
+
+        if offeringFilter is not None:
+            request.set_filter(offeringFilter)
+            istsos.debug("Offerings filter: %s" % offeringFilter["offerings"])
+        else:
+            istsos.debug("Offering filter NOT set")

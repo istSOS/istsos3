@@ -12,9 +12,6 @@ from istsos.actions.builders.sos_2_0_0.observationsBuilder import (
 from istsos.actions.builders.sos_2_0_0.offeringFilterBuilder import (
     OfferingFilterBuilder
 )
-from istsos.actions.servers.sos_2_0_0.requirement.transactional.ioFactoryRequirement import (
-    IOFactoryRequirement
-)
 
 
 class InsertObservation(CompositeAction):
@@ -28,23 +25,20 @@ structured according to the O&M specification into the SOS storage.
         """
         # @todo > Add XML Validation with XSD
 
-        # ObservationBuilder parses the SOS 2.0.0 XML POST request into
-        # an Observation entity
-        # > istsos.actions.builders.sos_2_0_0.observationsBuilder
-        self.add(ObservationsBuilder())
-
         # Added filter used by the Offering retriever
         self.add(OfferingFilterBuilder())
 
         # Adding action Offering retriever
         yield from self.add_retriever('Offerings')
 
-        # Check the insertObservation consistency
-        self.add(IOFactoryRequirement())
+        # ObservationBuilder parses the SOS 2.0.0 XML POST request into
+        # an Observation entity
+        # > istsos.actions.builders.sos_2_0_0.observationsBuilder
+        self.add(ObservationsBuilder())
 
         # Add the Observation action creator that will insert the new
         # observation in the database
-        yield from self.add_creator('ObservationFactoryCreator')
+        yield from self.add_creator('ObservationCreator')
 
     @asyncio.coroutine
     def after(self, request):

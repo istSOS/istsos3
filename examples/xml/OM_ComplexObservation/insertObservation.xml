@@ -1,0 +1,99 @@
+<sos:InsertObservation service="SOS" version="2.0.0"
+    xmlns:sos="http://www.opengis.net/sos/2.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:swe="http://www.opengis.net/swe/2.0"
+    xmlns:swes="http://www.opengis.net/swes/2.0"
+    xmlns:gml="http://www.opengis.net/gml/3.2"
+    xmlns:ogc="http://www.opengis.net/ogc"
+    xmlns:om="http://www.opengis.net/om/2.0"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+    <sos:offering>chemical_analisys</sos:offering>
+    <sos:observation>
+        <om:OM_Observation id="f1">
+            <om:type
+                xlink:href="http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation"/>
+            <om:phenomenonTime>
+                <gml:TimeInstant gml:id="phenomenonTime">
+                    <gml:timePosition>2017-05-08T16:50:00.000+00:00</gml:timePosition>
+                </gml:TimeInstant>
+            </om:phenomenonTime>
+            <om:resultTime xlink:href="#phenomenonTime"/>
+            <om:procedure xlink:href="chemical_analisys"/>
+            <om:observedProperty
+                xlink:href="urn:ogc:def:parameter:x-istsos:1.0:water:analysis"/>
+            <om:featureOfInterest xlink:href="sampling-256"/>
+            <om:result xsi:type="swe:DataRecordPropertyType">
+                <swe:DataRecord>
+                    <swe:field>
+                        <swe:Quantity definition="urn:ogc:def:parameter:x-istsos:1.0:water:analysis:ph">
+                            <swe:uom code="pH"/>
+                            <swe:value>7.9</swe:value>
+                        </swe:Quantity>
+                    </swe:field>
+                    <swe:field>
+                        <swe:Quantity definition="urn:ogc:def:parameter:x-istsos:1.0:water:analysis:as">
+                            <swe:uom code="µg/l"/>
+                            <swe:value>1.2</swe:value>
+                        </swe:Quantity>
+                    </swe:field>
+                    <swe:field>
+                        <swe:Quantity definition="urn:ogc:def:parameter:x-istsos:1.0:water:analysis:conductibility">
+                            <swe:uom code="µS/cm"/>
+                            <swe:value>372</swe:value>
+                        </swe:Quantity>
+                    </swe:field>
+                    <swe:field>
+                        <swe:Quantity definition="urn:ogc:def:parameter:x-istsos:1.0:water:analysis:nh4">
+                            <swe:uom code="µg/l"/>
+                            <swe:value>3.79</swe:value>
+                        </swe:Quantity>
+                    </swe:field>
+                </swe:DataRecord>
+            </om:result>
+        </om:OM_Observation>
+    </sos:observation>
+    <sos:observation>
+        <om:OM_Observation id="f2">
+            <om:type
+                xlink:href="http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation"/>
+            <om:phenomenonTime>
+                <gml:TimeInstant gml:id="phenomenonTime">
+                    <gml:timePosition>2017-05-08T17:00:00.000+00:00</gml:timePosition>
+                </gml:TimeInstant>
+            </om:phenomenonTime>
+            <om:resultTime xlink:href="#phenomenonTime"/>
+            <om:procedure xlink:href="chemical_analisys"/>
+            <om:observedProperty
+                xlink:href="urn:ogc:def:parameter:x-istsos:1.0:water:analysis"/>
+            <om:featureOfInterest xlink:href="sampling-256"/>
+            <om:result xsi:type="swe:DataRecordPropertyType">
+                <swe:DataRecord>
+                    <swe:field>
+                        <swe:Quantity definition="urn:ogc:def:parameter:x-istsos:1.0:water:analysis:ph">
+                            <swe:uom code="pH"/>
+                            <swe:value>7.6</swe:value>
+                        </swe:Quantity>
+                    </swe:field>
+                    <swe:field>
+                        <swe:Quantity definition="urn:ogc:def:parameter:x-istsos:1.0:water:analysis:as">
+                            <swe:uom code="µg/l"/>
+                            <swe:value>1.3</swe:value>
+                        </swe:Quantity>
+                    </swe:field>
+                    <swe:field>
+                        <swe:Quantity definition="urn:ogc:def:parameter:x-istsos:1.0:water:analysis:conductibility">
+                            <swe:uom code="µS/cm"/>
+                            <swe:value>368</swe:value>
+                        </swe:Quantity>
+                    </swe:field>
+                    <swe:field>
+                        <swe:Quantity definition="urn:ogc:def:parameter:x-istsos:1.0:water:analysis:nh4">
+                            <swe:uom code="µg/l"/>
+                            <swe:value>3.15</swe:value>
+                        </swe:Quantity>
+                    </swe:field>
+                </swe:DataRecord>
+            </om:result>
+        </om:OM_Observation>
+    </sos:observation>
+</sos:InsertObservation>

@@ -13,7 +13,7 @@ import asyncio
 import json
 import sys
 
-sys.path.append('/home/ist/workspace/istsos3')
+sys.path.append('.')
 
 
 # Python>3.4.3
@@ -44,7 +44,8 @@ https://gist.github.com/drgarcia1986/6b666c05ccb03e9525b4
                 future.set_exception(e)
 
         # asyncio.async() is deprecated, replaced with asyncio.ensure_future()
-        asyncio.ensure_future(func(*args, **kwargs)).add_done_callback(future_done)
+        asyncio.ensure_future(
+            func(*args, **kwargs)).add_done_callback(future_done)
         return future
     return decorator
 
@@ -92,7 +93,6 @@ class SosHandler(BaseHandler):
 
 
 class RestHandler(BaseHandler):
-
 
     @coroutine
     def post(self, *args, **kwargs):

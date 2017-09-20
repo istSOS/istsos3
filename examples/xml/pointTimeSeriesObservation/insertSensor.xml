@@ -26,7 +26,7 @@
                         <sml:ClassifierList>
                             <sml:classifier name="systemType">
                                 <sml:Term definition="urn:ogc:def:classifier:x-istsos:1.0:systemType">
-                                    <sml:value>pointTimeSeriesObservation</sml:value>
+                                    <sml:value>insitu-fixed-point</sml:value>
                                 </sml:Term>
                             </sml:classifier>
                         </sml:ClassifierList>
@@ -50,7 +50,9 @@
                         </swe:SimpleDataRecord>
                     </sml:capabilities>
                     <sml:location>
-                        <gml:Point srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                        <gml:Point
+                                gml:name="breganzona"
+                                srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
                             <gml:coordinates>46.001470,8.919284,510.3</gml:coordinates>
                         </gml:Point>
                     </sml:location>

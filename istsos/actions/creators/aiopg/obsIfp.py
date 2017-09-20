@@ -7,10 +7,18 @@ import asyncio
 import sys
 import traceback
 import istsos
-from istsos.actions.creators.observationCreator import ObservationCreator
+from istsos.actions.action import Action
 
 
-class Observation_IFS_Creator(ObservationCreator):
+class ObsIfp(Action):
+
+    @asyncio.coroutine
+    def before(self, request):
+        """Checking System type"""
+
+        if request['offerings'][0]["systemType"] != istsos._INSITU_FIXED_POINT:
+            raise Exception(
+                "Cannot create a %s" % request['offerings'][0]["systemType"])
 
     @asyncio.coroutine
     def process(self, request):
@@ -148,35 +156,29 @@ class Observation_IFS_Creator(ObservationCreator):
                             "%s_qi" % observed_property['column']
                         ])
 
-                        # TODO - this should be done only once
-                        # ========================================
-                        if not offering['results']:
-                            # add a specimen column
-                            typedef = (
-                                'http://www.opengis.net/def/'
-                                'samplingFeatureType/OGC-OM/2.0/'
-                            )
+                    # if foi_type is specimen add a specimen column
+                    typedef = (
+                        'http://www.opengis.net/def/'
+                        'samplingFeatureType/OGC-OM/2.0/'
+                    )
 
-                            if observation["foi_type"] == (
-                                "%sSF_Specimen" % typedef
-                            ):
-                                yield from cur.execute("""
-                                    ALTER TABLE data._%s
-                                        ADD COLUMN specimen TEXT;
-                                """ % (offering['name'])
-                                )
-                            # set sensorType in the offering table
-                            yield from cur.execute("""
-                                UPDATE public.offerings
-                                   SET id_sty= (
-                                    SELECT id FROM public.sensor_types
-                                     WHERE name = 'insitu-fixed-specimen'
-                                     )
-                                 WHERE id = %s;
-                            """ % (offering['id'],))
-                            # update observation['systemtype']
-                            offering["systemType"] = 'insitu-fixed-specimen'
-                        # ========================================
+                    if observation["foi_type"] == "%sSF_Specimen" % typedef:
+                        yield from cur.execute("""
+                            ALTER TABLE data._%s
+                                ADD COLUMN specimen TEXT;
+                        """ % (offering['name'])
+                        )
+                    # set sensorType in the offering table
+                    yield from cur.execute("""
+                        UPDATE public.offerings
+                           SET id_sty= (
+                            SELECT id FROM public.sensor_types
+                             WHERE name = 'insitu-fixed-specimen'
+                             )
+                         WHERE id = %s;
+                    """ % (offering['id'],))
+                    # update observation['systemtype']
+                    offering["systemType"] = 'insitu-fixed-specimen'
 
                 else:
                     # Offering already initialized
@@ -191,12 +193,6 @@ class Observation_IFS_Creator(ObservationCreator):
                             "%s_qi" % observed_property['column']
                         ])
 
-                print("----!!!!!---")
-                print(observation['observedProperty'])
-                print("-----------")
-                print(observation['result'])
-                print("-----------")
-
                 timeInstants = list(observation['result'].keys())
                 for timeInstant in timeInstants:
                     # And now it's time to insert measurements :)
@@ -205,57 +201,37 @@ class Observation_IFS_Creator(ObservationCreator):
                         row.extend([val, 100])
                     measures.append(tuple(row))
 
-                print("-----------")
-                print(measures)
-
-                print("-----------")
-
                 str_measures = []
                 for x in measures:
                     val = yield from cur.mogrify(
-                        "(%s, '%s')" % (",".join(["%s"]*len(x)),
-                        observation['featureOfInterest']['href']), x)
+                        "(%s)" % ",".join(["%s"]*len(x)), x)
                     str_measures.append(
                         val.decode("utf-8")
                     )
-
                 str_measures = ','.join(str_measures)
 
-                print("-----------")
-
-                print("--AAAAAAAAA--")
-                print(str_measures)
-                print(columns)
-
-                print("--AAAAAAAAA--")
-
-                a = yield from cur.mogrify("""
-                    INSERT INTO data._%s(
-                        event_time, %s, specimen)
-                """ % (
-                    offering['name'],
-                    ",".join(columns),
-                    ) + """
-                    VALUES %s
-                """ % str_measures)
-
-                print(a)
-
-                yield from cur.execute("""
-                    INSERT INTO data._%s(
-                        event_time, %s, specimen)
-                """ % (
-                    offering['name'],
-                    ",".join(columns),
-                    ) + """
-                    VALUES %s
-                """ % str_measures)
+                if offering["systemType"] == 'insitu-fixed-specimen':
+                    yield from cur.execute("""
+                        INSERT INTO data._%s(
+                            event_time, specimen, %s)
+                    """ % (
+                        offering['name'],
+                        observation['featureOfInterest'],
+                        ",".join(columns)) + """
+                        VALUES %s
+                    """ % str_measures)
+                else:
+                    yield from cur.execute("""
+                        INSERT INTO data._%s(
+                            event_time, %s)
+                    """ % (offering['name'], ",".join(columns)) + """
+                        VALUES %s
+                    """ % str_measures)
 
                 # Updating the offering phenomenon time
                 columns = []
                 vals = []
-                print(offering['phenomenon_time'])
-                if offering['phenomenon_time'] is None:
+                if offering['phenomenon_time']['timePeriod']['begin'] is None:
                     columns.append("pt_begin=%s::TIMESTAMPTZ")
                     vals.append(timeInstants[0])
                 else:
@@ -268,7 +244,7 @@ class Observation_IFS_Creator(ObservationCreator):
                         vals.append(timeInstants[0])
 
                         offering['phenomenon_time']['timePeriod']['begin']
-                if offering['phenomenon_time'] is None:
+                if offering['phenomenon_time']['timePeriod']['end'] is None:
                     columns.append("pt_end=%s::TIMESTAMPTZ")
                     vals.append(timeInstants[-1])
                 else:
@@ -295,7 +271,7 @@ class Observation_IFS_Creator(ObservationCreator):
                 ))
 
             except Exception as ex:
-                traceback.print_exc()
+                # traceback.print_exc()
                 istsos.warning(
                     (
                         'Error while inserting observations '

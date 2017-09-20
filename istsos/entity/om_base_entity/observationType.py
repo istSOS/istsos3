@@ -17,11 +17,14 @@ class ObservationType(BaseEntity):
     json_schema = {
         "type": "string",
         "enum": [
+            '%sOM_TemporalObservation' % typdef,
+            '%sOM_SWEArrayObservation' % typdef,
+            '%sOM_ComplexObservation' % typdef,
             '%sOM_CategoryObservation' % typdef,
-            '%sOM_TextObservation' % typdef,
             '%sOM_CountObservation' % typdef,
             '%sOM_Measurement' % typdef,
             '%sOM_TruthObservation' % typdef,
+            '%sOM_TextObservation' % typdef,
             '%sOM_GeometryObservation' % typdef
         ]
     }
