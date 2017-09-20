@@ -7,7 +7,6 @@ import asyncio
 import uuid
 import istsos
 from istsos.actions.creators.observationCreator import ObservationCreator
-from istsos.actions.creators.aiopg.ifsCreator import IfsCreator
 
 
 class ObservationCreator(ObservationCreator):
