@@ -47,7 +47,8 @@ class TestObservedProperties:
                     "data": {
                         "description": "Air temperature at 2 meters above terrain",
                         "def": "urn:ogc:def:parameter:x-istsos:1.0:meteo:air:temperature:{}".format(uuid.uuid4()),
-                        "name": "air-temperature-test"
+                        "name": "air-temperature-test",
+                        "type": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"
                     }
                 }
 
