@@ -87,7 +87,7 @@ class Action(object):
         if root is None:
             istsos.debug("%s is committing now" % self.__class__.__name__)
             yield from self.dbmanager.commit()
-            root.commit_requested = False
+            self.commit_requested = False
         else:
             istsos.debug(
                 "Commit will be executed at the chain's end by %s"
