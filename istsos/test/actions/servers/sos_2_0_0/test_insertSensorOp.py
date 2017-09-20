@@ -12,89 +12,8 @@ from istsos.actions.servers.sos_2_0_0.insertSensorOp import InsertSensor
 class TestInsertSensor:
 
     @asyncio.coroutine
-    def execute_1(self):
-        with open('examples/xml/insertSensor-1.xml') as xml_file:
-
-            # Installation of the istSOS server
-            server = yield from Server.create()
-
-            # Preparing the Request object
-            request = HttpRequest(
-                "POST",
-                "sos",
-                body=xml_file.read(),
-                content_type="application/xml"
-            )
-
-            response = yield from server.execute_http_request(
-                request, stats=True
-            )
-
-    @asyncio.coroutine
-    def execute_2(self):
-        with open('examples/xml/insertSensor-2.xml') as xml_file:
-
-            # Installation of the istSOS server
-            server = yield from Server.create()
-
-            if server.state.is_cache_active():
-                print(
-                    "\nObservation in cache at startup %s\n" %
-                    len(server.state.get_cached_offerings().keys())
-                )
-
-            # Preparing the Request object
-            request = HttpRequest(
-                "POST",
-                "sos",
-                body=xml_file.read(),
-                content_type="application/xml"
-            )
-
-            response = yield from server.execute_http_request(
-                request, stats=True
-            )
-
-            if server.state.is_cache_active():
-                print(
-                    "\nObservation in cache after InsertSensor %s\n" %
-                    len(server.state.get_cached_offerings().keys())
-                )
-
-    @asyncio.coroutine
-    def execute_3(self):
-        with open('examples/xml/insertSensor-3.xml') as xml_file:
-
-            # Installation of the istSOS server
-            server = yield from Server.create()
-
-            if server.state.is_cache_active():
-                print(
-                    "\nObservation in cache at startup %s\n" %
-                    len(server.state.get_cached_offerings().keys())
-                )
-
-            # Preparing the Request object
-            request = HttpRequest(
-                "POST",
-                "sos",
-                body=xml_file.read(),
-                content_type="application/xml"
-            )
-
-            response = yield from server.execute_http_request(
-                request, stats=True
-            )
-
-            if server.state.is_cache_active():
-                print(
-                    "\nObservation in cache after InsertSensor %s\n" %
-                    len(server.state.get_cached_offerings().keys())
-                )
-
-    @asyncio.coroutine
-    def execute_5(self):
-        with open('examples/xml/insertSensor-5.xml') as xml_file:
+    def execute_insert_sensor(self, path):
+        with open(path) as xml_file:
 
             # Installation of the istSOS server
             server = yield from Server.create()
@@ -124,10 +43,20 @@ class TestInsertSensor:
                 )
 
     def execute_all(self):
-        #yield from self.execute_1()
-        #yield from self.execute_2()
-        #yield from self.execute_3()
-        yield from self.execute_5()
+
+        examples = [
+            'OM_Measurement/insertSensor.xml',
+            'OM_ComplexObservation/insertSensor.xml'
+        ]
+        for example in examples:
+            yield from self.execute_insert_sensor(
+                'examples/xml/%s' % example
+            )
+
+        # yield from self.execute_1()
+        # yield from self.execute_2()
+        # yield from self.execute_3()
+        # yield from self.execute_5()
 
     def test_execute(self):
         loop = asyncio.get_event_loop()

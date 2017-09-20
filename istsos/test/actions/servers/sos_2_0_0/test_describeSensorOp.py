@@ -23,7 +23,7 @@ class TestDescribeSensor:
                 "service": "SOS",
                 "version": "2.0.0",
                 "request": "DescribeSensor",
-                "procedure": "urn:ogc:def:procedure:x-istsos:1.0:LUGANO",
+                "procedure": "LUGANO",
                 "procedureDescriptionFormat": (
                     "http://www.opengis.net/sensorML/1.0.1")
             }

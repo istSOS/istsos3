@@ -23,7 +23,7 @@ class TestGetObservation:
                 "service": "SOS",
                 "version": "2.0.0",
                 "request": "GetObservation",
-                "procedure": "urn:ogc:def:procedure:x-istsos:1.0:LUGANO",
+                "procedure": "LUGANO",
                 "temporalFilter": (
                     "om:phenomenonTime,"
                     "2017-01-01T00:00:00+0100/"

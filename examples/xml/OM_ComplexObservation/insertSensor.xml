@@ -31,22 +31,6 @@
                             </swe:field>
                         </swe:SimpleDataRecord>
                     </sml:capabilities>
-                    <sml:capabilities name="featuresOfInterest">
-                        <swe:SimpleDataRecord>
-                            <swe:field name="featureOfInterestID">
-                                <swe:Text>
-                                    <swe:value>lugano_lake_buoy_1</swe:value>
-                                </swe:Text>
-                            </swe:field>
-                        </swe:SimpleDataRecord>
-                    </sml:capabilities>
-                    <sml:location>
-                        <gml:Point
-                                gml:name="lugano_lake_buoy_1"
-                                srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
-                            <gml:coordinates>46.00138,8.96231,270.5</gml:coordinates>
-                        </gml:Point>
-                    </sml:location>
                 </sml:System>
             </sml:member>
         </sml:SensorML>

@@ -16,47 +16,48 @@ class DescriptionCreator(DescriptionCreator):
         if "procedureDescription" in request and (
                 request['procedureDescription'] is not None):
 
-            with (yield from request['state'].pool.cursor()) as cur:
-                yield from cur.execute("BEGIN;")
+            dbmanager = yield from self.init_connection()
+            yield from self.begin()
+            cur = dbmanager.cur
 
-                # Look if a sensor description is already registered
+            # Look if a sensor description is already registered
+            yield from cur.execute("""
+                SELECT id
+                FROM
+                    public.sensor_descriptions
+                WHERE
+                    id_off = %s
+                AND
+                    valid_time_end IS NULL;
+            """, (
+                request['offering']['id'],
+            ))
+            rec = yield from cur.fetchone()
+
+            if rec is not None:
+                # Update the end position with the actual date
                 yield from cur.execute("""
-                    SELECT id
-                    FROM
+                    UPDATE
                         public.sensor_descriptions
+                    SET
+                        valid_time_end=now()
                     WHERE
-                        id_off = %s
-                    AND
-                        valid_time_end IS NULL;
+                        id = %s;
                 """, (
-                    request['offering']['id'],
-                ))
-                rec = yield from cur.fetchone()
-
-                if rec is not None:
-                    # Update the end position with the actual date
-                    yield from cur.execute("""
-                        UPDATE
-                            public.sensor_descriptions
-                        SET
-                            valid_time_end=now()
-                        WHERE
-                            id = %s;
-                    """, (
-                        rec[0],
-                    ))
-
-                # Register the new sensor description
-                yield from cur.execute("""
-                    INSERT INTO public.sensor_descriptions(
-                        id_off,
-                        valid_time_begin,
-                        data
-                    )
-                    VALUES (%s, now(),%s);
-                """, (
-                    request['offering']['id'],
-                    request['procedureDescription']
+                    rec[0],
                 ))
 
-                yield from cur.execute("COMMIT;")
+            # Register the new sensor description
+            yield from cur.execute("""
+                INSERT INTO public.sensor_descriptions(
+                    id_off,
+                    valid_time_begin,
+                    data
+                )
+                VALUES (%s, now(),%s);
+            """, (
+                request['offering']['id'],
+                request['procedureDescription']
+            ))
+
+            yield from self.commit()

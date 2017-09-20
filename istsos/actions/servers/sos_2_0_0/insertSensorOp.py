@@ -4,6 +4,7 @@
 # Version: v3.0.0
 
 import asyncio
+import istsos
 from istsos.actions.action import CompositeAction
 from istsos.actions.builders.sos_2_0_0.offeringBuilder import OfferingBuilder
 from lxml import etree
@@ -21,10 +22,8 @@ class InsertSensor(CompositeAction):
         # @todo > Add XML Validation with XSD
         self.add(OfferingBuilder())
 
-        # yield from self.add_creator('TransactionBegin')
         yield from self.add_creator('OfferingCreator')
         yield from self.add_creator('DescriptionCreator')
-        # yield from self.add_creator('TransactionCommit')
 
     @asyncio.coroutine
     def after(self, request):
@@ -39,3 +38,4 @@ standard.
             request['offering']['procedure'],
             request['offering']['name']
         )
+        istsos.info("New offering '%s' created" % request['offering']['name'])

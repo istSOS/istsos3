@@ -1,0 +1,23 @@
+{
+    "id": 5432,
+    "name": "LUGANO",
+    "procedure": "LUGANO",
+    "procedure_description_format": [
+        "http://www.opengis.net/sensorML/1.0.1"
+    ],
+    "observable_property": [
+        {
+            "id": 1,
+            "name": "air temperature",
+            "definition": "urn:ogc:def:parameter:x-istsos:1.0:meteo:air:temperature",
+            "uom": "°C",
+            "type": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+            "column": "_1"
+        }
+    ],
+    "observation_type": {
+        "id": 7,
+        "definition": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+        "description": ""
+    }
+}

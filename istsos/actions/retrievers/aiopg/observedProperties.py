@@ -12,21 +12,40 @@ class ObservedProperties(ObservedProperties):
 
     @asyncio.coroutine
     def process(self, request):
-        with (yield from request['state'].pool.cursor()) as cur:
-            sql = """
-SELECT DISTINCT
-    COALESCE(name, ''),
-    def,
-    COALESCE(description, '')
-FROM
-    observed_properties
-ORDER BY def;
-"""
+        dbmanager = yield from self.init_connection()
+        with (yield from dbmanager.cursor()) as cur:
+            if request.is_get_capabilities():
+                # if a GetCapabilities request is done, only offerings related
+                # observed properties will be loaded
+                sql = """
+                    SELECT DISTINCT
+                        COALESCE(name, ''),
+                        def,
+                        COALESCE(description, '')
+                    FROM
+                        observed_properties,
+                        off_obs_prop
+                    WHERE
+                        observed_properties.id = off_obs_prop.id_opr
+                    ORDER BY def;
+                """
+            else:
+                sql = """
+                    SELECT DISTINCT
+                        COALESCE(name, ''),
+                        def,
+                        COALESCE(description, '')
+                    FROM
+                        observed_properties
+                    ORDER BY def;
+                """
             yield from cur.execute(sql)
             recs = yield from cur.fetchall()
             for rec in recs:
                 request['observedProperties'].append(ObservedProperty({
-                    "name": rec[0],
                     "def": rec[1],
-                    "description": rec[2]
+                    "name": rec[0],
+                    "description": rec[2],
+                    "type": None,
+                    "uom": None
                 }))

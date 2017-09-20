@@ -4,7 +4,7 @@
 # Version: v3.0.0
 
 import asyncio
-import uuid
+import istsos
 from istsos.entity.offering import Offering
 from istsos.actions.builders.offeringBuilder import OfferingBuilder
 
@@ -19,17 +19,7 @@ class OfferingBuilder(OfferingBuilder):
         if request.is_insert_sensor():
 
             # Preparing data dictionary
-            data = {
-                "name": str(uuid.uuid1()).replace('-', ''),
-                "procedure": str(uuid.uuid1()).replace('-', ''),
-                "procedure_description_format": [
-                    "http://www.opengis.net/sensorML/1.0.1"
-                ],
-                "observable_property": [],
-                "observation_type": [],
-                "systemType": 'undefined',
-                "foi_type": None
-            }
+            data = Offering.get_template()
 
             # If procedure description is an sensorML 1.0.1 then check if the
             # procedure identifier is given.
@@ -40,12 +30,21 @@ class OfferingBuilder(OfferingBuilder):
                     data['procedure'] = value.text.strip()
                     break
 
-            for classifier in request.get_xml().iterfind(
-                    './/sml_1_0_1:classifier', request.ns):
-                if classifier.get('name') == 'systemType':
-                    value = classifier.find('.//sml_1_0_1:value', request.ns)
-                    data['systemType'] = value.text.strip()
-                    break
+            istsos.debug("Procedure uniqueID: %s" % data['procedure'])
+
+            # If procedure description is an sensorML 1.0.1 then check if the
+            # offering identifier is given.
+            for capability in request.get_xml().iterfind(
+                    './/sml_1_0_1:capabilities', request.ns):
+                if capability.get('name') == 'offering':
+                    value = capability.find('.//swe_1_0_1:value', request.ns)
+                    data['name'] = value.text.strip()
+                if capability.get('name') == 'featuresOfInterest':
+                    value = capability.find('.//swe_1_0_1:value', request.ns)
+                    data['foi_name'] = value.text.strip()
+                    istsos.debug("Foi name: %s" % data['foi_name'])
+
+            istsos.debug("Offering uniqueID: %s" % data['name'])
 
             # Reading and adding the Observable Properties(s)
             for observableProperty in request.get_xml().iterfind(
@@ -54,6 +53,10 @@ class OfferingBuilder(OfferingBuilder):
                     "definition": observableProperty.text.strip()
                 })
 
+            istsos.debug(
+                "Observed properties: %s" % len(data['observable_property'])
+            )
+
             # Reading and adding the Observation Type(s)
             for observationType in request.get_xml().iterfind(
                     './/sos_2_0:observationType', request.ns):
@@ -61,10 +64,45 @@ class OfferingBuilder(OfferingBuilder):
                     "definition": observationType.text.strip()
                 })
 
+            istsos.debug(
+                "Observation types: %s" % len(data['observation_type'])
+            )
+
             # Reading and setting the feature of interest type
             foi_type = request.get_xml().find(
                 './/sos_2_0:featureOfInterestType', request.ns)
             if foi_type is not None:
                 data['foi_type'] = foi_type.text.strip()
+                istsos.debug(
+                    "Feature of Interest Type: %s" %
+                    data['foi_type'].replace(istsos._foidef, '')
+                )
+
+            """for classifier in request.get_xml().iterfind(
+                    './/sml_1_0_1:classifier', request.ns):
+                if classifier.get('name') == 'systemType':
+                    value = classifier.find('.//sml_1_0_1:value', request.ns)
+                    data['systemType'] = value.text.strip()
+                    break
+
+            if data['systemType'] is None:
+                # Guess from other configuration elements
+                if istsos._GEOMETRY_OBSERVATION in data['observation_type'] \
+                        and istsos._SAMPLING_CURVE == data['foi_type']:
+                    data['systemType'] = istsos._INSITU_MOBILE_POINT
+
+                elif istsos._GEOMETRY_OBSERVATION not in data[
+                        'observation_type'] \
+                        and istsos._SAMPLING_POINT == data['foi_type']:
+                    data['systemType'] = istsos._INSITU_MOBILE_POINT
+
+                elif istsos._SAMPLING_SPECIMEN == data['foi_type']:
+                    data['systemType'] = istsos._INSITU_FIXED_SPECIMEN
+
+                else:
+                    data['systemType'] = istsos._INSITU_FIXED_POINT
+
+            istsos.debug(
+                "System Type: %s" % data['systemType'])"""
 
             request['offering'] = Offering(json_source=data)
