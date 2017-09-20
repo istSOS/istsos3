@@ -2,6 +2,12 @@ CREATE EXTENSION postgis;
 
 CREATE SCHEMA data;
 
+CREATE SEQUENCE data.observations_id_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1000;
+
 CREATE SEQUENCE observed_properties_id_seq
     INCREMENT BY 1
     NO MAXVALUE
@@ -115,36 +121,11 @@ CREATE TABLE public.methods
 
 SELECT pg_catalog.setval('methods_id_met_seq', 1, true);
 
-CREATE TABLE public.observation_types
-(
-    id integer NOT NULL,
-    def character varying NOT NULL,
-    description character varying,
-    PRIMARY KEY (id)
-);
-
--- Observations and Measurements - XML Implementation [OGC 10-025r1]
--- @todo see Conformance Classes to OMXML (add column omxml)
-INSERT INTO observation_types(id, def, description) VALUES
-    (1,  'http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CategoryObservation', ''),
-    --(2,  'http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation', ''),
-    (3,  'http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CountObservation', ''),
-    --(5,  'http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_DiscreteCoverageObservation', ''),
-    --(6,  'http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_GeometryObservation', ''),
-    (7,  'http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement', ''),
-    --(8,  'http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Observation', ''),
-    --(9,  'http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_PointCoverageObservation', ''),
-    --(10, 'http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TemporalObservation', ''),
-    --(11, 'http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TimeSeriesObservation', ''),
-    (12, 'http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TruthObservation', ''),
-    (13, 'http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TextObservation', ''),
-    (14, 'http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_SWEArrayObservation', '');
-
 CREATE SEQUENCE offerings_id_seq
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
-    CACHE 1;
+    CACHE 10;
 
 CREATE TABLE public.offerings
 (
@@ -169,7 +150,6 @@ CREATE TABLE public.offerings
 
 CREATE INDEX
    ON public.offerings USING btree (id ASC NULLS LAST);
-
 
 CREATE SEQUENCE sensor_descriptions_id_seq
     INCREMENT BY 1
@@ -204,7 +184,7 @@ CREATE TABLE public.off_obs_prop
     id_off integer NOT NULL,
     id_opr integer NOT NULL,
     id_uom integer,
-    id_oty integer,
+    observation_type character varying,
     col_name character varying,
     PRIMARY KEY (id),
     FOREIGN KEY (id_off) REFERENCES offerings (id)
@@ -212,8 +192,6 @@ CREATE TABLE public.off_obs_prop
     FOREIGN KEY (id_opr) REFERENCES observed_properties (id)
         ON UPDATE NO ACTION ON DELETE NO ACTION,
     FOREIGN KEY (id_uom) REFERENCES uoms (id)
-        ON UPDATE NO ACTION ON DELETE NO ACTION,
-    FOREIGN KEY (id_oty) REFERENCES observation_types (id)
         ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
@@ -230,12 +208,10 @@ CREATE TABLE public.off_obs_type
 (
     id integer NOT NULL default nextval('off_obs_type_id_seq'),
     id_off integer NOT NULL,
-    id_oty integer,
+    observation_type character varying,
     PRIMARY KEY (id),
     FOREIGN KEY (id_off) REFERENCES offerings (id)
-        ON UPDATE NO ACTION ON DELETE CASCADE,
-    FOREIGN KEY (id_oty) REFERENCES observation_types (id)
-        ON UPDATE NO ACTION ON DELETE NO ACTION
+        ON UPDATE NO ACTION ON DELETE CASCADE
 );
 
 CREATE INDEX

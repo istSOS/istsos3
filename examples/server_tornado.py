@@ -13,7 +13,7 @@ import asyncio
 import json
 import sys
 
-sys.path.append('/home/maxi/GIT/istsos3')
+sys.path.append('.')
 
 
 # Python>3.4.3

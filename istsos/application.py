@@ -129,7 +129,9 @@ like this:
                     loader["port"]
                 )
             )
-            self.instance.pool = yield from aiopg.create_pool(dns)
+            self.instance.pool = yield from (
+                aiopg.create_pool(dns)
+            )
 
     @asyncio.coroutine
     def init_cache(self):
@@ -299,8 +301,8 @@ The HTTPRequest shall be prepared by the web framework used.
                 # Show response
                 if "response" in request:
                     print("\n")
-                    if len(request['response']) > 100:
-                        print(request['response'][:100])
+                    if len(request['response']) > 1000:
+                        print(request['response'][:1000])
                     else:
                         print(request['response'])
                     print("\n")

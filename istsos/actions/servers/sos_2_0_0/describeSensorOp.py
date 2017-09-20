@@ -47,7 +47,8 @@ standard.
         <swes:SensorDescription>
             <swes:data>
                 <sml:Component>
-                    %s</sml:Component>
+                    %s
+                </sml:Component>
             </swes:data>
         </swes:SensorDescription>
     </swes:description>

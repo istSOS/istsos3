@@ -5,8 +5,12 @@
 
 import asyncio
 import uuid
+import json
 import istsos
 from istsos.entity.observation import Observation
+from istsos.entity.observedProperty import (
+    ObservedProperty, ObservedPropertyComplex
+)
 from istsos.actions.builders.observationsBuilder import ObservationsBuilder
 
 
@@ -14,26 +18,33 @@ class ObservationsBuilder(ObservationsBuilder):
     """Read and parse an sos:InsertObservation XML document creating
     an observation.Observation entity."""
 
+    def __init__(self):
+        super(ObservationsBuilder, self).__init__()
+        self.instants = {}
+
     @asyncio.coroutine
     def process(self, request):
         """ @todo docstring
         """
-        if request.is_insert_observation():
+        request['observations'] = []
 
+        if request.is_insert_observation():
             # Getting the offering name
             offering_name = request.get_xml().find(
                 './/sos_2_0:offering', request.ns)
 
-            # Preparing data dictionary
-            data = Observation.get_template()
-            data["offering"] = offering_name.text.strip()
-
-            # Variable used to check if this insertObservation as observation
+            # Variable used to check if this insertObservation has observation
             # only for one and only one procedure (Offering - Procedure 1:1)
             unique_procedure = None
 
+            # Loop over every <sos:observation/> element
             for ob in request.get_xml().iterfind(
                     './/sos_2_0:observation', request.ns):
+
+                # Preparing data dictionary
+                data = Observation.get_template({
+                    "offering": offering_name.text.strip()
+                })
 
                 # Getting the procedure name
                 procedure_name = ob.find(
@@ -56,32 +67,103 @@ class ObservationsBuilder(ObservationsBuilder):
                     './/om_2_0:type', request.ns)
 
                 omType = omTypeElement.get("{%s}href" % request.ns['xlink'])
+                data['type'] = omType
 
                 # Reading featureOfInterest
-                omFfeatureOfInterest = ob.find(
+                omFeatureOfInterest = ob.find(
                     './/om_2_0:featureOfInterest', request.ns)
-                data["featureOfInterest"]["href"] = omFfeatureOfInterest.get(
+
+                data["featureOfInterest"] = omFeatureOfInterest.get(
                     "{%s}href" % request.ns['xlink'])
 
-                foiLink = data["featureOfInterest"]["href"].split("/")
-                typedef = (
-                    'http://www.opengis.net/def/'
-                    'samplingFeatureType/OGC-OM/2.0/'
+                data["phenomenonTime"] = self.get_time(
+                    ob.find(
+                        './/om_2_0:phenomenonTime', request.ns)
                 )
-                if "specimen" in foiLink:
-                    data["foi_type"] = "%sSF_Specimen" % typedef
-                elif "Point" in foiLink:
-                    data["foi_type"] = "%sSF_SamplingPoint" % typedef
+                resultTime = ob.find(
+                    './/om_2_0:resultTime', request.ns)
+                timeInstantId = resultTime.get(
+                        "{%s}href" % request.ns['xlink'])
+                if timeInstantId is None:
+                    data["resultTime"] = self.get_time(
+                        resultTime
+                    )
                 else:
-                    data["foi_type"] = None
+                    data["resultTime"] = self.instants[
+                        timeInstantId.replace("#", "")]
 
-                # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                # NB:
-                # to exactly know the FOI type we should download the resource;
-                # for now we guess from the path .../foi/foiType/specimenName
-                # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                if omType == istsos._complexObservation['definition']:
+                    # Looping the DataArray fields we can interpret the
+                    # missing informations in the DataArray's metadata
+                    observedProperties = []
+                    data['result'] = []
 
-                if omType == istsos._arrayObservation['definition']:
+                    observedProperty = ob.find(
+                        './/om_2_0:observedProperty', request.ns)
+                    op_title = observedProperty.get(
+                        "{%s}title" % request.ns['xlink'])
+                    op_def = observedProperty.get(
+                        "{%s}href" % request.ns['xlink'])
+
+                    op = ObservedPropertyComplex.get_template({
+                        "def": op_def,
+                        "name": op_title,
+                        "type": omType,
+                        "uom": None
+                    })
+                    data["observedProperty"] = ObservedPropertyComplex(
+                        json_source=op
+                    )
+
+                    for field in ob.iterfind('.//swe_2_0:field', request.ns):
+                        componentType = field.getchildren()
+                        if len(componentType) == 0:
+                            # The field have no data definition
+                            # This is ahh, wrong!
+                            raise Exception("XML wrong :P")
+
+                        # Let's interprete the observation type
+                        componentType = componentType[0]
+                        data_type = None
+                        for key in list(istsos._component_type.keys()):
+                            if componentType.tag == "{%s}%s" % (
+                                    request.ns['swe_2_0'], key):
+                                data_type = istsos._component_type[
+                                    key]['definition']
+                                break
+                        if data_type is None:
+                            # The dataType must be one from the
+                            # supported type list
+                            raise Exception(
+                                "Field definition unknown: %s" %
+                                componentType.tag
+                            )
+
+                        op = ObservedProperty.get_template()
+                        op['type'] = data_type
+                        op['def'] = componentType.get(
+                            'definition')
+
+                        uom = componentType.find(
+                            './/swe_2_0:uom', request.ns)
+                        if uom is not None:
+                            op['uom'] = uom.get('code')
+                        else:
+                            op['uom'] = None
+
+                        data["observedProperty"]['fields'].append(
+                            ObservedProperty(json_source=op)
+                        )
+
+                        value = componentType.find(
+                            './/swe_2_0:value', request.ns)
+
+                        # @todo parse result depending on the observation type
+                        data['result'].append(value.text.strip())
+
+                    # istsos.debug(json.dumps(data, indent=True))
+
+                elif omType == istsos._arrayObservation['definition']:
                     # Looping the DataArray fields we can interpret the
                     # missing informations in the DataArray's metadata
                     for field in ob.iterfind('.//swe_2_0:field', request.ns):
@@ -150,46 +232,11 @@ class ObservationsBuilder(ObservationsBuilder):
                         data['result'][record.pop(0)] = record
 
                 else:
-                    phenomenonTime = ob.find(
-                        './/om_2_0:phenomenonTime', request.ns)
-                    timeInstant = phenomenonTime.find(
-                        './/gml_3_2:TimeInstant', request.ns)
-                    timePeriod = phenomenonTime.find(
-                        './/gml_3_2:TimePeriod', request.ns)
-
-                    if timeInstant is not None:
-                        timePosition = timeInstant.find(
-                            './/gml_3_2:timePosition', request.ns)
-                        timePosition = timePosition.text.strip()
-                        data["phenomenonTime"]["timeInstant"][
-                            "instant"] = timePosition
-
-                        # If this observation time is not yet inserted,
-                        # preapre a new array ready to contains measures
-                        if timePosition not in data["result"]:
-                            data["result"][timePosition] = []
-
-                    elif timePeriod is not None:
-                        beginPosition = timePeriod.find(
-                            './/gml_3_2:beginPosition', request.ns)
-                        beginPosition = beginPosition.text.strip()
-                        endPosition = timePeriod.find(
-                            './/gml_3_2:endPosition', request.ns)
-                        endPosition = endPosition.text.strip()
-                        data["phenomenonTime"]["timePeriod"][
-                            "begin"] = beginPosition
-                        data["phenomenonTime"]["timePeriod"][
-                            "end"] = endPosition
-                        # TODO --- handle time position
-                        # (what is specimen with sampling time?)
-
-                        Exception("timePeriod not yet handled")
-                    else:
-                        Exception("the phenomenonTime is mandatory")
-
-                    # Getting the observed property
+                    # Getting the observed property metadata
                     observedProperty = ob.find(
                         './/om_2_0:observedProperty', request.ns)
+                    name = observedProperty.get(
+                        "{%s}title" % request.ns['xlink'])
                     observedProperty = observedProperty.get(
                         "{%s}href" % request.ns['xlink'])
 
@@ -197,48 +244,71 @@ class ObservationsBuilder(ObservationsBuilder):
                     result = ob.find(
                         './/om_2_0:result', request.ns)
 
-                    if observedProperty not in data["observedProperty"]:
-                        data["observedProperty"].append(observedProperty)
-                        data["type"].append(omType)
-                        data["uom"].append(result.get("uom"))
+                    op = ObservedProperty.get_template({
+                        "def": observedProperty,
+                        "name": name,
+                        "type": omType,
+                        "uom": result.get("uom")
+                    })
+                    data["observedProperty"] = op
 
-                    data["result"][timePosition].append(None)
+                    # @todo parse result depending on the observation type
+                    data['result'] = float(result.text.strip())
 
-                    ob_index = data["observedProperty"].index(
-                        observedProperty
-                    )
+                # Adding the Observation entity into the request array
+                request['observations'].append(
+                    Observation(json_source=data)
+                )
 
-                    data['result'][
-                        timePosition][ob_index] = result.text.strip()
+            # istsos.debug(json.dumps(request['observations'], indent=True))
 
-            # Calculating phenomenonTime
-            phenomenonTimes = list(data['result'].keys())
-            if len(phenomenonTimes) == 1:
-                # This is a time instant
-                # data["phenomenonTime"] = {
-                #     "type": "TimeInstant",
-                #     "instant": phenomenon_time
-                # }
+    def get_time(self, time):
+        timeInstant = time.find(
+            './/gml_3_2:TimeInstant', Observation.ns)
+        timePeriod = time.find(
+            './/gml_3_2:TimePeriod', Observation.ns)
 
-                data["phenomenonTime"] = {
-                    "timeInstant": {
-                        "instant": phenomenonTimes[0]
-                    }
+        if timeInstant is not None:
+            id = timeInstant.get(
+                "{%s}id" % Observation.ns['gml_3_2'])
+            return self.get_time_instant(timeInstant, id)
+
+        elif timePeriod is not None:
+            return self.get_time_period(timeInstant)
+
+        else:
+            Exception("the phenomenonTime is mandatory")
+
+    def get_time_instant(self, timeInstant, id=None):
+        timePosition = timeInstant.find(
+            './/gml_3_2:timePosition', Observation.ns)
+        timePosition = timePosition.text.strip()
+        if id is not None:
+            self.instants[id] = {
+                "timeInstant": {
+                    "instant": timePosition
                 }
-            else:
-                # This is a time period
-                # data['phenomenonTime'] = {
-                #     "type": "TimePeriod",
-                #     "begin": phenomenonTimes[0],
-                #     "end": phenomenonTimes[-1]
-                # }
+            }
+        return {
+            "timeInstant": {
+                "instant": timePosition
+            }
+        }
 
-                data['phenomenonTime'] = {
-                    "timePeriod": {
-                        "begin": phenomenonTimes[0],
-                        "end": phenomenonTimes[-1]
-                    }
-                }
+    def get_time_period(self, timePeriod):
+        # Extraction begin position
+        beginPosition = timePeriod.find(
+            './/gml_3_2:beginPosition', Observation.ns)
+        beginPosition = beginPosition.text.strip()
 
-            # Adding the Observation entity into the request array
-            request['observation'] = Observation(json_source=data)
+        # Extraction end position
+        endPosition = timePeriod.find(
+            './/gml_3_2:endPosition', Observation.ns)
+        endPosition = endPosition.text.strip()
+
+        return {
+            "timePeriod": {
+                "begin": beginPosition,
+                "end": endPosition
+            }
+        }

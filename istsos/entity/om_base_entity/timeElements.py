@@ -34,13 +34,13 @@ class TimeInstant(BaseEntity):
     """
 
     json_schema = {
-                    "type": "object",
-                    "properties": {
-                        "instant": Instant.json_schema
-                    },
-                    "required": ["instant"],
-                    "additionalProperties": False
-                }
+        "type": "object",
+        "properties": {
+            "instant": Instant.json_schema
+        },
+        "required": ["instant"],
+        "additionalProperties": False
+    }
 
 
 class TimeInterval(BaseEntity):
@@ -53,14 +53,14 @@ class TimeInterval(BaseEntity):
     """
 
     json_schema = {
-                    "type": "object",
-                    "timePeriod": {
-                        "type": "object",
-                        "properties": {
-                            "begin": Instant.json_schema,
-                            "end": Instant.json_schema
-                        },
-                        "required": ["begin", "end"],
-                        "additionalProperties": False
-                    }
-                }
+        "type": "object",
+        "timePeriod": {
+            "type": "object",
+            "properties": {
+                "begin": Instant.json_schema,
+                "end": Instant.json_schema
+            },
+            "required": ["begin", "end"],
+            "additionalProperties": False
+        }
+    }

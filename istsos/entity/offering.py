@@ -3,6 +3,8 @@
 # License: https://github.com/istSOS/istsos3/master/LICENSE.md
 # Version: v3.0.0
 
+import uuid
+import istsos
 from istsos.entity.baseEntity import BaseEntity
 from istsos.entity.om_base_entity.timeElements import TimeInterval
 from istsos.entity.om_base_entity.geoJson import Coordinates2D
@@ -21,7 +23,16 @@ class Offering(BaseEntity):
             "results": {"type": "boolean"},
             "name": {"type": "string"},
             "procedure": {"type": "string"},
-            "systemType": {"type": "string"},
+            "systemType": {
+                "oneOf": [
+                    {
+                        "type": "null"
+                    },
+                    {
+                        "type": "string"
+                    }
+                ]
+            },
             "procedure_description_format": {
                 "type": "array",
                 "items": [
@@ -141,9 +152,49 @@ class Offering(BaseEntity):
                     {"type": "null"}
                 ]
             },
-            "foi_type": SamplingType.json_schema
+            "foi_type": SamplingType.json_schema,
+            "foi_name": {"type": "string"}
         }
     }
+
+    @staticmethod
+    def get_template(offering=None):
+        ret = {
+            "name": str(uuid.uuid1()).replace('-', ''),
+            "procedure": str(uuid.uuid1()).replace('-', ''),
+            "procedure_description_format": [
+                "http://www.opengis.net/sensorML/1.0.1"
+            ],
+            "observable_property": [],
+            "observation_type": [],
+            "systemType": None,
+            "phenomenon_time": None,
+            "result_time": None,
+            "foi_type": None,
+            "foi_name": ""
+        }
+        if offering is not None:
+            ret.update(offering)
+        return ret
+
+    def is_complex(self):
+        for ot in self['observation_type']:
+            if ot['definition'] == istsos._COMPLEX_OBSERVATION:
+                return True
+        return False
+
+    def get_complex_observable_property(self):
+        for op in self['observable_property']:
+            if op['type'] == istsos._COMPLEX_OBSERVATION:
+                return op
+        raise Exception(
+            "This offering is not a Complex observable property")
+
+    def is_array(self):
+        for ot in self['observation_type']:
+            if ot['definition'] == istsos._ARRAY_OBSERVATION:
+                return True
+        return False
 
     def get_op_definition_list(self):
         """Return a list of Observed Properties"""
@@ -153,10 +204,10 @@ class Offering(BaseEntity):
         """Return a list of Observation Types"""
         return [ot['definition'] for ot in self['observation_type']]
 
-    def get_observed_property(self, definition):
-        for observed_property in self['observable_property']:
-            if definition == observed_property['definition']:
-                return observed_property
+    def get_observable_property(self, definition):
+        for observable_property in self['observable_property']:
+            if definition == observable_property['definition']:
+                return observable_property
         return None
 
     def get_observation_type(self, definition):
@@ -166,6 +217,6 @@ class Offering(BaseEntity):
         return None
 
     def set_column(self, definition, column_name):
-        observed_property = self.get_observed_property(definition)
-        if observed_property is not None:
-            observed_property['column'] = column_name
+        observable_property = self.get_observable_property(definition)
+        if observable_property is not None:
+            observable_property['column'] = column_name

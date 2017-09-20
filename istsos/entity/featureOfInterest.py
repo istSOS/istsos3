@@ -26,6 +26,7 @@ class SamplingType(BaseEntity):
             "%sSF_SpatialSamplingFeature" % typedef,
             "%sSF_Specimen" % typedef
         ]
+
     }
 
 
@@ -112,7 +113,7 @@ class FeatureOfInterestDetail(BaseEntity):
                 "oneOf": [
                     SamplingPoint.json_schema,
                     SamplingCurve.json_schema
-                    ]
+                ]
             },
             "specimen": Specimen.json_schema
         },

@@ -5,7 +5,10 @@
 
 import asyncio
 import time
+import traceback
+import sys
 import istsos
+from istsos.common.exceptions import *
 
 
 class Action(object):
@@ -14,6 +17,9 @@ class Action(object):
     def __init__(self, **kwargs):
         super(Action, self).__init__()
         self.time = None
+        self.parent = None
+        self.dbmanager = None
+        self.commit_requested = False
         self._observers = []
         self._kwargs = kwargs
         if kwargs is not None:
@@ -32,6 +38,80 @@ class Action(object):
         for observer in self._observers:
             observer.update(self, request)
 
+    def set_parent(self, parent):
+        self.parent = parent
+
+    def get_root(self):
+        root = self.parent
+        while root is not None and root.parent is not None:
+            root = root.parent
+        return root
+
+    def is_root(self):
+        if self.get_root() is None:
+            return True
+        return False
+
+    @asyncio.coroutine
+    def init_connection(self):
+        """Initilize a DbManager that will be used in the action chain.
+        returns the current DbManager.
+        """
+        root = self.get_root()
+        if root is None:
+            root = self
+        if root.dbmanager is None:
+            root.dbmanager = (
+                yield from get_common('DbManager')
+            )
+            yield from root.dbmanager.init_connection()
+        return root.dbmanager
+
+    @asyncio.coroutine
+    def begin(self):
+        """Begin can be called only once
+        """
+        root = self.get_root()
+        if root is None:
+            root = self
+        if root.dbmanager is None:
+            raise Exception("Dbmanager not initialized")
+
+        yield from root.dbmanager.begin()
+
+    @asyncio.coroutine
+    def commit(self):
+        """Commit can be called only once and only by root action
+        """
+        root = self.get_root()
+        if root is None:
+            istsos.debug("%s is committing now" % self.__class__.__name__)
+            yield from self.dbmanager.commit()
+            root.commit_requested = False
+        else:
+            istsos.debug(
+                "Commit will be executed at the chain's end by %s"
+                % root.__class__.__name__
+            )
+            root.commit_requested = True
+
+    @asyncio.coroutine
+    def close_connection(self):
+        root = self.get_root()
+        if root is None and self.dbmanager is not None:
+            istsos.debug("%s is closing now" % self.__class__.__name__)
+            yield from self.dbmanager.close()
+            self.dbmanager = None
+
+    @asyncio.coroutine
+    def rollback(self):
+        """Rollback is called by root after the exception is propagated
+        """
+        root = self.get_root()
+        if root is None:
+            yield from root.dbmanager.rollback()
+            yield from self.dbmanager.close()
+
     @asyncio.coroutine
     def before(self, request):
         pass
@@ -45,13 +125,48 @@ class Action(object):
         pass
 
     @asyncio.coroutine
+    def on_exception(self, request, exception):
+        if self.parent is not None:
+            raise exception
+
+        if isinstance(exception, DbError):
+            print(exception)
+
+        elif isinstance(exception, InvalidParameterValue):
+            request['response'] = """<ExceptionReport
+    xmlns="http://www.opengis.net/ows/1.1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    version="1.0.0" xml:lang="en">
+    %s
+</ExceptionReport>
+    """ % exception.to_xml()
+
+        else:
+            traceback.print_exc(file=sys.stdout)
+            request['response'] = """<ExceptionReport
+    xmlns="http://www.opengis.net/ows/1.1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    version="1.0.0" xml:lang="en">
+    <Exception exceptionCode="ServerError">
+        <ExceptionText>%s</ExceptionText>
+    </Exception>
+</ExceptionReport>
+    """ % exception
+
+        if self.dbmanager is not None:
+            yield from self.dbmanager.rollback()
+
+    @asyncio.coroutine
     def execute(self, request):
-        # print("Executing: %s" % self.__class__.__name__)
-        istsos.info("Executing: %s" % self.__class__.__name__)
+        istsos.debug("Executing: %s" % self.__class__.__name__)
         start = time.time()
-        yield from self.before(request)
-        yield from self.process(request)
-        yield from self.after(request)
+        try:
+            yield from self.before(request)
+            yield from self.process(request)
+            yield from self.after(request)
+            yield from self.close_connection()
+        except Exception as ex:
+            yield from self.on_exception(request, ex)
         self.time = time.time() - start
         self.update_observers(request)
 
@@ -67,61 +182,25 @@ class Action(object):
         return m
 
 
-"""
-class Proxy(Action):
-    def get_proxy(self, storage, action_name):
-        parts = ('%s.%s.%s' % (
-            '.'.join(self.__class__.__module__.split('.')[:-1]),
-            storage,
-            action_name
-        )).split('.')
-        module = ".".join(parts[:-1])
-        m = __import__(module)
-        for comp in parts[1:]:
-            m = getattr(m, comp)
-        return m
-
-    @asyncio.coroutine
-    def process(self, request):
-        yield from (
-            self.get_proxy(
-                request['state'].config["loader"]["type"],
-                "%s.%s" % (
-                    (self.__class__.__name__).lower(),
-                    self.__class__.__name__
-                )
-            )(**self._kwargs)
-        ).process(request)
-
-
-class ProxyCache(Proxy):
-    @asyncio.coroutine
-    def process(self, request):
-        dbtype = request['state'].config["loader"]["type"]
-        if "state" in request and request["state"].cache is not None:
-            dbtype = "memory"
-        yield from (
-            self.get_proxy(
-                dbtype,
-                "%s.%s" % (
-                    (self.__class__.__name__).lower(),
-                    self.__class__.__name__
-                )
-            )(**self._kwargs)
-        ).process(request)
-"""
-
-
 class CompositeAction(Action):
     """Base action class used to execute a specific action"""
 
-    def __init__(self):
-        super(CompositeAction, self).__init__()
-        istsos.debug("Constructing %s" % self.__class__.__name__)
+    def __init__(self, **kwargs):
+        super(CompositeAction, self).__init__(**kwargs)
+        istsos.debug(
+            "Constructing %s.%s" % (
+                self.__module__,
+                self.__class__.__name__
+            )
+        )
         self.actions = []
 
     def add(self, action):
+        istsos.debug("Adding %s.%s" % (
+            action.__module__,
+            action.__class__.__name__))
         self.actions.append(action)
+        action.set_parent(self)
 
     @asyncio.coroutine
     def add_builder(self, action, filter=None):
@@ -135,11 +214,9 @@ class CompositeAction(Action):
     def add_retriever(self, action, filter=None):
         self.add((yield from get_retrievers(action, filter=filter)))
 
-    def add_loader(self, config, action_name):
-        self.add(
-            self.get_loader(
-                config["loader"]["type"],
-                action_name)())
+    @asyncio.coroutine
+    def add_common(self, action, filter=None):
+        self.add((yield from get_common(action, filter=filter)))
 
     def remove(self, action):
         self.actions.remove(action)
@@ -148,27 +225,33 @@ class CompositeAction(Action):
     def execute(self, request):
         start = time.time()
         istsos.debug("Executing %s" % self.__class__.__name__)
-        yield from self.before(request)
-        yield from self.process(request)
-        for action in self.actions:
-            yield from action.execute(request)
-        yield from self.after(request)
+        try:
+            yield from self.before(request)
+            yield from self.process(request)
+            for action in self.actions:
+                yield from action.execute(request)
+            yield from self.after(request)
+            if self.commit_requested:
+                yield from self.commit()
+            yield from self.close_connection()
+        except Exception as ex:
+            yield from self.on_exception(request, ex)
+            # raise ex  # propagate the exception
         self.time = time.time() - start
         self.update_observers(request)
 
 
 @asyncio.coroutine
-def __get_proxy(action_package, action_module, **kwargs):
+def __get_proxy(istsos_package, action_module, **kwargs):
     import istsos
     import importlib
     state = yield from istsos.get_state()
     fileName = action_module[0].lower() + action_module[1:]
-    module = 'istsos.actions.%s.%s.%s' % (
-        action_package,
+    module = 'istsos.%s.%s.%s' % (
+        istsos_package,
         state.config["loader"]["type"],
         fileName
     )
-    istsos.debug("Importing %s.%s" % (module, action_module))
     m = importlib.import_module(module)
     m = getattr(m, action_module)
     if kwargs is not None:
@@ -179,19 +262,26 @@ def __get_proxy(action_package, action_module, **kwargs):
 @asyncio.coroutine
 def get_builders(name, **kwargs):
     action = yield from __get_proxy(
-        'retrievers', name, **kwargs)
+        'actions.retrievers', name, **kwargs)
     return action
 
 
 @asyncio.coroutine
 def get_creator(name, **kwargs):
     action = yield from __get_proxy(
-        'creators', name, **kwargs)
+        'actions.creators', name, **kwargs)
     return action
 
 
 @asyncio.coroutine
 def get_retrievers(name, **kwargs):
     action = yield from __get_proxy(
-        'retrievers', name, **kwargs)
+        'actions.retrievers', name, **kwargs)
+    return action
+
+
+@asyncio.coroutine
+def get_common(name, **kwargs):
+    action = yield from __get_proxy(
+        'common', name, **kwargs)
     return action

@@ -1,0 +1,35 @@
+{
+    "offering": "breganzona",
+    "procedure": "breganzona",
+    "type": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation",
+    "featureOfInterest": "breganzona",
+    "phenomenonTime": {
+        "timeInstant": {
+            "instant": "2017-05-08T16:50:00.000+00:00"
+        }
+    },
+    "resultTime": {
+        "timeInstant": {
+            "instant": "2017-05-08T17:10:00.000+00:00"
+        }
+    },
+    "result": ["0.164000", "78.1"],
+    "observedProperty": {
+        "def": "urn:ogc:def:parameter:x-istsos:1.0:meteo:air",
+        "type": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation",
+        "fields": [
+            {
+                "def": "urn:ogc:def:parameter:x-istsos:1.0:meteo:air:temperature",
+                "name": "Air temperature",
+                "type": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+                "uom": "°C"
+            },
+            {
+                "def": "urn:ogc:def:parameter:x-istsos:1.0:meteo:air:humidity",
+                "name": "Air humidity",
+                "type": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+                "uom": "%"
+            }
+        ]
+    }
+}
