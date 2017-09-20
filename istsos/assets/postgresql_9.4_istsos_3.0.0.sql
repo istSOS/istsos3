@@ -92,9 +92,9 @@ CREATE TABLE public.material_classes
 
 INSERT INTO material_classes VALUES
     (1, 'soil', ''),
-    (2, 'water,', ''),
-    (3, 'rock,', ''),
-    (4, 'tissue,', '');
+    (2, 'water', ''),
+    (3, 'rock', ''),
+    (4, 'tissue', '');
 
 SELECT pg_catalog.setval('material_classes_id_mcl_seq', 4, true);
 
@@ -140,6 +140,31 @@ INSERT INTO observation_types(id, def, description) VALUES
     (13, 'http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TextObservation', ''),
     (14, 'http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_SWEArrayObservation', '');
 
+CREATE SEQUENCE sensor_types_id_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+CREATE TABLE public.sensor_types
+(
+  id integer NOT NULL DEFAULT nextval('sensor_types_id_seq'),
+  name text,
+  CONSTRAINT sensor_types_pkey PRIMARY KEY (id)
+);
+
+INSERT INTO public.sensor_types VALUES
+(1, 'undefined'),
+(2, 'insitu-fixed-point'),
+(3, 'insitu-mobile-point'),
+(4, 'insitu-fixed-profile'),
+(5, 'insitu-mobile-profile'),
+(6, 'insitu-fixed-specimen'),
+(7, 'insitu-mobile-specimen');
+
+SELECT pg_catalog.setval('sensor_types_id_seq', 7, true);
+
+
 CREATE SEQUENCE offerings_id_seq
     INCREMENT BY 1
     NO MAXVALUE
@@ -164,11 +189,16 @@ CREATE TABLE public.offerings
     foi_geom geometry,
     observed_area geometry,
     cached jsonb,
-    PRIMARY KEY (id)
+    id_sty integer,
+    PRIMARY KEY (id),
+    CONSTRAINT offerings_id_sty_fkey FOREIGN KEY (id_sty)
+      REFERENCES public.sensor_types (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
 CREATE INDEX
    ON public.offerings USING btree (id ASC NULLS LAST);
+
 
 
 CREATE SEQUENCE sensor_descriptions_id_seq
@@ -240,3 +270,34 @@ CREATE TABLE public.off_obs_type
 
 CREATE INDEX
    ON public.off_obs_type USING btree (id_off ASC NULLS LAST);
+
+CREATE SEQUENCE specimen_id_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+CREATE TABLE public.specimens
+(
+  id integer NOT NULL DEFAULT nextval('specimen_id_seq'),
+  description text,
+  identifier text NOT NULL UNIQUE,
+  name text,
+  type text,
+  sampled_feat text,
+  id_mat_fk integer,
+  id_met_fk integer,
+  sampling_time timestamp with time zone,
+  sampling_location geometry,
+  processing_details jsonb,
+  sampling_size_uom text,
+  sampling_size double precision,
+  current_location jsonb,
+  specimen_type text,
+  CONSTRAINT specimen_id_mat_fk_fkey FOREIGN KEY (id_mat_fk)
+      REFERENCES material_classes (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT specimen_id_met_fk_fkey FOREIGN KEY (id_met_fk)
+      REFERENCES methods (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+)
