@@ -6,17 +6,16 @@
 from istsos.entity.baseEntity import BaseEntity
 
 
-class ProceduresFilter(BaseEntity):
+class Uom(BaseEntity):
 
     json_schema = {
         "type": "object",
         "properties": {
-            "procedures": {
-                "type": "array",
-                "minItems": 1,
-                "items": {
-                    "type": "string"
-                }
+            "name": {
+                "type": "string"
+            },
+            "description": {
+                "type": "string"
             }
         }
     }
@@ -24,5 +23,6 @@ class ProceduresFilter(BaseEntity):
     @staticmethod
     def get_template():
         return {
-            "procedures": []
+            "name": "",
+            "descriontion": ""
         }

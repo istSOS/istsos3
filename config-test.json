@@ -3,11 +3,11 @@
     "cache": false,
     "loader": {
         "type": "aiopg",
-        "host": "172.17.0.2",
+        "host": "postgres",
         "port": "5432",
         "user": "postgres",
         "password": "postgres",
-        "database": "istsos3"
+        "database": "istsos"
     },
     "identification": {
         "title": "IST Sensor Observation Service",

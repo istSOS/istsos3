@@ -4,7 +4,6 @@
 # Version: v3.0.0
 
 import asyncio
-import re
 import os.path
 import json
 import uuid
@@ -12,7 +11,6 @@ import importlib
 import traceback
 
 import istsos
-from istsos.actions.servers.rest.rule import Rule
 from istsos.actions.servers.sos_2_0_0.requirement.core.requestRequest import (
     RequestRequest
 )
@@ -87,7 +85,7 @@ like this:
     def __init__(self, path='config.json', config=None):
         if not State.instance:
             State.instance = State.__State(
-                path='config.json', config=config)
+                path=path, config=config)
 
     def __getattr__(self, name):
         return getattr(self.instance, name)
@@ -174,6 +172,9 @@ like this:
     def get_provider(self):
         return self.instance.config['provider']
 
+    def get_loader(self):
+        return self.instance.config['loader']
+
     def get_procedure_loader(self, assigned_id):
         if assigned_id not in self.instance.json["procedures"]:
             raise Exception("Procedure not found")
@@ -202,34 +203,43 @@ like this:
     def get_current_requests(self):
         return self.instance.requests
 
-
 REST_API = [
-    (r'config/uom', 'Uom')
+    (r'uoms', r'uom', 'Uom'),
+    (r'identification', r'configurations.identification', 'Identification'),
+    (r'provider', r'configurations.provider', 'Provider'),
+    (r'loader', r'configurations.loader', 'Loader'),
+    (r'observedProperties', r'observedProperties', 'ObservedProperties'),
+    (r'offering', r'offering', 'Offering'),
+    (r'observation', r'observation', 'Observation'),
+    (r'specimen', r'specimen.specimen', 'Specimen'),
+    (r'material', r'specimen.materials', 'Materials'),
+    (r'method', r'specimen.methods', 'Methods'),
+    (r'offeringList', r'utilities.offeringsList', 'OfferingList'),
+    (r'observationType', r'utilities.observationType', 'ObservationType'),
+    (r'systemType', r'utilities.systemType', 'SystemType')
 ]
 
 
-class Server():
+class Server:
     """docstring for Server."""
     def __init__(self, state):
         self.state = state
-        self.rules = []
+        self.rules = {}
         for rule in REST_API:
             module = 'istsos.actions.servers.rest.%s' % (
-                rule[0].replace('/', '.')
+                rule[1].replace('/', '.')
             )
             m = importlib.import_module(module)
-            action = getattr(m, rule[1])
-            self.rules.append(
-                Rule(rule[0], action)
-            )
+            action = getattr(m, rule[2])
+            self.rules[rule[0]] = action
 
     @classmethod
     @asyncio.coroutine
-    def create(self, state=None):
+    def create(cls, state=None):
         # Initialize PostgreSQL connection pool
         if state is None:
             state = yield from get_state()
-        return Server(state)
+        return cls(state)  # Server(state)
 
     @asyncio.coroutine
     def execute_http_request(self, request, stats=False):
@@ -287,16 +297,17 @@ The HTTPRequest shall be prepared by the web framework used.
 
         elif path[0] == 'rest':
             try:
-                path.pop(0)
-                path = "/".join(path)
-                for rule in self.rules:
-                    action = rule.match(path)
+                elem = request['body']['entity']
+
+                action = self.rules[elem]()
+
             except Exception:
                 traceback.print_exc()
 
         # Executing the requested action
         if action:
             yield from action.execute(request)
+
             if stats:
                 # Show response
                 if "response" in request:

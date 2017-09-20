@@ -98,9 +98,9 @@ CREATE TABLE public.material_classes
 
 INSERT INTO material_classes VALUES
     (1, 'soil', ''),
-    (2, 'water,', ''),
-    (3, 'rock,', ''),
-    (4, 'tissue,', '');
+    (2, 'water', ''),
+    (3, 'rock', ''),
+    (4, 'tissue', '');
 
 SELECT pg_catalog.setval('material_classes_id_mcl_seq', 4, true);
 
