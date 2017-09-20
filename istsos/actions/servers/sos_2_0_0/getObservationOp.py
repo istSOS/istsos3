@@ -19,7 +19,9 @@ from istsos.actions.builders.sos_2_0_0.procedureFilterBuilder import (
 from istsos.actions.builders.sos_2_0_0.observedPropertyFilterBuilder import (
     ObservedPropertyFilterBuilder
 )
-from istsos.actions.servers.sos_2_0_0.requirement.goRequirement import GORequirement
+from istsos.actions.servers.sos_2_0_0.requirement.goRequirement import (
+    GORequirement
+)
 
 
 class GetObservation(CompositeAction):
@@ -44,8 +46,213 @@ class GetObservation(CompositeAction):
 
     @asyncio.coroutine
     def after(self, request):
+        response = etree.XML("""<sos:GetObservationResponse
+            xmlns:sos="http://www.opengis.net/sos/2.0"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xmlns:swe="http://www.opengis.net/swe/2.0"
+            xmlns:swes="http://www.opengis.net/swes/2.0"
+            xmlns:gml="http://www.opengis.net/gml/3.2"
+            xmlns:ogc="http://www.opengis.net/ogc"
+            xmlns:om="http://www.opengis.net/om/2.0"
+            xmlns:xlink="http://www.w3.org/1999/xlink">
+        </sos:GetObservationResponse>""")
+
+        istsos.debug(
+            "Preparing %s observations" % len(request['observations']))
+        if len(request['observations']) > 0:
+            ns = request.ns
+            data = etree.SubElement(
+                response,
+                '{%s}observationData' % ns['sos_2_0'],
+            )
+            oid = 0
+            for observation in request['observations']:
+                oid += 1
+                # Preparing default metadata elements
+                omObs = etree.SubElement(
+                    data,
+                    '{%s}OM_Observation' % ns['om_2_0']
+                )
+                omObs.set(
+                    "{%s}id" % ns['gml_3_2'], str(oid)
+                )
+                etree.SubElement(
+                    omObs,
+                    '{%s}type' % ns['om_2_0']
+                ).set(
+                    "{%s}href" % ns['xlink'],
+                    observation['type']
+                )
+                # Adding om:phenomenonTime
+                phenomenonTime = etree.SubElement(
+                    omObs, '{%s}phenomenonTime' % ns['om_2_0'])
+
+                if 'timeInstant' in observation['phenomenonTime']:
+                    timeInstantId = "p%s" % oid
+                    timeResultId = "r%s" % oid
+                    timeInstant = etree.SubElement(
+                        phenomenonTime,
+                        '{%s}TimeInstant' % ns['gml_3_2'])
+                    etree.SubElement(
+                        timeInstant,
+                        '{%s}timePosition' % ns['gml_3_2']
+                    ).text = observation[
+                        'phenomenonTime']['timeInstant']['instant']
+
+                    if observation[
+                            'phenomenonTime']['timeInstant']['instant'] == \
+                            observation[
+                            'resultTime']['timeInstant']['instant']:
+                        timeInstant.set(
+                            "{%s}id" % ns['gml_3_2'], timeInstantId)
+                        etree.SubElement(
+                            omObs,
+                            '{%s}resultTime' % ns['om_2_0']
+                        ).set(
+                            "{%s}href" % ns['xlink'], '#%s' % timeInstantId
+                        )
+                    else:
+                        # Adding om:resultTime
+                        resultTime = etree.SubElement(
+                            omObs, '{%s}resultTime' % ns['om_2_0'])
+                        timeInstant = etree.SubElement(
+                            resultTime,
+                            '{%s}TimeInstant' % ns['gml_3_2'])
+                        # timeInstant.set(
+                        #    "{%s}id" % ns['gml_3_2'], timeInstantId)
+                        etree.SubElement(
+                            timeInstant,
+                            '{%s}timePosition' % ns['gml_3_2']
+                        ).text = observation[
+                            'resultTime']['timeInstant']['instant']
+
+                else:
+                    timePeriod = etree.SubElement(
+                        phenomenonTime,
+                        '{%s}TimePeriod' % ns['gml_3_2'])
+                    # timePeriod.set(
+                    #    "{%s}id" % ns['gml_3_2'], timeInstantId)
+                    etree.SubElement(
+                        timePeriod,
+                        '{%s}beginPosition' % ns['gml_3_2']
+                    ).text = observation[
+                        'phenomenonTime']['timePeriod']['begin']
+                    etree.SubElement(
+                        timePeriod,
+                        '{%s}endPosition' % ns['gml_3_2']
+                    ).text = observation[
+                        'phenomenonTime']['timePeriod']['end']
+
+                    # Adding om:resultTime
+                    resultTime = etree.SubElement(
+                        omObs, '{%s}resultTime' % ns['om_2_0'])
+                    timeInstant = etree.SubElement(
+                        resultTime,
+                        '{%s}TimeInstant' % ns['gml_3_2'])
+                    # timeInstant.set(
+                    #    "{%s}id" % ns['gml_3_2'], timeInstantId)
+                    etree.SubElement(
+                        timeInstant,
+                        '{%s}timePosition' % ns['gml_3_2']
+                    ).text = observation[
+                        'resultTime']['timeInstant']['instant']
+
+                # Adding om:observedProperty
+                etree.SubElement(
+                    omObs,
+                    '{%s}procedure' % ns['om_2_0']
+                ).set(
+                    "{%s}href" % ns['xlink'],
+                    observation["procedure"]
+                )
+
+                # Adding om:observedProperty
+                etree.SubElement(
+                    omObs,
+                    '{%s}observedProperty' % ns['om_2_0']
+                ).set(
+                    "{%s}href" % ns['xlink'],
+                    observation["observedProperty"]["def"]
+                )
+
+                # Adding om:featureOfInterest
+                etree.SubElement(
+                    omObs,
+                    '{%s}featureOfInterest' % ns['om_2_0']
+                ).set(
+                    "{%s}href" % ns['xlink'],
+                    observation["featureOfInterest"]
+                )
+
+                # Adding om:result
+                omresult = etree.SubElement(
+                    omObs, '{%s}result' % ns['om_2_0'])
+
+                if observation['type'] == istsos._COMPLEX_OBSERVATION:
+                    omresult.set(
+                        "{%s}type" % ns['xsi'],
+                        istsos.get_observation_type(
+                            istsos._COMPLEX_OBSERVATION
+                        )['type']
+                    )
+
+                    dataRecord = etree.SubElement(
+                        omresult,
+                        '{%s}DataRecord' % ns['swe_2_0']
+                    )
+
+                    opFields = observation.get_field_list()
+                    for idx in range(0, len(opFields)):
+                        opField = opFields[idx]
+
+                        field = etree.SubElement(
+                            dataRecord,
+                            '{%s}field' % ns['swe_2_0']
+                        )
+
+                        quantity = etree.SubElement(
+                            field,
+                            '{%s}Quantity' % ns['swe_2_0']
+                        )
+
+                        quantity.set(
+                            "definition",
+                            opField["def"]
+                        )
+
+                        etree.SubElement(
+                            quantity,
+                            '{%s}uom' % ns['swe_2_0']
+                        ).set(
+                            "code",
+                            opField['uom']
+                        )
+
+                        etree.SubElement(
+                            quantity,
+                            '{%s}value' % ns['swe_2_0']
+                        ).text = "%s" % observation["result"][idx]
+
+                elif observation['type'] == istsos._ARRAY_OBSERVATION:
+                    pass
+                else:
+                    omresult.set(
+                        "uom",
+                        observation["observedProperty"]["uom"]
+                    )
+                    omresult.set(
+                        "{%s}type" % ns['xsi'],
+                        istsos.get_observation_type(
+                            observation["observedProperty"]['type']
+                        )['type']
+                    )
+                    omresult.text = str(observation["result"])
+
         # request['response'] = self.get_classic_response(request)
-        request['response'] = self.get_array_response(request)
+        # request['response'] = self.get_array_response(request)
+        request['response'] = (
+            '<?xml version="1.0" encoding="UTF-8"?>\n%s'
+        ) % etree.tostring(response, encoding='unicode', method='xml')
 
     def get_array_response(self, request):
         response = etree.XML("""<sos:GetObservationResponse

@@ -13,7 +13,7 @@ import asyncio
 import json
 import sys
 
-sys.path.append('/home/ist/workspace/istsos3')
+sys.path.append('.')
 
 
 # Python>3.4.3
@@ -93,7 +93,10 @@ class SosHandler(BaseHandler):
 
 class RestHandler(BaseHandler):
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 61eec66eb24afe99891bc5ecd7a4436a1795ed72
     @coroutine
     def post(self, *args, **kwargs):
 

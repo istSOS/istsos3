@@ -59,6 +59,15 @@
                             </swe:field>
                         </swe:DataRecord>
                     </sml:characteristics>
+                    <sml:capabilities name="offering">
+                        <swe:SimpleDataRecord>
+                            <swe:field name="offeringID">
+                                <swe:Text definition="urn:ogc:def:identifier:OGC:offeringID">
+                                    <swe:value>BREGANZONA</swe:value>
+                                </swe:Text>
+                            </swe:field>
+                        </swe:SimpleDataRecord>
+                    </sml:capabilities>
                     <sml:capabilities name="featuresOfInterest">
                         <swe:DataRecord>
                             <swe:field name="featureOfInterestID">

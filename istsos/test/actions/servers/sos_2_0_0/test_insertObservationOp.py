@@ -10,68 +10,9 @@ from istsos.entity.httpRequest import HttpRequest
 
 class TestInsertObservation:
 
-    def execute_1(self):
-        with open('examples/xml/insertObservation-1.xml') as xml_file:
-
-            # Installation of the istSOS server
-            server = yield from Server.create()
-
-            # Preparing the Request object
-            request = HttpRequest(
-                "POST",
-                "sos",
-                body=xml_file.read(),
-                content_type="application/xml"
-            )
-
-            print()
-
-            response = yield from server.execute_http_request(
-                request, stats=True
-            )
-
-    def execute_2(self):
-        with open('examples/xml/insertObservation-2.xml') as xml_file:
-
-            # Installation of the istSOS server
-            server = yield from Server.create()
-
-            # Preparing the Request object
-            request = HttpRequest(
-                "POST",
-                "sos",
-                body=xml_file.read(),
-                content_type="application/xml"
-            )
-
-            print()
-
-            response = yield from server.execute_http_request(
-                request, stats=True
-            )
-
-    def execute_3(self):
-        with open('examples/xml/insertObservation-3.xml') as xml_file:
-
-            # Installation of the istSOS server
-            server = yield from Server.create()
-
-            # Preparing the Request object
-            request = HttpRequest(
-                "POST",
-                "sos",
-                body=xml_file.read(),
-                content_type="application/xml"
-            )
-
-            print()
-
-            response = yield from server.execute_http_request(
-                request, stats=True
-            )
-
-    def execute_5(self):
-        with open('examples/xml/insertObservation-5.xml') as xml_file:
+    @asyncio.coroutine
+    def execute_insert_observation(self, path):
+        with open(path) as xml_file:
 
             # Installation of the istSOS server
             server = yield from Server.create()
@@ -91,10 +32,14 @@ class TestInsertObservation:
             )
 
     def execute_all(self):
-        # yield from self.execute_1()
-        # yield from self.execute_2()
-        # yield from self.execute_3()
-        yield from self.execute_5()
+        examples = [
+            'OM_Measurement/insertObservation.xml',
+            'OM_ComplexObservation/insertObservation.xml'
+        ]
+        for example in examples:
+            yield from self.execute_insert_observation(
+                'examples/xml/%s' % example
+            )
 
     def test_execute(self):
         loop = asyncio.get_event_loop()

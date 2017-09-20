@@ -3,8 +3,12 @@
 # License: https://github.com/istSOS/istsos3/master/LICENSE.md
 # Version: v3.0.0
 
+import istsos
 from istsos.entity.baseEntity import BaseEntity
+from istsos.entity.observedProperty import (
+    ObservedProperty, ObservedPropertyComplex)
 from istsos.entity.om_base_entity.eventTime import EventTime
+from istsos.entity.om_base_entity.timeElements import TimeInstant
 from istsos.entity.om_base_entity.observationType import ObservationType
 from istsos.entity.featureOfInterest import SamplingType, FeatureOfInterest
 import collections
@@ -17,80 +21,112 @@ class Observation(BaseEntity):
             "offering": {
                 "type": "string"
             },
-            "description": {
-                "type": "string"
-            },
-            "type": {
-                "type": "array",
-                "items": [
-                    {
-                        "type": "string"
-                    }
-                ]
-            },
-            "phenomenonTime": EventTime.json_schema,
-            "resultTime": {
-                "oneOf": [EventTime.json_schema, {type: "null"}]
-            },
             "procedure": {
                 "type": "string"
             },
-            "observedProperty": {
-                "type": "array",
-                "items": [
-                    {
-                        "type": "string"
-                    }
-                ]
+            "type": ObservationType.json_schema,
+            "featureOfInterest": {
+                "type": "string"
             },
-            "featureOfInterest": FeatureOfInterest.json_schema,
-            "foi_type": {
-                "oneOf": [
-                    SamplingType.json_schema,
-                    {"type": "null"}
-                ]
-            },
-            "observation_type": {
-                "oneOf": [
-                    {
-                        "type": "array",
-                        "items": [ObservationType.json_schema]
-                    },
-                    {"type": "null"}
-                ]
-            },
-            "uom": {
-                "type": "array",
-                "items": [
-                    {
-                        "type": ["string", "null"]
-                    }
-                ]
+            "phenomenonTime": EventTime.json_schema,
+            "resultTime": {
+                "type": "object",
+                "properties": {
+                    "timeInstant": TimeInstant.json_schema
+                },
+                "required": ["timeInstant"]
             },
             "result": {
-                "type": "object"
+                "oneOf": [
+                    {
+                        "type": "array"
+                    },
+                    {
+                        "type": "string"
+                    },
+                    {
+                        "type": "number"
+                    },
+                    {
+                        "type": "boolean"
+                    }
+                ]
             },
-            "quality": {
-                "type": "object"
+            "observedProperty": {
+                "oneOf": [
+                    ObservedProperty.json_schema,
+                    ObservedPropertyComplex.json_schema
+                ]
             }
         }
     }
 
     @staticmethod
-    def get_template():
-        return {
+    def get_template(observation=None):
+        ret = {
             "offering": "",
-            "type": [],
+            "procedure": "",
+            "type": "",
+            "featureOfInterest": "",
             "phenomenonTime": {},
             "resultTime": {},
-            "procedure": "",
-            "observedProperty": [],
-            "featureOfInterest": {"href": ""},
-            "foi_type": "",
-            "uom": [],
-            "result": collections.OrderedDict(),
-            "quality": collections.OrderedDict()
+            "result": None,
+            "observedProperty": None
         }
+        if observation is not None:
+            ret.update(observation)
+        return ret
+
+    def get_op_list(self):
+        """Return a list of Observed Properties"""
+        op = self['observedProperty']
+        ret = []
+        if op is not None:
+            ret.append(op)
+            if op['type'] == istsos._complexObservation['definition'] \
+                    or op['type'] == istsos._arrayObservation['definition']:
+                for field in op['fields']:
+                    ret.append(field)
+        return ret
+
+    def get_field_list(self):
+        """Return a list of Observed Properties"""
+        op = self['observedProperty']
+        ret = []
+        if op is not None:
+            if op['type'] == istsos._complexObservation['definition'] \
+                    or op['type'] == istsos._arrayObservation['definition']:
+                for field in op['fields']:
+                    ret.append(field)
+            else:
+                ret.append(op)
+        return ret
+
+    def get_op_definition_list(self):
+        """Return a list of Observed Properties"""
+        op = self['observedProperty']
+        ret = []
+        if op is not None:
+            ret.append(op['def'])
+            if op['type'] == istsos._complexObservation['definition'] \
+                    or op['type'] == istsos._arrayObservation['definition']:
+                for field in op['fields']:
+                    ret.append(field['def'])
+
+        return ret
+
+    def get_op_type_list(self):
+        """Return a list of Observation Types"""
+        op = self['observedProperty']
+        ret = []
+        if op is not None:
+            ret.append(op['type'])
+            if op['type'] == istsos._complexObservation['definition'] \
+                    or op['type'] == istsos._arrayObservation['definition']:
+                for field in op['fields']:
+                    ret.append(field['type'])
+
+        return ret
 
     """def __cmp__(self, other):
         if self.phenomenon_time > other.phenomenon_time:
