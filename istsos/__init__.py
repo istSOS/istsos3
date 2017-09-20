@@ -194,6 +194,10 @@ def get_observation_type(definition):
     return _observationTypesDict[definition]
 
 
+def get_observation_types():
+    return _observationTypesDict
+
+
 _component_type = {
     "Time": _observationTypesDict[_TEMPORAL_OBSERVATION],
     "Category": _observationTypesDict[_CATEGORY_OBSERVATION],
@@ -251,5 +255,8 @@ _sensor_type = {
         "foi_type": "SF_Specimen"
     }
 }
+
+def get_sensor_type():
+    return _sensor_type
 
 __all__ = ['actions']

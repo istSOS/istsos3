@@ -6,6 +6,7 @@
 import asyncio
 from istsos.entity.rest.response import Response
 from istsos.actions.action import CompositeAction
+import istsos
 
 
 class SystemType(CompositeAction):
@@ -16,8 +17,8 @@ class SystemType(CompositeAction):
     def before(self, request):
 
         if request['body']['action'] == 'retrieve':
-            yield from self.add_retriever('SystemType')
-
+            # yield from self.add_retriever('SystemType')
+            pass
         else:
             raise Exception('Method {} not supported'.format(request['body']['action']))
 
@@ -29,6 +30,6 @@ class SystemType(CompositeAction):
         response = Response.get_template()
 
         if request['body']['action'] == 'retrieve':
-            response['data'] = request['systemType']
+            response['data'] = istsos.get_sensor_type()  # request['systemType']
 
         request['response'] = Response(response)

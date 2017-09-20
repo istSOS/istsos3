@@ -90,13 +90,8 @@ class SosHandler(BaseHandler):
         )
         self.write(request['response'])
 
-
 class RestHandler(BaseHandler):
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 61eec66eb24afe99891bc5ecd7a4436a1795ed72
     @coroutine
     def post(self, *args, **kwargs):
 
