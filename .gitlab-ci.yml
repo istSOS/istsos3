@@ -30,5 +30,4 @@ rest:
         - pytest -s istsos/test/actions/servers/rest/test_method.py
         - pytest -s istsos/test/actions/servers/rest/test_offering.py
         - pytest -s istsos/test/actions/servers/rest/test_specimen.py
-        - pytest -s istsos/test/actions/servers/rest/test_systemType.py
 
