@@ -13,7 +13,7 @@ import asyncio
 import json
 import sys
 
-sys.path.append('/home/maxi/GIT/istsos3')
+sys.path.append('/home/ist/workspace/istsos3')
 
 
 # Python>3.4.3
@@ -43,7 +43,8 @@ https://gist.github.com/drgarcia1986/6b666c05ccb03e9525b4
             except Exception as e:
                 future.set_exception(e)
 
-        asyncio.async(func(*args, **kwargs)).add_done_callback(future_done)
+        # asyncio.async() is deprecated, replaced with asyncio.ensure_future()
+        asyncio.ensure_future(func(*args, **kwargs)).add_done_callback(future_done)
         return future
     return decorator
 
@@ -90,6 +91,27 @@ class SosHandler(BaseHandler):
         self.write(request['response'])
 
 
+class RestHandler(BaseHandler):
+
+
+    @coroutine
+    def post(self, *args, **kwargs):
+
+        self.set_header("Content-Type", "application/json; charset=utf-8")
+
+        request = HttpRequest(
+            "POST",
+            self.request.path,
+            body=json.loads(self.request.body.decode('utf-8')),
+            content_type=self.request.headers.get(
+                "content-type", "application/json")
+        )
+        yield from self.istsos.execute_http_request(
+            request, stats=True
+        )
+        self.write(request['response'])
+
+
 @asyncio.coroutine
 def get_istsos_server():
     return (yield from Server.create())
@@ -112,7 +134,7 @@ if __name__ == "__main__":
 
     app = Application([
         (r'/sos', SosHandler),
-        (r'/rest/.*', SosHandler)
+        (r'/rest', RestHandler)
     ], **settings)
 
     app.listen(8887)
