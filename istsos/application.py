@@ -203,6 +203,7 @@ like this:
     def get_current_requests(self):
         return self.instance.requests
 
+
 REST_API = [
     (r'uoms', r'uom', 'Uom'),
     (r'identification', r'configurations.identification', 'Identification'),
@@ -301,7 +302,7 @@ The HTTPRequest shall be prepared by the web framework used.
 
                 action = self.rules[elem]()
 
-            except Exception:
+            except Exception as _:
                 traceback.print_exc()
 
         # Executing the requested action

@@ -257,8 +257,8 @@ def __get_proxy(istsos_package, action_module, **kwargs):
     try:
         m = importlib.import_module(module)
     except:
-        module = 'istsos.actions.%s.%s' % (
-            action_module,
+        module = 'istsos.%s.%s' % (
+            istsos_package,
             fileName
         )
         m = importlib.import_module(module)
