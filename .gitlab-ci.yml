@@ -1,8 +1,8 @@
 image: doscio/istsos3-test:alpine
 
 services:
-- name: doscio/istsos3-test:alpine
-  alias: postgres
+  - name: doscio/istsos3-test:alpine
+    alias: postgres
 
 variables:
   # Configure postgres service (https://hub.docker.com/_/postgres/)
