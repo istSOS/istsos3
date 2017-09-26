@@ -1,8 +1,8 @@
 image: doscio/istsos3-test:alpine
 
 services:
-- name: doscio/istsos3-test:alpine
-  alias: postgres
+  - name: doscio/istsos3-test:alpine
+    alias: postgres
 
 variables:
   # Configure postgres service (https://hub.docker.com/_/postgres/)
@@ -30,5 +30,4 @@ rest:
         - pytest -s istsos/test/actions/servers/rest/test_method.py
         - pytest -s istsos/test/actions/servers/rest/test_offering.py
         - pytest -s istsos/test/actions/servers/rest/test_specimen.py
-        - pytest -s istsos/test/actions/servers/rest/test_systemType.py
 

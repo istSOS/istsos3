@@ -71,6 +71,9 @@ class HttpRequest(Request):
     def get_body(self):
         return self['body']
 
+    def get_action(self):
+        return self['body']['action']
+
     def get_json(self):
         return self['json']
 
@@ -104,7 +107,10 @@ class HttpRequest(Request):
         return self['sos_request']
 
     def is_get_capabilities(self):
-        return (self.get_sos_request() == 'GetCapabilities')
+        try:
+            return self.get_sos_request() == 'GetCapabilities'
+        except Exception as _:
+            return False
 
     def is_describe_sensor(self):
         return (self.get_sos_request() == 'DescribeSensor')

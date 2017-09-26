@@ -21,13 +21,15 @@ class OfferingsList(OfferingsList):
 
             sql = """
                 SELECT
+                    id,
+                    offering_name,
                     procedure_name,
                     description_format,
                     pt_begin,
                     pt_end,
-                    offering_name,
-                    data_table_exists,
-                    id
+                    foi_name,
+                    foi_type,
+                    data_table_exists
                 FROM
                     offerings 
             """
@@ -37,14 +39,16 @@ class OfferingsList(OfferingsList):
 
             for res in recs:
 
-                table = res[5]
+                table = res[8]
 
                 off = {
-                    'procedure': res[0],
-                    'description': res[1],
-                    'begin_pos': res[2].isoformat() if res[2] else None,
-                    'end_pos': res[3].isoformat() if res[3] else None,
-                    'offering': res[4],
+                    'offering': res[1],
+                    'procedure': res[2],
+                    'description': res[3],
+                    'begin_pos': res[4].isoformat() if res[4] else None,
+                    'end_pos': res[5].isoformat() if res[5] else None,
+                    'foi_name': res[6],
+                    'foi_type': res[7],
                     'observable_properties': []
                 }
 
@@ -53,18 +57,15 @@ class OfferingsList(OfferingsList):
                         SELECT
                             observed_properties.name,
                             observed_properties.def,
-                            uoms.name,
-                            observation_types.def
+                            uoms.name
                         FROM
                             off_obs_prop
                         INNER JOIN observed_properties
                             ON id_opr = observed_properties.id
                         LEFT JOIN uoms
                             ON id_uom = uoms.id
-                        LEFT JOIN observation_types
-                            ON id_oty = observation_types.id
                         WHERE
-                            id_off = %s;""", (res[6],))
+                            id_off = %s;""", (res[0],))
 
                     r_obs = yield from cur.fetchall()
 
@@ -82,6 +83,5 @@ class OfferingsList(OfferingsList):
                     # est = yield from cur.fetchone()
                     # if len(est) > 0:
                     #     off['estimated'] = int(est[0])
-
 
                 request['offeringsList'].append(off)

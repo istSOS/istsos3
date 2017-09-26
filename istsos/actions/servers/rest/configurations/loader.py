@@ -14,10 +14,10 @@ class Loader(CompositeAction):
 
     @asyncio.coroutine
     def before(self, request):
-        if request['body']['action'] == 'retrieve':
+        if request.get_action() == 'retrieve':
             yield from self.add_retriever('Loader')
         else:
-            raise Exception('Method {} not supported'.format(request['method']))
+            raise Exception('Method {} not supported'.format(request.get_action()))
 
     @asyncio.coroutine
     def after(self, request):
@@ -25,7 +25,7 @@ class Loader(CompositeAction):
         """
         response = Response.get_template()
 
-        if request['body']['action'] == 'retrieve':
+        if request.get_action() == 'retrieve':
             response['data'] = request['loader']
 
         request['response'] = Response(json_source=response)

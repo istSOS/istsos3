@@ -252,7 +252,17 @@ def __get_proxy(istsos_package, action_module, **kwargs):
         state.config["loader"]["type"],
         fileName
     )
-    m = importlib.import_module(module)
+
+    istsos.debug("Importing %s.%s" % (module, action_module))
+    try:
+        m = importlib.import_module(module)
+    except:
+        module = 'istsos.%s.%s' % (
+            istsos_package,
+            fileName
+        )
+        m = importlib.import_module(module)
+
     m = getattr(m, action_module)
     if kwargs is not None:
         return m(**kwargs)

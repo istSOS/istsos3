@@ -17,7 +17,7 @@ class Provider(CompositeAction):
         if request['body']['action'] == 'retrieve':
             yield from self.add_retriever('Provider')
         else:
-            raise Exception('Method {} not supported'.format(request['method']))
+            raise Exception('Method {} not supported'.format(request.get_action()))
 
     @asyncio.coroutine
     def after(self, request):
