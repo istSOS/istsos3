@@ -31,8 +31,7 @@ SELECT DISTINCT
     rt_begin,
     rt_end,
     foi_type,
-    data_table_exists,
-    system_type
+    data_table_exists
 FROM
     offerings,
     off_obs_prop,
@@ -104,8 +103,7 @@ AND
                 "results": rec[9],
                 "name": rec[1],
                 "procedure": rec[2],
-                "foi_type": rec[8],
-                "systemType": rec[10]
+                "foi_type": rec[8]
             })
 
             pt_begin = rec[4].isoformat() if rec[4] else None

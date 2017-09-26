@@ -79,23 +79,95 @@ docs html page.
 To build the docs:
 
 ```bash
-cd docs
-make html
+    cd docs
+    make html
 ```
 
-### Continuous Integration (CI)
+## Continuous Integration (CI)
 
 https://about.gitlab.com/features/gitlab-ci-cd/
 
-[#todo to be emproved]
-Here is explained the deployment Piplines that automaticalliy tests, validate and publish documentation of the master branch.
+The tests are executed automatically at each commit on the remote repository.
+The test are performed inside a docker environment. 
+
+### Installation
+
+It's possible to execute the test locally, to do that follow the steps below:
+
+#### Install docker executor
+
+Add the GPG key for the official Docker repository:
+```bash
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+```
+
+Add Docker repo to APT sources:
+```bash
+    sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+```
+
+Install Docker
+```bash
+    sudo apt-get update
+    sudo apt-get install docker-ce
+```
+
+Run docker without sudo
+```bash
+    sudo usermod -aG docker ${USER}
+    su - ${USER}
+```
+
+#### Install gitlab-ci runner
+
+Download the correct deb (gitlab-ci-multi-runner_amd64.deb) from the following uri:
+```bash
+    https://gitlab-ci-multi-runner-downloads.s3.amazonaws.com/v9.5.0/deb/gitlab-ci-multi-runner_amd64.deb
+```
+
+Install gitlab-ci-runner:
+```bash
+    sudo dkpg -i gitlab-ci-multi-runner_amd64.deb
+```
+
+#### Run test locally with gitlab-ci
+
+Locally you can only run one test at time, the test run only on commited changes.
+
+```bash
+    cd git-root
+    gitlab-runner exec docker [test_name] 
+
+```
+
+### Add new jobs to gitleb-ci
+
+The .gitlab-ci.yml file defines sets of jobs with constraints of how and when they should be run.
+The jobs are defined as top-level elements with a name (in our case rest) and always have to contain the script keyword.
+
+Each job run independently from each other. If a test fails the job will be stopped.
+
+Example:
+```
+rest:
+    stage: test
+
+    script:
+        - pytest -s istsos/test/actions/servers/rest/test_uom.py
+        - pytest -s istsos/test/actions/servers/rest/test_observedProperties.py
+        - pytest -s istsos/test/actions/servers/rest/test_material.py
+        - pytest -s istsos/test/actions/servers/rest/test_method.py
+        - pytest -s istsos/test/actions/servers/rest/test_offering.py
+        - pytest -s istsos/test/actions/servers/rest/test_specimen.py
+
+```
 
 
 ## istSOS3 lib usage
 
 ### Usage example:
 
-[#todo to be emproved]
+[#todo to be improved]
 
 ```python
 
@@ -133,7 +205,7 @@ loop.close()
 
 ```
 
-#### Intialize a new config file
+#### Initialize a new config file
 
 Initializing the istSOS Server with a config dictionary. A new config file will be created in the given path (default to config.pickle).
 
@@ -157,3 +229,5 @@ state = State(
 )
 
 ```
+
+

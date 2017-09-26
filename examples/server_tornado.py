@@ -43,7 +43,8 @@ https://gist.github.com/drgarcia1986/6b666c05ccb03e9525b4
             except Exception as e:
                 future.set_exception(e)
 
-        asyncio.async(func(*args, **kwargs)).add_done_callback(future_done)
+        # asyncio.async() is deprecated, replaced with asyncio.ensure_future()
+        asyncio.ensure_future(func(*args, **kwargs)).add_done_callback(future_done)
         return future
     return decorator
 
@@ -88,7 +89,6 @@ class SosHandler(BaseHandler):
             request, stats=True
         )
         self.write(request['response'])
-
 
 class RestHandler(BaseHandler):
 
