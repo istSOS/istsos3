@@ -4,7 +4,7 @@
 # Version: v3.0.0
 
 import asyncio
-import istsos
+from istsos import setting
 from istsos.actions.retrievers.retriever import Retriever
 from istsos.entity.provider import Provider as EProvider
 
@@ -13,6 +13,6 @@ class Provider(Retriever):
     @asyncio.coroutine
     def process(self, request):
         request['provider'] = EProvider(json_source=(
-                yield from istsos.get_state()
+                yield from setting.get_state()
             ).get_provider()
         )

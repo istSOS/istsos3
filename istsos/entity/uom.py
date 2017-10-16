@@ -24,5 +24,5 @@ class Uom(BaseEntity):
     def get_template():
         return {
             "name": "",
-            "descriontion": ""
+            "description": ""
         }

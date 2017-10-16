@@ -13,7 +13,7 @@ class TestMaterial:
 
     def execute_get(self):
         # Installation of the istSOS server
-        state = State('config-test.json')
+        state = State('config.json')
         server = yield from Server.create(state)
 
         body = {
@@ -38,7 +38,7 @@ class TestMaterial:
         assert False
 
     def execute_post(self):
-        state = State('config-test.json')
+        state = State('config.json')
         server = yield from Server.create(state)
 
         self.body = {

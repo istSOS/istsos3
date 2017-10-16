@@ -6,7 +6,7 @@
 import asyncio
 import uuid
 import json
-import istsos
+from istsos import setting
 from istsos.entity.observation import Observation
 from istsos.entity.observedProperty import (
     ObservedProperty, ObservedPropertyComplex
@@ -92,7 +92,7 @@ class ObservationsBuilder(ObservationsBuilder):
                     data["resultTime"] = self.instants[
                         timeInstantId.replace("#", "")]
 
-                if omType == istsos._complexObservation['definition']:
+                if omType == setting._complexObservation['definition']:
                     # Looping the DataArray fields we can interpret the
                     # missing informations in the DataArray's metadata
                     observedProperties = []
@@ -125,10 +125,10 @@ class ObservationsBuilder(ObservationsBuilder):
                         # Let's interprete the observation type
                         componentType = componentType[0]
                         data_type = None
-                        for key in list(istsos._component_type.keys()):
+                        for key in list(setting._component_type.keys()):
                             if componentType.tag == "{%s}%s" % (
                                     request.ns['swe_2_0'], key):
-                                data_type = istsos._component_type[
+                                data_type = setting._component_type[
                                     key]['definition']
                                 break
                         if data_type is None:
@@ -180,10 +180,10 @@ class ObservationsBuilder(ObservationsBuilder):
                         if componentType.tag != "{%s}Time" % (
                                 request.ns['swe_2_0']):
                             data_type = None
-                            for key in list(istsos._component_type.keys()):
+                            for key in list(setting._component_type.keys()):
                                 if componentType.tag == "{%s}%s" % (
                                         request.ns['swe_2_0'], key):
-                                    data_type = istsos._component_type[
+                                    data_type = setting._component_type[
                                         key]['definition']
                                     break
                             if data_type is None:

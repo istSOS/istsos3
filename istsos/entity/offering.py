@@ -4,11 +4,13 @@
 # Version: v3.0.0
 
 import uuid
-import istsos
+from istsos import setting
 from istsos.entity.baseEntity import BaseEntity
 from istsos.entity.om_base_entity.timeElements import TimeInterval
 from istsos.entity.om_base_entity.geoJson import Coordinates2D
 from istsos.entity.featureOfInterest import SamplingType
+from istsos.entity.om_base_entity.observationType import ObservationType
+from istsos.entity.observableProperty import ObservableProperty
 import collections
 
 
@@ -21,17 +23,14 @@ class Offering(BaseEntity):
         "properties": {
             "id": {"type": "integer"},
             "results": {"type": "boolean"},
-            "name": {"type": "string"},
-            "procedure": {"type": "string"},
-            "systemType": {
-                "oneOf": [
-                    {
-                        "type": "null"
-                    },
-                    {
-                        "type": "string"
-                    }
-                ]
+            "fixed": {"type": "boolean"},
+            "name": {
+                "type": "string",
+                "minLength": 1
+            },
+            "procedure": {
+                "type": "string",
+                "minLength": 1
             },
             "procedure_description_format": {
                 "type": "array",
@@ -39,99 +38,25 @@ class Offering(BaseEntity):
                     {
                         "type": "string",
                         "enum": [
-                            "http://www.opengis.net/sensorML/1.0.1"
+                            "http://www.opengis.net/sensorML/1.0.1",
+                            "application/json"
                         ]
                     }
                 ]
             },
-            "observable_property": {
+            "observable_properties": {
                 "type": "array",
                 "items": [
-                    {
-                        "type": "object",
-                        "properties": {
-                            "id": {
-                                "type": "integer"
-                            },
-                            "name": {
-                                "oneOf": [
-                                    {
-                                        "type": "null"
-                                    },
-                                    {
-                                        "type": "string"
-                                    }
-                                ]
-                            },
-                            "definition": {
-                                "type": "string"
-                            },
-                            "uom": {
-                                "oneOf": [
-                                    {
-                                        "type": "null"
-                                    },
-                                    {
-                                        "type": "string"
-                                    }
-                                ]
-                            },
-                            "type": {
-                                "oneOf": [
-                                    {
-                                        "type": "null"
-                                    },
-                                    {
-                                        "type": "string"
-                                    }
-                                ]
-                            },
-                            "column": {
-                                "oneOf": [
-                                    {
-                                        "type": "null"
-                                    },
-                                    {
-                                        "type": "string"
-                                    }
-                                ]
-                            },
-                            "constraint": {
-                                "type": "object",
-                                "properties": {
-                                    "inteval": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "string"
-                                        }
-                                    },
-                                    "role": {
-                                        "type": "string"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                ]
+                    ObservableProperty.json_schema
+                ],
+                "minLength": 1
             },
-            "observation_type": {
+            "observation_types": {
                 "type": "array",
                 "items": [
-                    {
-                        "type": "object",
-                        "properties": {
-                            "id": {
-                                "type": "integer"
-                            },
-                            "definition": {
-                                "type": "string"
-                            },
-                            "description": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                ]
+                    ObservationType.json_schema
+                ],
+                "minLength": 1
             },
             "observed_area": {
                 "type": "object",
@@ -153,25 +78,34 @@ class Offering(BaseEntity):
                 ]
             },
             "foi_type": SamplingType.json_schema,
-            "foi_name": {"type": "string"}
-        }
+            "sampled_foi": {
+                "oneOf": [
+                    {"type": "string"},
+                    {"type": "null"}
+                ]
+            }
+        },
+        "required": [
+            "fixed", "name", "procedure", "procedure_description_format",
+            "observable_properties", "observation_types", "foi_type",
+            "sampled_foi"
+        ]
     }
 
     @staticmethod
     def get_template(offering=None):
         ret = {
+            "fixed": False,
             "name": str(uuid.uuid1()).replace('-', ''),
             "procedure": str(uuid.uuid1()).replace('-', ''),
             "procedure_description_format": [
-                "http://www.opengis.net/sensorML/1.0.1"
+                "http://www.opengis.net/sensorML/1.0.1",
+                "application/json"
             ],
-            "observable_property": [],
-            "observation_type": [],
-            "systemType": None,
-            "phenomenon_time": None,
-            "result_time": None,
+            "observable_properties": [],
+            "observation_types": [],
             "foi_type": None,
-            "foi_name": ""
+            "sampled_foi": setting._ogc_nil
         }
         if offering is not None:
             ret.update(offering)
@@ -179,20 +113,20 @@ class Offering(BaseEntity):
 
     def is_complex(self):
         for ot in self['observation_type']:
-            if ot['definition'] == istsos._COMPLEX_OBSERVATION:
+            if ot['definition'] == setting._COMPLEX_OBSERVATION:
                 return True
         return False
 
     def get_complex_observable_property(self):
         for op in self['observable_property']:
-            if op['type'] == istsos._COMPLEX_OBSERVATION:
+            if op['type'] == setting._COMPLEX_OBSERVATION:
                 return op
         raise Exception(
             "This offering is not a Complex observable property")
 
     def is_array(self):
         for ot in self['observation_type']:
-            if ot['definition'] == istsos._ARRAY_OBSERVATION:
+            if ot['definition'] == setting._ARRAY_OBSERVATION:
                 return True
         return False
 

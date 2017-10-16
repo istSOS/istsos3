@@ -6,6 +6,7 @@
 import asyncio
 import uuid
 import istsos
+from istsos import setting
 from istsos.actions.creators.observationCreator import ObservationCreator
 
 
@@ -23,11 +24,11 @@ class ObservationCreator(ObservationCreator):
             yield from self.create_data_table(
                 offering, observation, cur
             )
-            if observation['type'] == istsos._complexObservation['definition']:
+            if observation['type'] == setting._complexObservation['definition']:
                 yield from self.insert_result(
                     offering, observation, cur)
 
-            elif observation['type'] == istsos._arrayObservation['definition']:
+            elif observation['type'] == setting._arrayObservation['definition']:
                 pass
 
             else:
@@ -52,16 +53,15 @@ class ObservationCreator(ObservationCreator):
 
             # The data table are not yet initialized.
             # Now the missing columns will be created.
-            if observation['type'] == istsos._complexObservation['definition']:
+            if observation['type'] == setting._complexObservation['definition']:
                 for op in observation.get_op_list():
                     yield from self.add_field(
                         offering, op, cur)
 
-            elif observation['type'] == istsos._arrayObservation['definition']:
+            elif observation['type'] == setting._arrayObservation['definition']:
                 raise Exception("Not implemented yet")
 
             else:
-                istsos.debug("Adding field")
                 yield from self.add_field(
                     offering, observation['observedProperty'], cur)
 
@@ -74,6 +74,7 @@ class ObservationCreator(ObservationCreator):
 
     @asyncio.coroutine
     def add_field(self, offering, observedProperty, cur):
+        istsos.debug("Adding field: %s" % observedProperty['def'])
 
         # Getting offering's observable property
         observable_property = offering.get_observable_property(
@@ -144,23 +145,23 @@ class ObservationCreator(ObservationCreator):
         # of this offering
         sqlType = None
         if observedProperty['type'] in [
-                istsos._CATEGORY_OBSERVATION,
-                istsos._TEXT_OBSERVATION]:
+                setting._CATEGORY_OBSERVATION,
+                setting._TEXT_OBSERVATION]:
             sqlType = "character varying"
 
-        elif observedProperty['type'] == istsos._COUNT_OBSERVATION:
+        elif observedProperty['type'] == setting._COUNT_OBSERVATION:
             sqlType = "integer"
 
-        elif observedProperty['type'] == istsos._MESAUREMENT_OBSERVATION:
+        elif observedProperty['type'] == setting._MESAUREMENT_OBSERVATION:
             sqlType = "double precision"
 
-        elif observedProperty['type'] == istsos._TRUTH_OBSERVATION:
+        elif observedProperty['type'] == setting._TRUTH_OBSERVATION:
             sqlType = "boolean"
 
-        elif observedProperty['type'] == istsos._GEOMETRY_OBSERVATION:
+        elif observedProperty['type'] == setting._GEOMETRY_OBSERVATION:
             sqlType = "geometry"
 
-        elif observedProperty['type'] == istsos._COMPLEX_OBSERVATION:
+        elif observedProperty['type'] == setting._COMPLEX_OBSERVATION:
             sqlType = None
 
         else:
@@ -208,7 +209,7 @@ class ObservationCreator(ObservationCreator):
             observation['phenomenonTime']['timeInstant']['instant'],
             observation['featureOfInterest']
         ]
-        if observation['type'] == istsos._complexObservation['definition']:
+        if observation['type'] == setting._complexObservation['definition']:
             istsos.debug(columns)
             for result in observation['result']:
                 params.extend([result, 100])
@@ -226,7 +227,7 @@ class ObservationCreator(ObservationCreator):
                 """, tuple(params)
             )
 
-        elif observation['type'] == istsos._arrayObservation['definition']:
+        elif observation['type'] == setting._arrayObservation['definition']:
             pass
 
         else:
@@ -252,7 +253,7 @@ class ObservationCreator(ObservationCreator):
         rt_begin = None
         rt_end = None
 
-        if observations[0]['type'] == istsos._complexObservation['definition']:
+        if observations[0]['type'] == setting._complexObservation['definition']:
             pt = []
             rt = []
             for observation in observations:
@@ -267,7 +268,7 @@ class ObservationCreator(ObservationCreator):
             rt_begin = min(pt)
             rt_end = max(pt)
 
-        elif observations[0]['type'] == istsos._arrayObservation['definition']:
+        elif observations[0]['type'] == setting._arrayObservation['definition']:
             pass
 
         else:

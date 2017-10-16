@@ -82,6 +82,12 @@ class BaseEntity(dict):
     def to_json(self):
         return json.dumps(self)
 
+    @staticmethod
+    def get_template(entity=None):
+        if entity is not None:
+            return entity
+        return {}
+
 
 class CompositeEntity(BaseEntity):
 

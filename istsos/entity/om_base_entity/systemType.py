@@ -3,21 +3,21 @@
 # License: https://github.com/istSOS/istsos3/master/LICENSE.md
 # Version: v3.0.0
 
-import istsos
+from istsos import setting
 from istsos.entity.baseEntity import BaseEntity
 import collections
 
 
 class SystemType(BaseEntity):
 
-    typdef = istsos._typdef
+    typdef = setting._typdef
 
     json_schema = {
         "type": "string",
         "enum": [
-            istsos._INSITU_FIXED_POINT,
-            istsos._INSITU_MOBILE_POINT,
-            istsos._INSITU_FIXED_SPECIMEN,
-            istsos._INSITU_MOBILE_SPECIMEN
+            setting._INSITU_FIXED_POINT,
+            setting._INSITU_MOBILE_POINT,
+            setting._INSITU_FIXED_SPECIMEN,
+            setting._INSITU_MOBILE_SPECIMEN
         ]
     }

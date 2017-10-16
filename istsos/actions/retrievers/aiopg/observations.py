@@ -5,6 +5,7 @@
 
 import asyncio
 import istsos
+from istsos import setting
 from istsos.actions.retrievers.observations import Observations
 from istsos.entity.observation import Observation
 from istsos.entity.observedProperty import (
@@ -80,7 +81,7 @@ temporalFilter:
             observation = {}
             observation.update(template)
             if offering.is_complex():
-                observation["type"] = istsos._COMPLEX_OBSERVATION
+                observation["type"] = setting._COMPLEX_OBSERVATION
                 op = offering.get_complex_observable_property()
                 observation["observedProperty"] = \
                     ObservedPropertyComplex.get_template({
@@ -90,7 +91,7 @@ temporalFilter:
                         "uom": op['uom']
                     })
                 for op in offering['observable_property']:
-                    if op['type'] == istsos._COMPLEX_OBSERVATION:
+                    if op['type'] == setting._COMPLEX_OBSERVATION:
                         continue
                     else:
                         # observedProperty filters are applied here excluding

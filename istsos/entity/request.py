@@ -11,6 +11,7 @@ class Request(BaseEntity):
     def __init__(self):
         super(Request, self).__init__()
         self['filters'] = None
+        self['response'] = None
 
     def set_filter(self, _filter):
         if self['filters'] is None:
@@ -25,3 +26,8 @@ class Request(BaseEntity):
         if self['filters'] is not None and name in self['filters']:
             return self['filters'][name]
         return None
+
+    def normalizr(self, byKey):
+        if isinstance(self['response'], list):
+            return {item[byKey]: item for item in self['response']}
+        return self['response']

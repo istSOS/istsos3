@@ -134,15 +134,13 @@ CREATE TABLE public.offerings
     offering_name character varying NOT NULL,
     procedure_name character varying NOT NULL,
     description_format character varying,
-    data_model character varying,
-    table_name character varying,
+    foi_type character varying NOT NULL,
+    sampled_foi character varying,
+    fixed boolean DEFAULT FALSE,
     pt_begin timestamp with time zone,
     pt_end timestamp with time zone,
     rt_begin timestamp with time zone,
     rt_end timestamp with time zone,
-    foi_name character varying,
-    foi_type character varying NOT NULL,
-    foi_geom geometry,
     observed_area geometry,
     cached jsonb,
     PRIMARY KEY (id)
@@ -246,4 +244,44 @@ CREATE TABLE public.specimens
   CONSTRAINT specimen_id_met_fk_fkey FOREIGN KEY (id_met_fk)
       REFERENCES methods (id) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION
-)
+);
+
+CREATE TABLE public.fois
+(
+   id serial NOT NULL,
+   description character varying,
+   identifier character varying NOT NULL,
+   foi_name character varying,
+   foi_type character varying,
+   geom geometry,
+   PRIMARY KEY (id),
+   UNIQUE (identifier)
+);
+
+CREATE TABLE public.sampled_foi
+(
+    id integer NOT NULL,
+    id_sam integer NOT NULL,
+    PRIMARY KEY (id, id_sam),
+    FOREIGN KEY (id) REFERENCES public.fois (id)
+        ON UPDATE NO ACTION ON DELETE CASCADE,
+    FOREIGN KEY (id_sam) REFERENCES public.fois (id)
+        ON UPDATE NO ACTION ON DELETE CASCADE
+);
+
+
+INSERT INTO public.fois(
+    description, identifier, foi_name, sampled_foi, foi_type, geom)
+VALUES (
+    'There is no value',
+    'http://www.opengis.net/def/nil/OGC/0/inapplicable',
+    'Inapplicable', NULL, NULL
+),(
+    'The correct value is not readily available to the sender of this data. Furthermore, a correct value may not exist',
+    'http://www.opengis.net/def/nil/OGC/0/missing',
+    'Missing', NULL, NULL
+),(
+    'The correct value is not known to, or not computable by, the sender of this data. However, the correct value probably exists',
+    'http://www.opengis.net/def/nil/OGC/0/unknown',
+    'Unknown', NULL, NULL
+);

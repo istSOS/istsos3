@@ -4,7 +4,9 @@
 # Version: v3.0.0
 
 import asyncio
+from istsos.entity.offering import Offering
 from istsos.actions.retrievers.offeringsList import OfferingsList
+from istsos.entity.observableProperty import ObservableProperty
 
 
 class OfferingsList(OfferingsList):
@@ -24,14 +26,15 @@ class OfferingsList(OfferingsList):
                     id,
                     offering_name,
                     procedure_name,
-                    description_format,
+                    foi_type,
+                    sampled_foi,
+                    data_table_exists,
                     pt_begin,
                     pt_end,
-                    foi_name,
-                    foi_type,
-                    data_table_exists
+                    rt_begin,
+                    rt_end
                 FROM
-                    offerings 
+                    offerings
             """
 
             yield from cur.execute(sql)
@@ -39,25 +42,51 @@ class OfferingsList(OfferingsList):
 
             for res in recs:
 
-                table = res[8]
-
-                off = {
+                off = Offering.get_template({
+                    'id': res[0],
                     'offering': res[1],
                     'procedure': res[2],
-                    'description': res[3],
-                    'begin_pos': res[4].isoformat() if res[4] else None,
-                    'end_pos': res[5].isoformat() if res[5] else None,
-                    'foi_name': res[6],
-                    'foi_type': res[7],
-                    'observable_properties': []
-                }
+                    'foi_type': res[3],
+                    'sampled_foi': res[4]
+                })
+
+                table = res[5]
+
+                if res[6] is not None and res[7] is not None:
+                    off["phenomenon_time"] = {
+                        "begin": res[6].isoformat(),
+                        "end": res[7].isoformat()
+                    }
+
+                if res[8] is not None and res[9] is not None:
+                    off["result_time"] = {
+                        "begin": res[8].isoformat(),
+                        "end": res[9].isoformat()
+                    }
+
+                yield from cur.execute("""
+                    SELECT
+                        observation_type
+                    FROM
+                        off_obs_type
+                    WHERE
+                        id_off = %s;""", (res[0],))
+
+                observation_types = yield from cur.fetchall()
+
+                for observation_type in observation_types:
+                    off['observation_types'].append(
+                        observation_type[0]
+                    )
 
                 if table:
                     yield from cur.execute("""
                         SELECT
+                            off_obs_prop.id,
                             observed_properties.name,
                             observed_properties.def,
-                            uoms.name
+                            uoms.name,
+                            observation_type
                         FROM
                             off_obs_prop
                         INNER JOIN observed_properties
@@ -70,18 +99,18 @@ class OfferingsList(OfferingsList):
                     r_obs = yield from cur.fetchall()
 
                     for obs_prop in r_obs:
-                        off['observable_properties'].append({
-                            "name": obs_prop[0],
-                            "definition": obs_prop[1],
-                            "uom": obs_prop[2],
+                        op = ObservableProperty.get_template({
+                            "id": obs_prop[0],
+                            "name": obs_prop[1],
+                            "definition": obs_prop[2],
+                            "uom": obs_prop[3],
                             # "type": obs_prop[3]
                         })
+                        if obs_prop[4] is not None:
+                            op['type'] = obs_prop[4]
 
-                    # this value is updated on VACUUM
-                    # sql = "SELECT reltuples FROM pg_class WHERE relname = '_{}';".format(res[4])
-                    # yield from cur.execute(sql)
-                    # est = yield from cur.fetchone()
-                    # if len(est) > 0:
-                    #     off['estimated'] = int(est[0])
+                        off['observable_properties'].append(
+                            ObservableProperty(op)
+                        )
 
-                request['offeringsList'].append(off)
+                request['offeringsList'].append(Offering(off))

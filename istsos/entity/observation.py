@@ -3,7 +3,7 @@
 # License: https://github.com/istSOS/istsos3/master/LICENSE.md
 # Version: v3.0.0
 
-import istsos
+from istsos import setting
 from istsos.entity.baseEntity import BaseEntity
 from istsos.entity.observedProperty import (
     ObservedProperty, ObservedPropertyComplex)
@@ -83,8 +83,8 @@ class Observation(BaseEntity):
         ret = []
         if op is not None:
             ret.append(op)
-            if op['type'] == istsos._complexObservation['definition'] \
-                    or op['type'] == istsos._arrayObservation['definition']:
+            if op['type'] == setting._complexObservation['definition'] \
+                    or op['type'] == setting._arrayObservation['definition']:
                 for field in op['fields']:
                     ret.append(field)
         return ret
@@ -94,8 +94,8 @@ class Observation(BaseEntity):
         op = self['observedProperty']
         ret = []
         if op is not None:
-            if op['type'] == istsos._complexObservation['definition'] \
-                    or op['type'] == istsos._arrayObservation['definition']:
+            if op['type'] == setting._complexObservation['definition'] \
+                    or op['type'] == setting._arrayObservation['definition']:
                 for field in op['fields']:
                     ret.append(field)
             else:
@@ -108,8 +108,8 @@ class Observation(BaseEntity):
         ret = []
         if op is not None:
             ret.append(op['def'])
-            if op['type'] == istsos._complexObservation['definition'] \
-                    or op['type'] == istsos._arrayObservation['definition']:
+            if op['type'] == setting._complexObservation['definition'] \
+                    or op['type'] == setting._arrayObservation['definition']:
                 for field in op['fields']:
                     ret.append(field['def'])
 
@@ -121,8 +121,8 @@ class Observation(BaseEntity):
         ret = []
         if op is not None:
             ret.append(op['type'])
-            if op['type'] == istsos._complexObservation['definition'] \
-                    or op['type'] == istsos._arrayObservation['definition']:
+            if op['type'] == setting._complexObservation['definition'] \
+                    or op['type'] == setting._arrayObservation['definition']:
                 for field in op['fields']:
                     ret.append(field['type'])
 

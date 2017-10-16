@@ -4,7 +4,7 @@
 # Version: v3.0.0
 
 import asyncio
-import istsos
+from istsos import setting
 from istsos.actions.retrievers.retriever import Retriever
 from istsos.entity.identification import Identification as EIdentification
 
@@ -13,6 +13,6 @@ class Identification(Retriever):
     @asyncio.coroutine
     def process(self, request):
         request['identification'] = EIdentification(json_source=(
-                yield from istsos.get_state()
+                yield from setting.get_state()
             ).get_identification()
         )

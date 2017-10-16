@@ -26,8 +26,10 @@ class Response(BaseEntity):
         ]
     }
 
-    @staticmethod
-    def get_template():
-        return {
+    def get_template(response=None):
+        ret = {
             "success": True
         }
+        if response is not None:
+            ret.update(response)
+        return ret

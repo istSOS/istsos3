@@ -5,6 +5,7 @@
 
 import asyncio
 import istsos
+from istsos import setting
 import json
 from istsos.actions.retrievers.offerings import Offerings
 from istsos.entity.offering import Offering
@@ -166,7 +167,7 @@ WHERE
             rOty = yield from cur.fetchall()
             for obs_type in rOty:
                 data['observation_type'].append(
-                    istsos._observationTypesDict[obs_type[0]]
+                    setting._observationTypesDict[obs_type[0]]
                 )
 
             request['offerings'].append(Offering(data))

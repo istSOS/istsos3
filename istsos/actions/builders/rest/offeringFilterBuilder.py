@@ -29,7 +29,8 @@ class OfferingFilterBuilder(OfferingFilterBuilder):
 
         else:
 
-            procedure_filter = request['body']['params'].get('procedures', None)
+            procedure_filter = request['body']['params'].get(
+                'procedures', None)
 
             if procedure_filter is not None:
                 tmpl = ProceduresFilter.get_template()

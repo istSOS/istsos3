@@ -13,7 +13,7 @@ class TestOffering:
 
     def execute_get(self):
         # Installation of the istSOS server
-        state = State('config-test.json')
+        state = State('config.json')
         server = yield from Server.create(state)
 
         body = {
@@ -38,7 +38,7 @@ class TestOffering:
         assert procedure == self.body['data']['procedure']
 
     def execute_post(self):
-        state = State('config-test.json')
+        state = State('config.json')
         server = yield from Server.create(state)
 
         self.body = {
@@ -47,23 +47,33 @@ class TestOffering:
             "data": {
                 "observable_property": [
                     {
-                        "type": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+                        "type": (
+                            "http://www.opengis.net/def/observationType/"
+                            "OGC-OM/2.0/OM_Measurement"),
                         "name": "air-temperature",
-                        "definition": "urn:ogc:def:parameter:x-istsos:1.0:meteo:air:temperature",
+                        "definition": (
+                            "urn:ogc:def:parameter:x-istsos:1.0:"
+                            "meteo:air:temperature"),
                         "uom": "°C"
                     }
                 ],
                 "observation_type": [
                     {
-                        "definition": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+                        "definition": (
+                            "http://www.opengis.net/def/observationType/"
+                            "OGC-OM/2.0/OM_Measurement"),
                         "description": ""
                     }
                 ],
-                "procedure": "urn:ogc:def:procedure:x-istsos:1.0:{}".format(uuid.uuid4()),
+                "procedure": (
+                    "urn:ogc:def:procedure:x-istsos:1.0:{}"
+                ).format(uuid.uuid4()),
                 "procedure_description_format": [
                     "http://www.opengis.net/sensorML/1.0.1"
                 ],
-                "foi_type": "http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint",
+                "foi_type": (
+                    "http://www.opengis.net/def/samplingFeatureType/OGC-OM/"
+                    "2.0/SF_SamplingPoint"),
                 "foi_name": "https://istsos.org/istsos3/fois/ceresio",
                 "systemType": "undefined"
             }

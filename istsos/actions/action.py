@@ -3,11 +3,11 @@
 # License: https://github.com/istSOS/istsos3/master/LICENSE.md
 # Version: v3.0.0
 
+import istsos
 import asyncio
 import time
 import traceback
 import sys
-import istsos
 from istsos.common.exceptions import *
 
 
@@ -55,8 +55,7 @@ class Action(object):
     @asyncio.coroutine
     def init_connection(self):
         """Initilize a DbManager that will be used in the action chain.
-        returns the current DbManager.
-        """
+        returns the current DbManager."""
         root = self.get_root()
         if root is None:
             root = self
@@ -129,29 +128,9 @@ class Action(object):
         if self.parent is not None:
             raise exception
 
-        if isinstance(exception, DbError):
-            print(exception)
+        traceback.print_exc(file=sys.stdout)
 
-        elif isinstance(exception, InvalidParameterValue):
-            request['response'] = """<ExceptionReport
-    xmlns="http://www.opengis.net/ows/1.1"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    version="1.0.0" xml:lang="en">
-    %s
-</ExceptionReport>
-    """ % exception.to_xml()
-
-        else:
-            traceback.print_exc(file=sys.stdout)
-            request['response'] = """<ExceptionReport
-    xmlns="http://www.opengis.net/ows/1.1"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    version="1.0.0" xml:lang="en">
-    <Exception exceptionCode="ServerError">
-        <ExceptionText>%s</ExceptionText>
-    </Exception>
-</ExceptionReport>
-    """ % exception
+        request['response'] = exception
 
         if self.dbmanager is not None:
             yield from self.dbmanager.rollback()
@@ -243,9 +222,9 @@ class CompositeAction(Action):
 
 @asyncio.coroutine
 def __get_proxy(istsos_package, action_module, **kwargs):
-    import istsos
+    from istsos import setting
     import importlib
-    state = yield from istsos.get_state()
+    state = yield from setting.get_state()
     fileName = action_module[0].lower() + action_module[1:]
     module = 'istsos.%s.%s.%s' % (
         istsos_package,
@@ -256,7 +235,7 @@ def __get_proxy(istsos_package, action_module, **kwargs):
     istsos.debug("Importing %s.%s" % (module, action_module))
     try:
         m = importlib.import_module(module)
-    except:
+    except Exception:
         module = 'istsos.%s.%s' % (
             istsos_package,
             fileName
