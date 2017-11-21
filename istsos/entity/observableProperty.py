@@ -54,9 +54,7 @@ class ObservableProperty(BaseEntity):
                     {
                         "type": "null"
                     },
-                    {
-                        "type": "string"
-                    }
+                    ObservationType.json_schema
                 ]
             },
             "column": {

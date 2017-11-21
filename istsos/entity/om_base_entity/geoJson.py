@@ -91,7 +91,7 @@ class Point(BaseEntity):
         "properties": {
             "type": {
                 "type": "string",
-                "enum": ["point"]
+                "enum": ["Point"]
             },
             "coordinates": {
                 "oneOf": [
@@ -107,7 +107,7 @@ class Point(BaseEntity):
     @staticmethod
     def get_template(point=None):
         ret = {
-            "type": "point",
+            "type": "Point",
             "coordinates": []
         }
         if point is not None:

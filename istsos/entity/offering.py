@@ -11,6 +11,9 @@ from istsos.entity.om_base_entity.geoJson import Coordinates2D
 from istsos.entity.featureOfInterest import SamplingType
 from istsos.entity.om_base_entity.observationType import ObservationType
 from istsos.entity.observableProperty import ObservableProperty
+from istsos.entity.featureOfInterest import (
+    SamplingPoint
+)
 import collections
 
 
@@ -22,6 +25,12 @@ class Offering(BaseEntity):
         "type": "object",
         "properties": {
             "id": {"type": "integer"},
+            "config": {
+                "oneOf": [
+                    {"type": "object"},
+                    {"type": "null"}
+                ]
+            },  # Extra config paramenters
             "results": {"type": "boolean"},
             "fixed": {"type": "boolean"},
             "name": {
@@ -81,6 +90,7 @@ class Offering(BaseEntity):
             "sampled_foi": {
                 "oneOf": [
                     {"type": "string"},
+                    SamplingPoint.json_schema,
                     {"type": "null"}
                 ]
             }

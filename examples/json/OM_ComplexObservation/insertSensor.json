@@ -1,0 +1,42 @@
+{
+	"action": "CREATE_SENSOR",
+	"data": {
+		"name": "I am the sensor name",
+		"fixed": true,
+		"procedure": "sensor_101",
+		"procedure_description_format": [
+            "http://www.opengis.net/sensorML/1.0.1"
+        ],
+		"observable_property": [
+            {
+    			"definition": "urn:ogc:def:parameter:x-istsos:1.0:meteo:air:rainfall",
+    			"uom": "mm",
+    			"type": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"
+    		},
+            {
+    			"definition": "urn:ogc:def:parameter:x-istsos:1.0:meteo:air:temperature",
+    			"uom": "°C",
+    			"type": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"
+    		}
+        ],
+		"observation_type": [
+            "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+            "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation"
+        ],
+		"foi_type": "http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint",
+		"sampled_foi": {
+			"description": "",
+			"identifier": "position_1",
+			"name": "Lugano Lido",
+			"type": "http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint",
+			"shape": {
+				"type": "Point",
+				"coordinates": [
+                    997602.2192848356,
+                    5780646.617357063,
+                    0
+                ]
+			}
+		}
+	}
+}

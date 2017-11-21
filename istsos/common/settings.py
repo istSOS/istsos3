@@ -15,27 +15,33 @@ _SAMPLING_SPECIMEN = "%sSF_Specimen" % _foidef
 _samplingTypes = [
     {
         "id": 1,
-        "definition": _SAMPLING_CURVE
+        "definition": _SAMPLING_CURVE,
+        "name": "Curve"
     },
     {
         "id": 2,
-        "definition": _SAMPLING_POINT
+        "definition": _SAMPLING_POINT,
+        "name": "Point"
     },
     {
         "id": 3,
-        "definition": _SAMPLING_SOLID
+        "definition": _SAMPLING_SOLID,
+        "name": "Solid"
     },
     {
         "id": 4,
-        "definition": _SAMPLING_SURFACE
+        "definition": _SAMPLING_SURFACE,
+        "name": "Surface"
     },
     {
         "id": 5,
-        "definition": _SAMPLING_SPATIAL_FEATURE
+        "definition": _SAMPLING_SPATIAL_FEATURE,
+        "name": "Feature"
     },
     {
         "id": 6,
-        "definition": _SAMPLING_SPECIMEN
+        "definition": _SAMPLING_SPECIMEN,
+        "name": "Specimen"
     }
 ]
 
@@ -56,13 +62,13 @@ _TEMPORAL_OBSERVATION = "%sOM_TemporalObservation" % _typdef
 _arrayObservation = {
     "id": 14,
     "definition": _ARRAY_OBSERVATION,
-    "description": "",
+    "description": "Data array",
     "type": "swe:DataArrayPropertyType"
 }
 _complexObservation = {
     "id": 2,
     "definition": _COMPLEX_OBSERVATION,
-    "description": "",
+    "description": "Data record",
     "type": "swe:DataRecordPropertyType"
 }
 

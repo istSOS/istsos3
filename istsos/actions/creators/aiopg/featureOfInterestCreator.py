@@ -60,7 +60,7 @@ class FeatureOfInterestCreator(Action):
             ) VALUES (
                 %s, %s, %s, %s,
                 ST_GeomFromText(
-                    %s, 4326)
+                    %s, 3857)
             ) RETURNING id;
         """, (
             foi['description'] if 'description' in foi else '',

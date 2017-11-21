@@ -4,27 +4,20 @@
 # Version: v3.0.0
 
 import asyncio
+from istsos import setting
 from istsos.entity.rest.response import Response
 from istsos.actions.action import CompositeAction
 
 
-class Offerings(CompositeAction):
+class SamplingTypes(CompositeAction):
     """Rest api used to manage unit of measures
     """
-
-    @asyncio.coroutine
-    def before(self, request):
-        data = request.get_rest_data()
-        if 'specimen' in data:
-            request.set_filter(data)
-        yield from self.add_retriever('OfferingsList')
-
     @asyncio.coroutine
     def after(self, request):
         """Render the result of the request in json.
         """
         request['response'] = Response(
             json_source=Response.get_template({
-                "data": request['offeringsList']
+                "data": setting._samplingTypes
             })
         )

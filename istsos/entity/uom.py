@@ -21,8 +21,11 @@ class Uom(BaseEntity):
     }
 
     @staticmethod
-    def get_template():
-        return {
+    def get_template(uom=None):
+        ret = {
             "name": "",
             "description": ""
         }
+        if uom is not None:
+            ret.update(uom)
+        return ret

@@ -9,6 +9,7 @@ from istsos.entity.om_base_entity.timeElements import Instant
 from istsos.entity.om_base_entity.measure import Measure
 from istsos.entity.om_base_entity.geoJson import Point
 from istsos.entity.om_base_entity.link import Link
+from istsos import setting
 import collections
 
 
@@ -75,11 +76,26 @@ class Specimen(BaseEntity):
     json_schema = {
         "type": "object",
         "properties": {
-            "description": {"type": "string"},
-            "identifier": {"type": "string"},
-            "name": {"type": "string"},
-            "type": Link.json_schema,
-            "sampledFeature": Link.json_schema,
+            "id": {
+                "type": "integer"
+            },
+            "description": {
+                "type": "string"
+            },
+            "identifier": {
+                "type": "string",
+                "minLength": 1
+            },
+            "name": {
+                "type": "string"
+            },
+            "type": {
+                "type": "string",
+                "enum": [
+                    setting._SAMPLING_SPECIMEN
+                ]
+            },
+            "sampled_feature": Link.json_schema,
             "materialClass": Link.json_schema,
             "samplingTime": EventTime.json_schema,
             "samplingMethod": Link.json_schema,
@@ -98,7 +114,12 @@ class Specimen(BaseEntity):
             },
             "size": Measure.json_schema,
             "currentLocation": Link.json_schema,
-            "specimenType": {"oneOf": [Link.json_schema, {type: "null"}]}
+            "specimenType": {
+                "oneOf": [
+                    Link.json_schema,
+                    {type: "null"}
+                ]
+            }
         },
         "required": [
             "description",

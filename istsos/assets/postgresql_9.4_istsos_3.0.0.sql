@@ -20,9 +20,10 @@ CREATE TABLE public.observed_properties
    name character varying,
    def character varying NOT NULL,
    description character varying,
-   PRIMARY KEY (id)
+   PRIMARY KEY (id),
+   UNIQUE (name),
+   UNIQUE (def)
 );
-
 
 INSERT INTO public.observed_properties VALUES
 (1, 'air-temperature',
@@ -65,7 +66,8 @@ CREATE TABLE public.uoms
     id integer NOT NULL default nextval('uoms_id_uom_seq'),
     name character varying NOT NULL,
     description character varying,
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    UNIQUE (name)
 );
 
 INSERT INTO uoms VALUES
@@ -78,7 +80,11 @@ INSERT INTO uoms VALUES
     (6, '°F', 'Fahrenheit degree'),
     (7, 'm', 'metre'),
     (8, 'm3/s', 'cube meter per second'),
-    (9, 'mm/h', 'evapotranspiration');
+    (9, 'mm/h', 'evapotranspiration'),
+    (10, 'g', 'gram'),
+    (11, 'Kg', 'kilogram'),
+    (12, 'ml', 'milliliter'),
+    (13, 'l', 'liter');
 
 SELECT pg_catalog.setval('uoms_id_uom_seq', 9, true);
 
@@ -92,15 +98,34 @@ CREATE TABLE public.material_classes
 (
     id integer NOT NULL default nextval('material_classes_id_mcl_seq'),
     name character varying NOT NULL,
+    definition character varying NOT NULL,
     description character varying,
+    image character varying,
     PRIMARY KEY (id)
 );
 
 INSERT INTO material_classes VALUES
-    (1, 'soil', ''),
-    (2, 'water', ''),
-    (3, 'rock', ''),
-    (4, 'tissue', '');
+    (1,
+        'soil',
+        'http://www.opengis.net/def/material/OGC-OM/2.0/soil',
+        '',
+        '/img/materials/soil.png'),
+    (2,
+        'water',
+        'http://www.opengis.net/def/material/OGC-OM/2.0/water',
+        '',
+        '/img/materials/water.png'),
+    (3,
+        'rock',
+        'http://www.opengis.net/def/material/OGC-OM/2.0/rock',
+        '',
+        '/img/materials/rock.png'),
+    (4,
+        'tissue',
+        'http://www.opengis.net/def/material/OGC-OM/2.0/tissue',
+        '',
+        '/img/materials/tissue.png'
+    );
 
 SELECT pg_catalog.setval('material_classes_id_mcl_seq', 4, true);
 
@@ -143,6 +168,7 @@ CREATE TABLE public.offerings
     rt_end timestamp with time zone,
     observed_area geometry,
     cached jsonb,
+    config jsonb,
     PRIMARY KEY (id)
 );
 

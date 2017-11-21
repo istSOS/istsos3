@@ -10,11 +10,6 @@ import collections
 
 class ObservationType(BaseEntity):
 
-    typdef = (
-        'http://www.opengis.net/def/'
-        'observationType/OGC-OM/2.0/'
-    )
-
     json_schema = {
         "type": "string",
         "enum": [

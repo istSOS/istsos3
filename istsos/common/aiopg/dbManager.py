@@ -47,7 +47,7 @@ class DbManager():
             yield from self.cur.execute("BEGIN;")
             self._begin = True
         else:
-            setting.debug("Transation already started")
+            istsos.debug("Transation already started")
 
     @asyncio.coroutine
     def commit(self):

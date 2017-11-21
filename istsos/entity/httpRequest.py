@@ -78,7 +78,9 @@ class HttpRequest(Request):
         return self['json']
 
     def get_rest_data(self):
-        return self['json']['data']
+        if "data" in self['json']:
+            return self['json']['data']
+        return {}
 
     def get_xml(self):
         if self['xml'] is None:

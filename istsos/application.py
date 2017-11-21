@@ -225,6 +225,10 @@ REST_API = {
         'list.offerings',
         'Offerings'
     ),
+    "FETCH_SENSORS": (
+        'list.offerings',
+        'Offerings'
+    ),
     "FETCH_OBSERVABLE_PROPERTIES": (
         'list.observableProperties',
         'ObservableProperties'
@@ -237,13 +241,65 @@ REST_API = {
         'list.uoms',
         'Uoms'
     ),
+    "FETCH_SAMPLING_TYPES": (
+        'list.samplingTypes',
+        'SamplingTypes'
+    ),
+    "FETCH_FOIS": (
+        'list.featureOfInterests',
+        'FeatureOfInterests'
+    ),
     "CREATE_SENSOR": (
         'create.offering',
         'Offering'
     ),
-    "CREATE_FEATURE_OF_INTEREST": (
+    "CREATE_FOI": (
         'create.featureOfInterest',
         'FeatureOfInterest'
+    ),
+    "FETCH_DOMAINS": (
+        'list.domains',
+        'Domains'
+    ),
+    "FETCH_MATERIALS": (
+        'list.materials',
+        'Materials'
+    ),
+    "CHECK_SENSOR_NAME": (
+        'utilities.checkSensorName',
+        'CheckSensorName'
+    ),
+    "CHECK_FOI_NAME": (
+        'utilities.checkFoiName',
+        'CheckFoiName'
+    ),
+    "CHECK_FOI_IDENTIFIER": (
+        'utilities.checkFoiIdentifier',
+        'CheckFoiIdentifier'
+    ),
+    "CHECK_UOM_NAME": (
+        'utilities.checkUomName',
+        'CheckUomName'
+    ),
+    "CHECK_OBSERVABLE_PROPERTY_NAME": (
+        'utilities.checkObservablePropertyName',
+        'CheckObservablePropertyName'
+    ),
+    "CHECK_OBSERVABLE_PROPERTY_DEFINITION": (
+        'utilities.checkObservablePropertyDefinition',
+        'CheckObservablePropertyDefinition'
+    ),
+    "CHECK_SPECIMEN_IDENTIFIER": (
+        'utilities.checkSpecimenIdentifier',
+        'CheckSpecimenIdentifier'
+    ),
+    "CREATE_OBSERVABLE_PROPERTY": (
+        'create.observableProperty',
+        'ObservableProperty'
+    ),
+    "CREATE_UOM": (
+        'create.unitOfMeasure',
+        'UnitOfMeasure'
     )
 }
 
@@ -347,7 +403,8 @@ The HTTPRequest shall be prepared by the web framework used.
                     if isinstance(request['response'], DbError):
                         print(request['response'])
 
-                    elif isinstance(request['response'], InvalidParameterValue):
+                    elif isinstance(
+                            request['response'], InvalidParameterValue):
                         request['response'] = """<ExceptionReport
     xmlns="http://www.opengis.net/ows/1.1"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"

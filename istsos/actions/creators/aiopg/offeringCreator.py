@@ -5,6 +5,7 @@
 
 import asyncio
 import istsos
+from psycopg2.extras import Json
 from istsos import setting
 from istsos.common.exceptions import InvalidParameterValue
 from istsos.actions.creators.offeringCreator import OfferingCreator
@@ -45,24 +46,43 @@ class OfferingCreator(OfferingCreator):
                 request['offering']["sampled_foi"] == "":
             request['offering']["sampled_foi"] = setting._ogc_nil
         else:
-            # Check if sampled_foi exists, in istSOS Feature of Interest
-            # must exists before insert
-            yield from cur.execute("""
-                SELECT EXISTS(
-                    SELECT 1
-                    FROM fois
-                    WHERE identifier = %s
-                ) AS exists;
-            """, (
-                request['offering']["sampled_foi"],
-            ))
-            rec = yield from cur.fetchone()
-            if rec[0] is False:
-                raise InvalidParameterValue(
-                    "sampled_foi",
-                    "Sampled feature '%s' not exists" % request[
-                        'offering']["sampled_foi"]
-                )
+            # Check if a FeatureOfInterest entity is given instead of the uri
+            if isinstance(request['offering']["sampled_foi"], dict):
+                # In this case inser the feature of interest in the database
+                yield from (
+                    yield from istsos.actions.get_creator(
+                        'FeatureOfInterestCreator',
+                        parent=self
+                    )
+                ).process({
+                    "featureOfInterest": request['offering']["sampled_foi"]
+                })
+                request['offering']["sampled_foi"] = request[
+                    "offering"]["sampled_foi"]["identifier"]
+            else:
+                # Check if sampled_foi exists, in istSOS Feature of Interest
+                # must exists before insert
+                yield from cur.execute("""
+                    SELECT EXISTS(
+                        SELECT 1
+                        FROM fois
+                        WHERE identifier = %s
+                    ) AS exists;
+                """, (
+                    request['offering']["sampled_foi"],
+                ))
+                rec = yield from cur.fetchone()
+                if rec[0] is False:
+                    raise InvalidParameterValue(
+                        "sampled_foi",
+                        "Sampled feature '%s' not exists" % request[
+                            'offering']["sampled_foi"]
+                    )
+
+        config = None
+        if 'config' in request['offering'] and \
+                isinstance(request['offering']["config"], dict):
+            config = Json(request['offering']['config'])
 
         # Register the new sensor into the offerings table
         yield from cur.execute("""
@@ -71,27 +91,30 @@ class OfferingCreator(OfferingCreator):
                 procedure_name,
                 description_format,
                 foi_type,
-                sampled_foi
+                sampled_foi,
+                fixed,
+                config
             ) VALUES (
-                %s, %s, %s, %s, %s
+                %s, %s, %s, %s, %s, %s, %s
             ) RETURNING id;
         """, (
             request['offering']['name'],
             request['offering']['procedure'],
             request['offering']['procedure_description_format'][0],
             request['offering']['foi_type'],
-            request['offering']['sampled_foi']
+            request['offering']['sampled_foi'],
+            request['offering']['fixed'],
+            config
         ))
         rec = yield from cur.fetchone()
         request['offering']['id'] = rec[0]
 
         # Check if observation type is managed by this istSOS
+        print(request['offering']['observation_types'])
         for observationType in request['offering']['observation_types']:
-            if observationType[
-                    'definition'] not in setting._observationTypesList:
+            if observationType not in setting._observationTypesList:
                 raise Exception(
-                    "Sorry, %s not implemented" %
-                    observationType['definition'])
+                    "Sorry, %s not implemented" % observationType)
 
             yield from cur.execute("""
                 INSERT INTO off_obs_type(
@@ -100,7 +123,7 @@ class OfferingCreator(OfferingCreator):
                 VALUES (%s, %s) RETURNING id;
             """, (
                 request['offering']['id'],
-                observationType['definition']
+                observationType
             ))
 
         # Create specific table columns in case if the feature type is
