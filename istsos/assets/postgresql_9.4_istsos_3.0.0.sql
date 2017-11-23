@@ -139,12 +139,31 @@ CREATE SEQUENCE methods_id_met_seq
 CREATE TABLE public.methods
 (
     id integer NOT NULL default nextval('methods_id_met_seq'),
+    identifier character varying NOT NULL,
     name character varying NOT NULL,
     description character varying,
     PRIMARY KEY (id)
 );
 
-SELECT pg_catalog.setval('methods_id_met_seq', 1, true);
+-- Sampling method techniques:
+-- http://www.who.int/water_sanitation_health/dwq/2edvol3d.pdf
+-- http://www.umich.edu/~chemstu/assignments/Scholarship/water%20sampling.pdf
+-- https://water.usgs.gov/owq/FieldManual/chapter4/pdf/Chap4_v2.pdf
+INSERT INTO methods VALUES
+    (1,
+        '/filtration/membrane',
+        'membrane filtration',
+        ''),
+    (2,
+        '/equal/width/increment',
+        'equal width increment - EWI',
+        ''),
+    (3,
+        '/equal/discharge/increment',
+        'equal discharge increment - EDI',
+        '');
+
+SELECT pg_catalog.setval('methods_id_met_seq', 3, true);
 
 CREATE SEQUENCE offerings_id_seq
     INCREMENT BY 1
@@ -310,4 +329,46 @@ VALUES (
     'The correct value is not known to, or not computable by, the sender of this data. However, the correct value probably exists',
     'http://www.opengis.net/def/nil/OGC/0/unknown',
     'Unknown', NULL, NULL
+);
+
+
+CREATE TABLE public.humans(
+    id serial,
+    username character varying NOT NULL,
+    pword character varying NOT NULL,
+    firstname character varying,
+    middlename character varying,
+    lastname character varying,
+    organisation_name character varying,
+    position_name character varying,
+    role_name character varying,
+    telephone character varying,
+    fax character varying,
+    email character varying,
+    web character varying,
+    address character varying,
+    city character varying,
+    adminarea character varying,
+    postalcode character varying,
+    country character varying,
+    PRIMARY KEY (id),
+    UNIQUE (username)
+);
+
+
+CREATE SEQUENCE processing_details_id_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+CREATE TABLE public.processing_details
+(
+   id integer NOT NULL default nextval('processing_details_id_seq'),
+   name character varying,
+   identifier character varying NOT NULL,
+   description character varying,
+   PRIMARY KEY (id),
+   UNIQUE (name),
+   UNIQUE (identifier)
 );

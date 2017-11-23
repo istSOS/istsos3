@@ -82,6 +82,9 @@ class Specimen(BaseEntity):
             "description": {
                 "type": "string"
             },
+            "offering": {
+                "type": "string"
+            },
             "identifier": {
                 "type": "string",
                 "minLength": 1
@@ -95,7 +98,7 @@ class Specimen(BaseEntity):
                     setting._SAMPLING_SPECIMEN
                 ]
             },
-            "sampled_feature": Link.json_schema,
+            "sampledFeature": Link.json_schema,
             "materialClass": Link.json_schema,
             "samplingTime": EventTime.json_schema,
             "samplingMethod": Link.json_schema,
@@ -131,10 +134,29 @@ class Specimen(BaseEntity):
             "samplingTime",
             "samplingMethod",
             "samplingLocation",
-            "processingDetails",
             "size",
             "currentLocation",
             "specimenType"
         ],
         "additionalProperties": False
     }
+
+    @staticmethod
+    def get_template(specimen=None):
+        ret = {
+            "description": "",
+            "identifier": "",
+            "name": "",
+            "type": setting._SAMPLING_SPECIMEN,
+            "sampledFeature": "",
+            "materialClass": "",
+            "samplingTime": "",
+            "samplingMethod": "",
+            "samplingLocation": "",
+            "size": Measure.get_template(),
+            "currentLocation": "",
+            "specimenType": ""
+        }
+        if specimen is not None:
+            ret.update(specimen)
+        return ret

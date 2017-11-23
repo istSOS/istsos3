@@ -221,6 +221,8 @@ REST_API = [
 ]
 
 REST_API = {
+
+    #  FETCH API
     "FETCH_OFFERINGS": (
         'list.offerings',
         'Offerings'
@@ -249,14 +251,6 @@ REST_API = {
         'list.featureOfInterests',
         'FeatureOfInterests'
     ),
-    "CREATE_SENSOR": (
-        'create.offering',
-        'Offering'
-    ),
-    "CREATE_FOI": (
-        'create.featureOfInterest',
-        'FeatureOfInterest'
-    ),
     "FETCH_DOMAINS": (
         'list.domains',
         'Domains'
@@ -265,6 +259,50 @@ REST_API = {
         'list.materials',
         'Materials'
     ),
+    "FETCH_SAMPLING_METHODS": (
+        'list.samplingMethods',
+        'SamplingMethods'
+    ),
+    "FETCH_HUMANS": (
+        'list.humans',
+        'Humans'
+    ),
+    "FETCH_PROCESSING_DETAILS": (
+        'list.processingDetails',
+        'ProcessingDetails'
+    ),
+
+    #  CREATION API
+    "CREATE_SENSOR": (
+        'create.offering',
+        'Offering'
+    ),
+    "CREATE_FOI": (
+        'create.featureOfInterest',
+        'FeatureOfInterest'
+    ),
+    "CREATE_OBSERVABLE_PROPERTY": (
+        'create.observableProperty',
+        'ObservableProperty'
+    ),
+    "CREATE_UOM": (
+        'create.unitOfMeasure',
+        'UnitOfMeasure'
+    ),
+    "CREATE_SPECIMEN": (
+        'create.specimen',
+        'Specimen'
+    ),
+    "CREATE_SAMPLING_METHOD": (
+        'create.samplingMethod',
+        'SamplingMethod'
+    ),
+    "CREATE_HUMAN": (
+        'create.human',
+        'Human'
+    ),
+
+    #  CHECK API
     "CHECK_SENSOR_NAME": (
         'utilities.checkSensorName',
         'CheckSensorName'
@@ -293,13 +331,17 @@ REST_API = {
         'utilities.checkSpecimenIdentifier',
         'CheckSpecimenIdentifier'
     ),
-    "CREATE_OBSERVABLE_PROPERTY": (
-        'create.observableProperty',
-        'ObservableProperty'
+    "CHECK_SAMPLING_METHOD_NAME": (
+        'utilities.checkSamplingMethodName',
+        'CheckSamplingMethodName'
     ),
-    "CREATE_UOM": (
-        'create.unitOfMeasure',
-        'UnitOfMeasure'
+    "CHECK_SAMPLING_METHOD_IDENTIFIER": (
+        'utilities.checkSamplingMethodIdentifier',
+        'CheckSamplingMethodIdentifier'
+    ),
+    "CHECK_HUMAN_USERNAME": (
+        'utilities.checkHumanUsername',
+        'CheckHumanUsername'
     )
 }
 
