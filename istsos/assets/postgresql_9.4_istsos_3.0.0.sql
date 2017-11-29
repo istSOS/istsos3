@@ -101,7 +101,8 @@ CREATE TABLE public.material_classes
     definition character varying NOT NULL,
     description character varying,
     image character varying,
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    UNIQUE (definition)
 );
 
 INSERT INTO material_classes VALUES
@@ -142,7 +143,8 @@ CREATE TABLE public.methods
     identifier character varying NOT NULL,
     name character varying NOT NULL,
     description character varying,
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    UNIQUE (identifier)
 );
 
 -- Sampling method techniques:
@@ -188,7 +190,8 @@ CREATE TABLE public.offerings
     observed_area geometry,
     cached jsonb,
     config jsonb,
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    UNIQUE (offering_name)
 );
 
 CREATE INDEX
@@ -260,35 +263,73 @@ CREATE TABLE public.off_obs_type
 CREATE INDEX
    ON public.off_obs_type USING btree (id_off ASC NULLS LAST);
 
+
 CREATE SEQUENCE specimen_id_seq
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
     CACHE 1;
+    
 
 CREATE TABLE public.specimens
 (
-  id integer NOT NULL DEFAULT nextval('specimen_id_seq'),
-  description text,
-  identifier text NOT NULL UNIQUE,
-  name text,
-  type text,
-  sampled_feat text,
-  id_mat_fk integer,
-  id_met_fk integer,
-  sampling_time timestamp with time zone,
-  sampling_location geometry,
-  processing_details jsonb,
-  sampling_size_uom text,
-  sampling_size double precision,
-  current_location jsonb,
-  specimen_type text,
-  CONSTRAINT specimen_id_mat_fk_fkey FOREIGN KEY (id_mat_fk)
-      REFERENCES material_classes (id) MATCH SIMPLE
+    id integer NOT NULL DEFAULT nextval('specimen_id_seq'),
+    offering_name character varying NOT NULL,
+    foi_name character varying NOT NULL,
+    description character varying,
+    identifier character varying NOT NULL,
+    sampled_feature character varying, 
+    material character varying,
+    sampling_time timestamp with time zone NOT NULL,
+    method character varying,
+    --sampling_location geometry,
+    sampling_size double precision,
+    sampling_uom character varying,
+    current_location character varying,
+    speciment_type character varying,
+    
+    PRIMARY KEY (id),
+    UNIQUE (identifier),
+
+    CONSTRAINT specimen_offering_name_fkey FOREIGN KEY (offering_name)
+      REFERENCES offerings (offering_name) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION,
-  CONSTRAINT specimen_id_met_fk_fkey FOREIGN KEY (id_met_fk)
-      REFERENCES methods (id) MATCH SIMPLE
+
+    CONSTRAINT specimen_sampled_feature_fkey FOREIGN KEY (sampled_feature)
+      REFERENCES fois (identifier) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION,
+
+    CONSTRAINT specimen_material_fkey FOREIGN KEY (material)
+      REFERENCES material_classes (definition) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION,
+
+    CONSTRAINT specimen_method_fkey FOREIGN KEY (method)
+      REFERENCES methods (identifier) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION,
+
+    CONSTRAINT specimen_sampling_uom_fkey FOREIGN KEY (sampling_uom)
+      REFERENCES uoms (name) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+
+CREATE SEQUENCE processing_id_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+CREATE TABLE public.processing
+(
+    id integer NOT NULL DEFAULT nextval('processing_id_seq'),
+    id_spec integer,
+    process_operator character varying NOT NULL,
+    processing_details character varying NOT NULL,
+    processing_time timestamp with time zone,
+    PRIMARY KEY (id),
+
+    CONSTRAINT specimen_id_spec_fkey FOREIGN KEY (id_spec)
+      REFERENCES specimens (identifier) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE CASCADE
 );
 
 CREATE TABLE public.fois

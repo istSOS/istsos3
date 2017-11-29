@@ -4,10 +4,10 @@
 # Version: v3.0.0
 
 import asyncio
-from istsos.actions.creators.materialCreator import MaterialCreator
+from istsos.actions.creators.methodCreator import MethodCreator
 
 
-class MaterialCreator(MaterialCreator):
+class ProcessingDetailCreator(MethodCreator):
     """Query an .
     """
     @asyncio.coroutine
@@ -16,17 +16,19 @@ class MaterialCreator(MaterialCreator):
         dbmanager = yield from self.init_connection()
         cur = dbmanager.cur
         yield from self.begin()
-        material = request['material']
+        processing_details = request['processingDetail']
         yield from cur.execute("""
-                    INSERT INTO material_classes(
+                    INSERT INTO processing_details(
+                        identifier,
                         name,
                         description
                     )
-                    VALUES (%s,%s) RETURNING id;
+                    VALUES (%s, %s,%s) RETURNING id;
                 """, (
-            material['name'],
-            material['description']
+            processing_details['identifier'],
+            processing_details['name'],
+            processing_details['description']
         ))
         rec = yield from cur.fetchone()
-        request['material']['id'] = rec[0]
+        request['processingDetail']['id'] = rec[0]
         yield from self.commit()

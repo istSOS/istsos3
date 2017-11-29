@@ -14,7 +14,6 @@ from istsos.entity.observableProperty import ObservableProperty
 from istsos.entity.featureOfInterest import (
     SamplingPoint
 )
-import collections
 
 
 class Offering(BaseEntity):

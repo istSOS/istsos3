@@ -139,7 +139,6 @@ def get_observation_types():
 _component_type = {
     "Time": _observationTypesDict[_TEMPORAL_OBSERVATION],
     "Category": _observationTypesDict[_CATEGORY_OBSERVATION],
-    "Category": _observationTypesDict[_CATEGORY_OBSERVATION],
     "Count": _observationTypesDict[_COUNT_OBSERVATION],
     "Quantity": _observationTypesDict[_MESAUREMENT_OBSERVATION],
     "Boolean": _observationTypesDict[_TRUTH_OBSERVATION],

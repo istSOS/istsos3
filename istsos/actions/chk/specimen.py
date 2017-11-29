@@ -6,5 +6,5 @@
 from istsos.actions.action import Action
 
 
-class SpecimenCreator(Action):
+class Specimen(Action):
     pass

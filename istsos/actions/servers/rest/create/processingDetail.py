@@ -5,28 +5,25 @@
 
 import asyncio
 from istsos.actions.action import CompositeAction
-from istsos.entity.specimen import Specimen as SpecimenEntitiy
+from istsos.entity.processingDetail import ProcessingDetail as Entity
 from istsos.entity.rest.response import Response
 
 
-class Specimen(CompositeAction):
-    """Rest api used to manage unit of measures
-    """
+class ProcessingDetail(CompositeAction):
 
     @asyncio.coroutine
     def before(self, request):
-        request['specimen'] = SpecimenEntitiy(
-            SpecimenEntitiy.get_template(
+        request['processingDetail'] = Entity(
+            Entity.get_template(
                 request.get_rest_data()
             )
         )
-        yield from self.add_checker('Specimen')
-        yield from self.add_creator('SpecimenCreator')
+        yield from self.add_creator('ProcessingDetailCreator')
 
     @asyncio.coroutine
     def after(self, request):
         request['response'] = Response(
             Response.get_template({
-                "data": request['specimen']
+                "data": request['processingDetail']
             })
         )

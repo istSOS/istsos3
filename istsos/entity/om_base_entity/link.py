@@ -4,7 +4,6 @@
 # Version: v3.0.0
 
 from istsos.entity.baseEntity import BaseEntity
-import collections
 
 url = (
     "^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+"
@@ -26,8 +25,8 @@ class Link(BaseEntity):
         "type": "object",
         "properties": {
             "href": {
-                "type": "string",
-                "pattern": url
+                "type": "string"
+                # "pattern": url
             },
             "rel": {"type": "string"},
             "title": {"type": "string"}

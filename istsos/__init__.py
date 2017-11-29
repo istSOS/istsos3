@@ -3,12 +3,16 @@
 # License: https://github.com/istSOS/istsos3/master/LICENSE.md
 # Version: v3.0.0
 
+from istsos import actions
 import asyncio
 from dateutil import parser
 import sys
 import inspect
 import logging
 from datetime import datetime
+
+__all__ = ['actions']
+
 log = logging.getLogger('istSOS')
 # log.setLevel(logging.ERROR)
 # log.setLevel(logging.INFO)
@@ -89,5 +93,3 @@ class Setting():
 
 
 setting = Setting()
-
-__all__ = ['actions']

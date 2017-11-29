@@ -8,7 +8,6 @@ import asyncio
 import time
 import traceback
 import sys
-from istsos.common.exceptions import *
 
 
 class Action(object):
@@ -197,6 +196,10 @@ class CompositeAction(Action):
     def add_common(self, action, filter=None):
         self.add((yield from get_common(action, filter=filter)))
 
+    @asyncio.coroutine
+    def add_checker(self, action, filter=None):
+        self.add((yield from get_checker(action, filter=filter)))
+
     def remove(self, action):
         self.actions.remove(action)
 
@@ -273,4 +276,11 @@ def get_retrievers(name, **kwargs):
 def get_common(name, **kwargs):
     action = yield from __get_proxy(
         'common', name, **kwargs)
+    return action
+
+
+@asyncio.coroutine
+def get_checker(name, **kwargs):
+    action = yield from __get_proxy(
+        'actions.chk', name, **kwargs)
     return action

@@ -1,41 +1,46 @@
 {
+    "offering": "sensor_001",
+    "name": "LUG_20170731",
     "description": "A sample for the Lugano Lake water quality monitoring",
     "identifier": "LUG_20170731",
-    "name": "LUG_20170731",
     "type": "http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_Specimen",
-    "sampledFeature": "http://www.istsos.org/demo/feature/LuganoLake",
-    "materialClass": "http://www.istsos.org/material/water",
+    "sampledFeature": {
+        "href":  "http://istsos.org/foi/lugano_foce"
+    },
+    "materialClass": {
+        "href": "http://www.opengis.net/def/material/OGC-OM/2.0/water"
+    },
     "samplingTime": {
         "timeInstant": {
-            "instant": "2017-06-30T15:27:00+01:00"
+            "instant": "2017-11-04T12:00:00+01"
         }
     },
-    "samplingMethod": "http://www.istsos.org/samplingMethod/still-water",
-    "samplingLocation": {
-        "type": "point",
-        "coordinates": [100.0, 0.0],
-        "epsg": 4326
+    "samplingMethod": {
+        "href": "http://www.istsos.org/samplingMethod/still-water"
     },
     "processingDetails": [
         {
-            "processOperator": {"href": "http://www.supsi.ch/ist?person=MarioBianchi"},
-            "processingDetails": {"href": "http://www.istsos.org/processes/storage"},
-            "time": "2017-07-01T15:27:00+01:00"
-        },
-        {
-            "processOperator": {"href": "https://www.supsi.ch/ist?person=LucaRossi"},
-            "processingDetails": {"href": "http://www.istsos.org/processes/Reaction"},
-            "time": "2017-07-06T15:27:00+01:00"
+            "processOperator": {
+                "href": "http://istsos.org/operator/foobar"
+            },
+            "processingDetails": {
+                "href": "http://istsos.org/processingdetail/p1"
+            },
+            "time": {
+                "timeInstant": {
+                    "instant": "2017-11-05T13:20:00+01"
+                }
+            }
         }
     ],
     "size": {
-        "value": 1,
-        "uom": "liter"
+        "value": "500",
+        "uom": "l"
     },
     "currentLocation": {
-        "href": "http://www.ti.ch/umam",
-        "rel": "http://www.onu.org/offices",
-        "title": "Ufficio Monitoraggio Ambientale - Canton Ticino"
+        "href": "http://istsos.org/currentLocation/P002"
     },
-    "specimenType": null
+    "specimenType": {
+        "href": "http://istsos.org/specimentType/Liquido"
+    }
 }

@@ -24,11 +24,13 @@ class ObservationCreator(ObservationCreator):
             yield from self.create_data_table(
                 offering, observation, cur
             )
-            if observation['type'] == setting._complexObservation['definition']:
+            if observation['type'] == setting._complexObservation[
+                    'definition']:
                 yield from self.insert_result(
                     offering, observation, cur)
 
-            elif observation['type'] == setting._arrayObservation['definition']:
+            elif observation['type'] == setting._arrayObservation[
+                    'definition']:
                 pass
 
             else:
@@ -53,12 +55,14 @@ class ObservationCreator(ObservationCreator):
 
             # The data table are not yet initialized.
             # Now the missing columns will be created.
-            if observation['type'] == setting._complexObservation['definition']:
+            if observation['type'] == setting._complexObservation[
+                    'definition']:
                 for op in observation.get_op_list():
                     yield from self.add_field(
                         offering, op, cur)
 
-            elif observation['type'] == setting._arrayObservation['definition']:
+            elif observation['type'] == setting._arrayObservation[
+                    'definition']:
                 raise Exception("Not implemented yet")
 
             else:
@@ -192,7 +196,6 @@ class ObservationCreator(ObservationCreator):
     def insert_result(self, offering, observation, cur):
         """This function ...
         """
-        measures = []
         columns = []
         for field in observation.get_field_list():
             observed_property = offering.get_observable_property(

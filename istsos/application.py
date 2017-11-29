@@ -9,8 +9,10 @@ import json
 import uuid
 import importlib
 import traceback
+import sys
 
 import istsos
+from istsos.common.exceptions import DbError, InvalidParameterValue
 from istsos.actions.servers.sos_2_0_0.requirement.core.requestRequest import (
     RequestRequest
 )
@@ -301,6 +303,10 @@ REST_API = {
         'create.human',
         'Human'
     ),
+    "CREATE_PROCESSING_DETAIL": (
+        'create.processingDetail',
+        'ProcessingDetail'
+    ),
 
     #  CHECK API
     "CHECK_SENSOR_NAME": (
@@ -342,6 +348,14 @@ REST_API = {
     "CHECK_HUMAN_USERNAME": (
         'utilities.checkHumanUsername',
         'CheckHumanUsername'
+    ),
+    "CHECK_PROCESSING_DETAIL_NAME": (
+        'utilities.checkProcessingDetailName',
+        'CheckProcessingDetailName'
+    ),
+    "CHECK_PROCESSING_DETAIL_IDENTIFIER": (
+        'utilities.checkProcessingDetailIdentifier',
+        'CheckProcessingDetailIdentifier'
     )
 }
 
@@ -487,7 +501,7 @@ The HTTPRequest shall be prepared by the web framework used.
 
                     # Print statistics
                     from istsos.actions.action import (
-                        Action, CompositeAction
+                        CompositeAction
                     )
 
                     def show_stats(action, depth=0):

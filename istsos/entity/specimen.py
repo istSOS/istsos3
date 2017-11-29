@@ -4,13 +4,14 @@
 # Version: v3.0.0
 
 from istsos.entity.baseEntity import BaseEntity
-from istsos.entity.om_base_entity.eventTime import EventTime
-from istsos.entity.om_base_entity.timeElements import Instant
+from istsos.entity.om_base_entity.eventTime import (
+    EventTime,
+    EventTimeInstant
+)
 from istsos.entity.om_base_entity.measure import Measure
-from istsos.entity.om_base_entity.geoJson import Point
+# from istsos.entity.om_base_entity.geoJson import Point
 from istsos.entity.om_base_entity.link import Link
 from istsos import setting
-import collections
 
 
 class Specimen(BaseEntity):
@@ -79,18 +80,18 @@ class Specimen(BaseEntity):
             "id": {
                 "type": "integer"
             },
-            "description": {
+            "offering": {
                 "type": "string"
             },
-            "offering": {
+            "name": {
+                "type": "string"
+            },
+            "description": {
                 "type": "string"
             },
             "identifier": {
                 "type": "string",
                 "minLength": 1
-            },
-            "name": {
-                "type": "string"
             },
             "type": {
                 "type": "string",
@@ -101,8 +102,13 @@ class Specimen(BaseEntity):
             "sampledFeature": Link.json_schema,
             "materialClass": Link.json_schema,
             "samplingTime": EventTime.json_schema,
-            "samplingMethod": Link.json_schema,
-            "samplingLocation": Point.json_schema,
+            "samplingMethod": {
+                "oneOf": [
+                    Link.json_schema,
+                    {"type": "null"}
+                ]
+            },
+            #  "samplingLocation": Point.json_schema,
             "processingDetails": {
                 "type": "array",
                 "items": {
@@ -110,7 +116,7 @@ class Specimen(BaseEntity):
                     "properties": {
                         "processOperator": Link.json_schema,
                         "processingDetails": Link.json_schema,
-                        "time": Instant.json_schema
+                        "time": EventTimeInstant.json_schema
                     },
                     "additionalProperties": False
                 }
@@ -119,8 +125,8 @@ class Specimen(BaseEntity):
             "currentLocation": Link.json_schema,
             "specimenType": {
                 "oneOf": [
-                    Link.json_schema,
-                    {type: "null"}
+                    {"type": "null"},
+                    Link.json_schema
                 ]
             }
         },
@@ -133,7 +139,7 @@ class Specimen(BaseEntity):
             "materialClass",
             "samplingTime",
             "samplingMethod",
-            "samplingLocation",
+            # "samplingLocation",
             "size",
             "currentLocation",
             "specimenType"
@@ -152,7 +158,7 @@ class Specimen(BaseEntity):
             "materialClass": "",
             "samplingTime": "",
             "samplingMethod": "",
-            "samplingLocation": "",
+            # "samplingLocation": "",
             "size": Measure.get_template(),
             "currentLocation": "",
             "specimenType": ""
