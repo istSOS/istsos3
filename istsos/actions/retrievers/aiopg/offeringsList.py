@@ -4,6 +4,7 @@
 # Version: v3.0.0
 
 import asyncio
+import istsos
 from istsos import setting
 from istsos.entity.offering import Offering
 from istsos.actions.retrievers.offeringsList import OfferingsList
@@ -24,20 +25,26 @@ class OfferingsList(OfferingsList):
         cur = dbmanager.cur
 
         sql = """
-        SELECT
-            id,
-            offering_name,
-            procedure_name,
-            foi_type,
-            sampled_foi,
-            data_table_exists,
-            pt_begin,
-            pt_end,
-            rt_begin,
-            rt_end,
-            config
-        FROM
-            offerings
+SELECT DISTINCT
+    offerings.id,
+    offering_name,
+    procedure_name,
+    foi_type,
+    sampled_foi,
+    data_table_exists,
+    pt_begin,
+    pt_end,
+    rt_begin,
+    rt_end,
+    config
+FROM
+    offerings,
+    off_obs_prop,
+    observed_properties
+WHERE
+    id_opr = observed_properties.id
+AND
+    id_off = offerings.id
         """
 
         where = []
@@ -48,12 +55,29 @@ class OfferingsList(OfferingsList):
                     where.append(
                         "foi_type = '%s'" % setting._SAMPLING_SPECIMEN
                     )
+                if key == 'observedProperties' and \
+                        len(request.get_filter(key)) > 0:
+                    ops = []
+                    for op in request.get_filter(key):
+                        ops.append((
+                            yield from cur.mogrify(
+                                "observed_properties.def = %s", (op,)
+                            )
+                        ).decode("utf-8"))
+                    where.append(
+                        "(%s)" % " OR ".join(ops)
+                    )
 
         if len(where) > 0:
-            sql += "WHERE %s" % (
+            sql += "AND %s" % (
                 '\nAND '.join(where)
             )
 
+        istsos.debug(
+            (
+                yield from cur.mogrify(sql)
+            ).decode("utf-8")
+        )
         yield from cur.execute(sql)
         recs = yield from cur.fetchall()
 

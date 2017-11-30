@@ -5,7 +5,6 @@
 
 from istsos.entity.baseEntity import BaseEntity
 from istsos import setting
-import collections
 
 
 class ObservationType(BaseEntity):

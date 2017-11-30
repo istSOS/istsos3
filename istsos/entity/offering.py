@@ -114,6 +114,8 @@ class Offering(BaseEntity):
             "observable_properties": [],
             "observation_types": [],
             "foi_type": None,
+            "phenomenon_time": None,
+            "result_time": None,
             "sampled_foi": setting._ogc_nil
         }
         if offering is not None:
@@ -121,45 +123,45 @@ class Offering(BaseEntity):
         return ret
 
     def is_complex(self):
-        for ot in self['observation_type']:
+        for ot in self['observation_types']:
             if ot['definition'] == setting._COMPLEX_OBSERVATION:
                 return True
         return False
 
     def get_complex_observable_property(self):
-        for op in self['observable_property']:
+        for op in self['observable_properties']:
             if op['type'] == setting._COMPLEX_OBSERVATION:
                 return op
         raise Exception(
             "This offering is not a Complex observable property")
 
     def is_array(self):
-        for ot in self['observation_type']:
+        for ot in self['observation_types']:
             if ot['definition'] == setting._ARRAY_OBSERVATION:
                 return True
         return False
 
     def get_op_definition_list(self):
         """Return a list of Observed Properties"""
-        return [op['definition'] for op in self['observable_property']]
+        return [op['definition'] for op in self['observable_properties']]
 
     def get_ot_definition_list(self):
         """Return a list of Observation Types"""
-        return [ot['definition'] for ot in self['observation_type']]
+        return [ot for ot in self['observation_types']]
 
     def get_observable_property(self, definition):
-        for observable_property in self['observable_property']:
-            if definition == observable_property['definition']:
-                return observable_property
+        for observable_properties in self['observable_properties']:
+            if definition == observable_properties['definition']:
+                return observable_properties
         return None
 
     def get_observation_type(self, definition):
-        for observation_type in self['observation_type']:
-            if definition == observation_type['definition']:
-                return observation_type
+        for observation_types in self['observation_types']:
+            if definition == observation_types['definition']:
+                return observation_types
         return None
 
     def set_column(self, definition, column_name):
-        observable_property = self.get_observable_property(definition)
-        if observable_property is not None:
-            observable_property['column'] = column_name
+        observable_properties = self.get_observable_properties(definition)
+        if observable_properties is not None:
+            observable_properties['column'] = column_name

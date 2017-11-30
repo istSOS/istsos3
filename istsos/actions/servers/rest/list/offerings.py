@@ -15,9 +15,9 @@ class Offerings(CompositeAction):
     @asyncio.coroutine
     def before(self, request):
         data = request.get_rest_data()
-        if 'specimen' in data:
-            request.set_filter(data)
-        yield from self.add_retriever('OfferingsList')
+        # if 'specimen' in data:
+        request.set_filter(data)
+        yield from self.add_retriever('Offerings')
 
     @asyncio.coroutine
     def after(self, request):
@@ -25,6 +25,6 @@ class Offerings(CompositeAction):
         """
         request['response'] = Response(
             json_source=Response.get_template({
-                "data": request['offeringsList']
+                "data": request['offerings']
             })
         )

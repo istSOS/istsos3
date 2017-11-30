@@ -4,8 +4,6 @@
 # Version: v3.0.0
 
 import asyncio
-import uuid
-import json
 from istsos import setting
 from istsos.entity.observation import Observation
 from istsos.entity.observedProperty import (
@@ -95,7 +93,7 @@ class ObservationsBuilder(ObservationsBuilder):
                 if omType == setting._complexObservation['definition']:
                     # Looping the DataArray fields we can interpret the
                     # missing informations in the DataArray's metadata
-                    observedProperties = []
+                    # observedProperties = []
                     data['result'] = []
 
                     observedProperty = ob.find(
@@ -163,7 +161,7 @@ class ObservationsBuilder(ObservationsBuilder):
 
                     # istsos.debug(json.dumps(data, indent=True))
 
-                elif omType == istsos._arrayObservation['definition']:
+                elif omType == setting._arrayObservation['definition']:
                     # Looping the DataArray fields we can interpret the
                     # missing informations in the DataArray's metadata
                     for field in ob.iterfind('.//swe_2_0:field', request.ns):

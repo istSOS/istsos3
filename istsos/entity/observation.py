@@ -10,8 +10,6 @@ from istsos.entity.observedProperty import (
 from istsos.entity.om_base_entity.eventTime import EventTime
 from istsos.entity.om_base_entity.timeElements import TimeInstant
 from istsos.entity.om_base_entity.observationType import ObservationType
-from istsos.entity.featureOfInterest import SamplingType, FeatureOfInterest
-import collections
 
 
 class Observation(BaseEntity):

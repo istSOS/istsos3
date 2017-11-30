@@ -253,10 +253,11 @@ class ObservationCreator(ObservationCreator):
         # Updating the offering phenomenon time
         pt_begin = None
         pt_end = None
-        rt_begin = None
-        rt_end = None
+        # rt_begin = None
+        # rt_end = None
 
-        if observations[0]['type'] == setting._complexObservation['definition']:
+        if observations[0]['type'] == \
+                setting._complexObservation['definition']:
             pt = []
             rt = []
             for observation in observations:
@@ -268,10 +269,11 @@ class ObservationCreator(ObservationCreator):
                 ))
             pt_begin = min(pt)
             pt_end = max(pt)
-            rt_begin = min(pt)
-            rt_end = max(pt)
+            # rt_begin = min(pt)
+            # rt_end = max(pt)
 
-        elif observations[0]['type'] == setting._arrayObservation['definition']:
+        elif observations[0]['type'] == \
+                setting._arrayObservation['definition']:
             pass
 
         else:
@@ -286,8 +288,8 @@ class ObservationCreator(ObservationCreator):
                 ))
             pt_begin = min(pt)
             pt_end = max(pt)
-            rt_begin = min(pt)
-            rt_end = max(pt)
+            # rt_begin = min(pt)
+            # rt_end = max(pt)
 
         columns = []
         vals = []

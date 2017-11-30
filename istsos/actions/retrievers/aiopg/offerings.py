@@ -5,8 +5,7 @@
 
 import asyncio
 import istsos
-from istsos import setting
-import json
+# from istsos import setting
 from istsos.actions.retrievers.offerings import Offerings
 from istsos.entity.offering import Offering
 
@@ -62,16 +61,20 @@ AND
                         params.append(procedure)
                     where.append("(%s)" % " OR ".join(or_condition))
 
-                if key == 'observedProperties':
+                if key == 'observedProperties' and \
+                        len(request.get_filter(key)) > 0:
                     # observedProperties will filter only offerings
                     # and will not impact the entity representation
                     # modifying also the observable_property values.
                     # This is because the entity can came from the cache
                     # and modifying the cache will impact all the istSOS
                     or_condition = []
-                    for observedProperty in request.get_filter(key):
-                        or_condition.append("\ndef = %s\n")
-                        params.append(observedProperty)
+                    for op in request.get_filter(key):
+                        or_condition.append((
+                            yield from cur.mogrify(
+                                "observed_properties.def = %s", (op,)
+                            )
+                        ).decode("utf-8"))
                     where.append("(%s)" % " OR ".join(or_condition))
 
             if len(where) > 0:
@@ -106,6 +109,8 @@ AND
                 "procedure": rec[2],
                 "foi_type": rec[8]
             })
+            istsos.debug(data)
+            istsos.debug(data['observable_properties'])
 
             pt_begin = rec[4].isoformat() if rec[4] else None
             pt_end = rec[5].isoformat() if rec[5] else None
@@ -147,7 +152,7 @@ WHERE
     id_off = %s;""", (data['id'],))
             rObs = yield from cur.fetchall()
             for obs_prop in rObs:
-                data['observable_property'].append({
+                data['observable_properties'].append({
                     "id": obs_prop[0],
                     "name": obs_prop[1],
                     "definition": obs_prop[2],
@@ -166,8 +171,9 @@ WHERE
     id_off = %s;""", (data['id'],))
             rOty = yield from cur.fetchall()
             for obs_type in rOty:
-                data['observation_type'].append(
-                    setting._observationTypesDict[obs_type[0]]
+                data['observation_types'].append(
+                    obs_type[0]
+                    # setting._observationTypesDict[obs_type[0]]
                 )
 
             request['offerings'].append(Offering(data))
