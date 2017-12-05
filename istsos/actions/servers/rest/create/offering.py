@@ -21,12 +21,12 @@ class Offering(CompositeAction):
             )
         )
         yield from self.add_creator('OfferingCreator')
+        yield from self.add_creator('DescriptionCreator')
 
     @asyncio.coroutine
     def after(self, request):
         request['response'] = Response(
             Response.get_template({
-                "offering": "o",
-                "procedure": "p"
+                "data": request['offering']
             })
         )

@@ -191,7 +191,8 @@ CREATE TABLE public.offerings
     cached jsonb,
     config jsonb,
     PRIMARY KEY (id),
-    UNIQUE (offering_name)
+    UNIQUE (offering_name),
+    UNIQUE (procedure_name)
 );
 
 CREATE INDEX
@@ -210,6 +211,18 @@ CREATE TABLE public.sensor_descriptions
     valid_time_begin timestamp with time zone,
     valid_time_end timestamp with time zone,
     data character varying,
+    short_name character varying,
+    keywords character varying[],
+    description character varying,
+    manufacturer character varying,
+    model_number character varying
+    serial_number character varying,
+    sampling_resolution interval,
+    acquisition_resolution interval,
+    storage_capacity character varying,
+    battery_capacity character varying,
+    owner character varying,
+    operator character varying,
     PRIMARY KEY (id),
     FOREIGN KEY (id_off) REFERENCES offerings (id)
         ON UPDATE NO ACTION ON DELETE CASCADE
@@ -269,7 +282,7 @@ CREATE SEQUENCE specimen_id_seq
     NO MAXVALUE
     NO MINVALUE
     CACHE 1;
-    
+
 
 CREATE TABLE public.specimens
 (
@@ -278,7 +291,7 @@ CREATE TABLE public.specimens
     foi_name character varying NOT NULL,
     description character varying,
     identifier character varying NOT NULL,
-    sampled_feature character varying, 
+    sampled_feature character varying,
     material character varying,
     sampling_time timestamp with time zone NOT NULL,
     method character varying,
@@ -287,7 +300,7 @@ CREATE TABLE public.specimens
     sampling_uom character varying,
     current_location character varying,
     speciment_type character varying,
-    
+
     PRIMARY KEY (id),
     UNIQUE (identifier),
 

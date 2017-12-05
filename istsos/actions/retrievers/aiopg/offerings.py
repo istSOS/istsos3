@@ -5,7 +5,7 @@
 
 import asyncio
 import istsos
-# from istsos import setting
+from istsos import setting
 from istsos.actions.retrievers.offerings import Offerings
 from istsos.entity.offering import Offering
 
@@ -31,7 +31,8 @@ SELECT DISTINCT
     rt_begin,
     rt_end,
     foi_type,
-    data_table_exists
+    data_table_exists,
+    config
 FROM
     offerings,
     off_obs_prop,
@@ -77,6 +78,11 @@ AND
                         ).decode("utf-8"))
                     where.append("(%s)" % " OR ".join(or_condition))
 
+                if key == 'specimen':
+                    where.append(
+                        "foi_type = '%s'" % setting._SAMPLING_SPECIMEN
+                    )
+
             if len(where) > 0:
                 sql += "AND %s" % (
                     '\nAND '.join(where)
@@ -107,10 +113,9 @@ AND
                 "results": rec[9],
                 "name": rec[1],
                 "procedure": rec[2],
-                "foi_type": rec[8]
+                "foi_type": rec[8],
+                'config': rec[10]
             })
-            istsos.debug(data)
-            istsos.debug(data['observable_properties'])
 
             pt_begin = rec[4].isoformat() if rec[4] else None
             pt_end = rec[5].isoformat() if rec[5] else None

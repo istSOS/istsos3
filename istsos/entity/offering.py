@@ -14,6 +14,7 @@ from istsos.entity.observableProperty import ObservableProperty
 from istsos.entity.featureOfInterest import (
     SamplingPoint
 )
+from istsos.entity.human import Human
 
 
 class Offering(BaseEntity):
@@ -51,6 +52,89 @@ class Offering(BaseEntity):
                         ]
                     }
                 ]
+            },
+            "procedure_description": {
+                "type": "object",
+                "properties": {
+                    "general_info": {
+                        "type": "object",
+                        "properties": {
+                            "alias": {
+                                "type": "string"
+                            },
+                            "keywords": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "description": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "identification": {
+                        "type": "object",
+                        "properties": {
+                            "manufacturer": {
+                                "oneOf": [
+                                    {"type": "string"},
+                                    Human.json_schema
+                                ]
+                            },
+                            "model_number": {
+                                "type": "string"
+                            },
+                            "serial_number": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "capabilities": {
+                        "type": "object",
+                        "properties": {
+                            "sampling_time_resolution": {
+                                "type": "string",
+                                "pattern": (
+                                    "^(-?)P(?=\d|T\d)(?:(\d+)Y)?(?:(\d+)M)"
+                                    "?(?:(\d+)([DW]))?(?:T(?:(\d+)H)?(?:(\d+)"
+                                    "M)?(?:(\d+(?:\.\d+)?)S)?)?$"
+                                )
+                            },
+                            "acquisition_time_resolution": {
+                                "type": "string",
+                                "pattern": (
+                                    "^(-?)P(?=\d|T\d)(?:(\d+)Y)?(?:(\d+)M)"
+                                    "?(?:(\d+)([DW]))?(?:T(?:(\d+)H)?(?:(\d+)"
+                                    "M)?(?:(\d+(?:\.\d+)?)S)?)?$"
+                                )
+                            },
+                            "storage_capacity": {
+                                "type": "string"
+                            },
+                            "battery_capacity": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "contact": {
+                        "type": "object",
+                        "properties": {
+                            "owner": {
+                                "oneOf": [
+                                    {"type": "string"},
+                                    Human.json_schema
+                                ]
+                            },
+                            "operator": {
+                                "oneOf": [
+                                    {"type": "string"},
+                                    Human.json_schema
+                                ]
+                            }
+                        }
+                    }
+                }
             },
             "observable_properties": {
                 "type": "array",
