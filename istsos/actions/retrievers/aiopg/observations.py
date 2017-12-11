@@ -48,7 +48,8 @@ temporalFilter:
                 self.__get_data(offering, request) for offering in request[
                     'offerings']
             ]
-            loop = asyncio.get_event_loop()
+            # loop = asyncio.get_event_loop()
+            asyncio.get_event_loop()
             yield from asyncio.gather(*funcs)
 
         else:
@@ -75,7 +76,7 @@ temporalFilter:
             })
 
             columns = []
-            columns_qi = []
+            # columns_qi = []
             op_filter = request.get_filter('observedProperties')
 
             observation = {}
@@ -135,9 +136,12 @@ temporalFilter:
 
             sql = """
                 SELECT
-                    begin_time, end_time, result_time, %s""" % (
+                    begin_time,
+                    end_time,
+                    result_time,
+                    %s""" % (
                                 ", ".join(columns)
-                            ) + """
+                    ) + """
                 FROM %s
                 """ % table_name
             temporal = []

@@ -4,7 +4,6 @@
 # Version: v3.0.0
 
 import asyncio
-import istsos
 from istsos import setting
 from istsos.actions.retrievers.offerings import Offerings
 from istsos.entity.offering import Offering
@@ -100,8 +99,8 @@ AND
 
         recs = yield from cur.fetchall()
 
-        if len(recs) == 0:
-            raise Exception("Sensor NOT found")
+        # if len(recs) == 0:
+        #    raise Exception("Sensor NOT found")
 
         for rec in recs:
             pt_begin = rec[4].isoformat() if rec[4] else None
