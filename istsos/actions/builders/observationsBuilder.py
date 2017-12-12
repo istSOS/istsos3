@@ -3,7 +3,6 @@
 # License: https://github.com/istSOS/istsos3/master/LICENSE.md
 # Version: v3.0.0
 
-import asyncio
 from istsos.actions.action import Action
 
 

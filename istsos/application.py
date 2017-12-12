@@ -9,8 +9,10 @@ import json
 import uuid
 import importlib
 import traceback
+import sys
 
 import istsos
+from istsos.common.exceptions import DbError, InvalidParameterValue
 from istsos.actions.servers.sos_2_0_0.requirement.core.requestRequest import (
     RequestRequest
 )
@@ -220,19 +222,158 @@ REST_API = [
     (r'systemType', r'utilities.systemType', 'SystemType')
 ]
 
+REST_API = {
+
+    #  FETCH API
+    "FETCH_OFFERINGS": (
+        'list.offerings',
+        'Offerings'
+    ),
+    "FETCH_SENSORS": (
+        'list.offerings',
+        'Offerings'
+    ),
+    "FETCH_OBSERVABLE_PROPERTIES": (
+        'list.observableProperties',
+        'ObservableProperties'
+    ),
+    "FETCH_OBSERVATION_TYPES": (
+        'list.observationTypes',
+        'ObservationTypes'
+    ),
+    "FETCH_UOMS": (
+        'list.uoms',
+        'Uoms'
+    ),
+    "FETCH_SAMPLING_TYPES": (
+        'list.samplingTypes',
+        'SamplingTypes'
+    ),
+    "FETCH_FOIS": (
+        'list.featureOfInterests',
+        'FeatureOfInterests'
+    ),
+    "FETCH_DOMAINS": (
+        'list.domains',
+        'Domains'
+    ),
+    "FETCH_MATERIALS": (
+        'list.materials',
+        'Materials'
+    ),
+    "FETCH_SAMPLING_METHODS": (
+        'list.samplingMethods',
+        'SamplingMethods'
+    ),
+    "FETCH_HUMANS": (
+        'list.humans',
+        'Humans'
+    ),
+    "FETCH_PROCESSING_DETAILS": (
+        'list.processingDetails',
+        'ProcessingDetails'
+    ),
+
+    #  CREATION API
+    "CREATE_SENSOR": (
+        'create.offering',
+        'Offering'
+    ),
+    "CREATE_FOI": (
+        'create.featureOfInterest',
+        'FeatureOfInterest'
+    ),
+    "CREATE_OBSERVABLE_PROPERTY": (
+        'create.observableProperty',
+        'ObservableProperty'
+    ),
+    "CREATE_UOM": (
+        'create.unitOfMeasure',
+        'UnitOfMeasure'
+    ),
+    "CREATE_SPECIMEN": (
+        'create.specimen',
+        'Specimen'
+    ),
+    "CREATE_SAMPLING_METHOD": (
+        'create.samplingMethod',
+        'SamplingMethod'
+    ),
+    "CREATE_HUMAN": (
+        'create.human',
+        'Human'
+    ),
+    "CREATE_PROCESSING_DETAIL": (
+        'create.processingDetail',
+        'ProcessingDetail'
+    ),
+
+    #  CHECK API
+    "CHECK_SENSOR_NAME": (
+        'utilities.checkSensorName',
+        'CheckSensorName'
+    ),
+    "CHECK_FOI_NAME": (
+        'utilities.checkFoiName',
+        'CheckFoiName'
+    ),
+    "CHECK_FOI_IDENTIFIER": (
+        'utilities.checkFoiIdentifier',
+        'CheckFoiIdentifier'
+    ),
+    "CHECK_UOM_NAME": (
+        'utilities.checkUomName',
+        'CheckUomName'
+    ),
+    "CHECK_OBSERVABLE_PROPERTY_NAME": (
+        'utilities.checkObservablePropertyName',
+        'CheckObservablePropertyName'
+    ),
+    "CHECK_OBSERVABLE_PROPERTY_DEFINITION": (
+        'utilities.checkObservablePropertyDefinition',
+        'CheckObservablePropertyDefinition'
+    ),
+    "CHECK_SPECIMEN_IDENTIFIER": (
+        'utilities.checkSpecimenIdentifier',
+        'CheckSpecimenIdentifier'
+    ),
+    "CHECK_SAMPLING_METHOD_NAME": (
+        'utilities.checkSamplingMethodName',
+        'CheckSamplingMethodName'
+    ),
+    "CHECK_SAMPLING_METHOD_IDENTIFIER": (
+        'utilities.checkSamplingMethodIdentifier',
+        'CheckSamplingMethodIdentifier'
+    ),
+    "CHECK_HUMAN_USERNAME": (
+        'utilities.checkHumanUsername',
+        'CheckHumanUsername'
+    ),
+    "CHECK_PROCESSING_DETAIL_NAME": (
+        'utilities.checkProcessingDetailName',
+        'CheckProcessingDetailName'
+    ),
+    "CHECK_PROCESSING_DETAIL_IDENTIFIER": (
+        'utilities.checkProcessingDetailIdentifier',
+        'CheckProcessingDetailIdentifier'
+    )
+}
+
 
 class Server:
     """docstring for Server."""
     def __init__(self, state):
         self.state = state
         self.rules = {}
-        for rule in REST_API:
-            module = 'istsos.actions.servers.rest.%s' % (
-                rule[1].replace('/', '.')
-            )
+        keys = REST_API.keys()
+        istsos.debug(
+            "Initializing REST API: \n   > %s" % "\n   > ".join(keys))
+        for key in keys:
+            rule = REST_API[key]
+            module = 'istsos.actions.servers.rest.%s' % rule[0]
             m = importlib.import_module(module)
-            action = getattr(m, rule[2])
-            self.rules[rule[0]] = action
+            action = getattr(m, rule[1])
+            self.rules[key] = action
 
     @classmethod
     @asyncio.coroutine
@@ -260,6 +401,8 @@ The HTTPRequest shall be prepared by the web framework used.
         )
 
         action = False
+
+        istsos.debug("Request path: %s" % path[0])
 
         if path[0] == 'sos':
 
@@ -298,9 +441,9 @@ The HTTPRequest shall be prepared by the web framework used.
 
         elif path[0] == 'rest':
             try:
-                elem = request['body']['entity']
+                action_name = request['json']['action']
 
-                action = self.rules[elem]()
+                action = self.rules[action_name]()
 
             except Exception as _:
                 traceback.print_exc()
@@ -309,38 +452,73 @@ The HTTPRequest shall be prepared by the web framework used.
         if action:
             yield from action.execute(request)
 
-            if stats:
-                # Show response
-                if "response" in request:
-                    print("\n")
-                    if len(request['response']) > 1000:
-                        print(request['response'][:1000])
-                    else:
+            if isinstance(request['response'], Exception):
+                request['status'] = "400"
+
+                if path[0] == 'sos':
+                    if isinstance(request['response'], DbError):
                         print(request['response'])
-                    print("\n")
 
-                # Print statistics
-                from istsos.actions.action import (
-                    Action, CompositeAction
-                )
+                    elif isinstance(
+                            request['response'], InvalidParameterValue):
+                        request['response'] = """<ExceptionReport
+    xmlns="http://www.opengis.net/ows/1.1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    version="1.0.0" xml:lang="en">
+    %s
+</ExceptionReport>
+                """ % request['response'].to_xml()
 
-                def show_stats(action, depth=0):
-                    if action.time is not None:
-                        print("%s%s: %s ms" % (
-                            "%s-" % ("  "*depth),
-                            action.__class__.__name__,
-                            action.time * 1000
-                        ))
-                    if isinstance(action, CompositeAction):
-                        for child_action in action.actions:
-                            show_stats(child_action, depth+1)
+                    else:
+                        traceback.print_exc(file=sys.stdout)
+                        request['response'] = """<ExceptionReport
+    xmlns="http://www.opengis.net/ows/1.1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    version="1.0.0" xml:lang="en">
+    <Exception exceptionCode="ServerError">
+        <ExceptionText>%s</ExceptionText>
+    </Exception>
+</ExceptionReport>
+                """ % request['response']
+                else:
+                    request['response'] = {
+                        "success": False,
+                        "message": str(request['response'])
+                    }
 
-                show_stats(action)
+            else:
+                request['status'] = "200"
+
+                if stats:
+                    # Show response
+                    if "response" in request:
+                        print("\n")
+                        if len(request['response']) > 1000:
+                            print(request['response'][:1000])
+                        else:
+                            print(request['response'])
+                        print("\n")
+
+                    # Print statistics
+                    from istsos.actions.action import (
+                        CompositeAction
+                    )
+
+                    def show_stats(action, depth=0):
+                        if action.time is not None:
+                            print("%s%s: %s ms" % (
+                                "%s-" % ("  "*depth),
+                                action.__class__.__name__,
+                                action.time * 1000
+                            ))
+                        if isinstance(action, CompositeAction):
+                            for child_action in action.actions:
+                                show_stats(child_action, depth+1)
+
+                    show_stats(action)
 
             # Free memory
             action = None
-
-            request['status'] = "200"
             return request
 
         request['status'] = "400"

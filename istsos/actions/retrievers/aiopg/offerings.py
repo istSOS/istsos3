@@ -4,8 +4,7 @@
 # Version: v3.0.0
 
 import asyncio
-import istsos
-import json
+from istsos import setting
 from istsos.actions.retrievers.offerings import Offerings
 from istsos.entity.offering import Offering
 
@@ -31,7 +30,8 @@ SELECT DISTINCT
     rt_begin,
     rt_end,
     foi_type,
-    data_table_exists
+    data_table_exists,
+    config
 FROM
     offerings,
     off_obs_prop,
@@ -61,17 +61,26 @@ AND
                         params.append(procedure)
                     where.append("(%s)" % " OR ".join(or_condition))
 
-                if key == 'observedProperties':
+                if key == 'observedProperties' and \
+                        len(request.get_filter(key)) > 0:
                     # observedProperties will filter only offerings
                     # and will not impact the entity representation
                     # modifying also the observable_property values.
                     # This is because the entity can came from the cache
                     # and modifying the cache will impact all the istSOS
                     or_condition = []
-                    for observedProperty in request.get_filter(key):
-                        or_condition.append("\ndef = %s\n")
-                        params.append(observedProperty)
+                    for op in request.get_filter(key):
+                        or_condition.append((
+                            yield from cur.mogrify(
+                                "observed_properties.def = %s", (op,)
+                            )
+                        ).decode("utf-8"))
                     where.append("(%s)" % " OR ".join(or_condition))
+
+                if key == 'specimen':
+                    where.append(
+                        "foi_type = '%s'" % setting._SAMPLING_SPECIMEN
+                    )
 
             if len(where) > 0:
                 sql += "AND %s" % (
@@ -90,8 +99,8 @@ AND
 
         recs = yield from cur.fetchall()
 
-        if len(recs) == 0:
-            raise Exception("Sensor NOT found")
+        # if len(recs) == 0:
+        #    raise Exception("Sensor NOT found")
 
         for rec in recs:
             pt_begin = rec[4].isoformat() if rec[4] else None
@@ -103,7 +112,8 @@ AND
                 "results": rec[9],
                 "name": rec[1],
                 "procedure": rec[2],
-                "foi_type": rec[8]
+                "foi_type": rec[8],
+                'config': rec[10]
             })
 
             pt_begin = rec[4].isoformat() if rec[4] else None
@@ -146,7 +156,7 @@ WHERE
     id_off = %s;""", (data['id'],))
             rObs = yield from cur.fetchall()
             for obs_prop in rObs:
-                data['observable_property'].append({
+                data['observable_properties'].append({
                     "id": obs_prop[0],
                     "name": obs_prop[1],
                     "definition": obs_prop[2],
@@ -165,8 +175,9 @@ WHERE
     id_off = %s;""", (data['id'],))
             rOty = yield from cur.fetchall()
             for obs_type in rOty:
-                data['observation_type'].append(
-                    istsos._observationTypesDict[obs_type[0]]
+                data['observation_types'].append(
+                    obs_type[0]
+                    # setting._observationTypesDict[obs_type[0]]
                 )
 
             request['offerings'].append(Offering(data))

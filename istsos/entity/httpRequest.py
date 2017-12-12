@@ -72,10 +72,15 @@ class HttpRequest(Request):
         return self['body']
 
     def get_action(self):
-        return self['body']['action']
+        return self['json']['action']
 
     def get_json(self):
         return self['json']
+
+    def get_rest_data(self):
+        if "data" in self['json']:
+            return self['json']['data']
+        return {}
 
     def get_xml(self):
         if self['xml'] is None:

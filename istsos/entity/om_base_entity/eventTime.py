@@ -5,7 +5,6 @@
 
 from istsos.entity.baseEntity import BaseEntity
 from istsos.entity.om_base_entity.timeElements import TimeInstant, TimeInterval
-import collections
 
 
 class EventTime(BaseEntity):
@@ -19,4 +18,13 @@ class EventTime(BaseEntity):
             {"required": ["timeInstant"]},
             {"required": ["timePeriod"]}
         ]
+    }
+
+
+class EventTimeInstant(BaseEntity):
+    json_schema = {
+        "type": ["object", "null"],
+        "properties": {
+            "timeInstant": TimeInstant.json_schema
+        }
     }

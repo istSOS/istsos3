@@ -32,8 +32,14 @@ class ObservationCreator(CompositeAction):
 
             # Check that all the Offerings *observation types* are within
             # the Observation.
+            print(offering['observation_types'])
             offering_ots = offering.get_ot_definition_list()
             observation_ots = observation.get_op_type_list()
+
+            print(offering_ots)
+            print(observation_ots)
+            print(set(
+                offering_ots).symmetric_difference(observation_ots))
 
             difference = set(
                 offering_ots).symmetric_difference(observation_ots)

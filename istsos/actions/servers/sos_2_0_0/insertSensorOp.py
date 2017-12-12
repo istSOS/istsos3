@@ -7,7 +7,6 @@ import asyncio
 import istsos
 from istsos.actions.action import CompositeAction
 from istsos.actions.builders.sos_2_0_0.offeringBuilder import OfferingBuilder
-from lxml import etree
 
 
 class InsertSensor(CompositeAction):

@@ -4,99 +4,79 @@
 # Version: v3.0.0
 
 import asyncio
-import json
 from istsos.actions.creators.specimenCreator import SpecimenCreator
 
 
 class SpecimenCreator(SpecimenCreator):
-    """Query an .
-    """
     @asyncio.coroutine
     def process(self, request):
+        dbmanager = yield from self.init_connection()
+        cur = dbmanager.cur
+        yield from self.begin()
+        specimen = request['specimen']
+        yield from cur.execute("""
+            INSERT INTO specimens(
+                offering_name,
+                foi_name,
+                description,
+                identifier,
+                sampled_feature,
+                material,
+                sampling_time,
+                method,
+                sampling_size,
+                sampling_uom,
+                current_location,
+                speciment_type
+            ) VALUES (
+                %s, %s, %s,
+                %s, %s, %s,
+                %s, %s, %s,
+                %s, %s, %s
+            ) RETURNING id;
+        """, (
+            specimen['offering'],
+            specimen['name'],
+            specimen['description'],
+            specimen['identifier'],
+            specimen['sampledFeature']['href'],
+            specimen['materialClass']['href'],
+            specimen['samplingTime']['timeInstant']['instant'],
+            specimen['samplingMethod']['href']
+            if specimen['samplingMethod'] is not None else None,
+            specimen['size']['value'],
+            specimen['size']['uom'] if 'uom' in specimen['size'] else '',
+            specimen['currentLocation']['href'],
+            specimen['specimenType']['href']
+            if specimen['specimenType'] is not None else None
+        ))
+        rec = yield from cur.fetchone()
+        request['specimen']['id'] = rec[0]
 
-        with (yield from request['state'].pool.cursor()) as cur:
-            yield from cur.execute("BEGIN;")
-
-            specimen = request['specimen']
-
-            mat_name = specimen['materialClass']['href'].split('/')[-1]
-            mat_id = yield from self.__check_material(cur, mat_name)
-
-            met_name = specimen['samplingMethod']['href'].split('/')[-1]
-            met_id = yield from self.__check_method(cur, met_name)
-
-            samp_loc = specimen['samplingLocation']
-            coord = samp_loc['coordinates']
-            geom_var = "ST_GeomFromText('POINT({} {})')".format(coord[0], coord[1])
-
-            spec_type = None
-
-            if specimen['specimenType']:
-                spec_type = specimen['specimenType']['href']
-
+        # If present, insert also the processing details
+        if "processingDetails" in request and \
+                isinstance(request["processingDetails"], list) and \
+                len(request["processingDetails"]) > 0:
+            pds = []
+            for pd in request['processingDetails']:
+                pds.append((
+                    yield from cur.mogrify(
+                        '(%s, %s, %s, %s)',
+                        (
+                            request['specimen']['id'],
+                            pd['processOperator'],
+                            pd['processingDetails'],
+                            pd['time']
+                        )
+                    ).decode("utf-8")
+                ))
             yield from cur.execute("""
-                                        INSERT INTO specimens(
-                                            description,
-                                            identifier,
-                                            name,
-                                            type,
-                                            sampled_feat,
-                                            sampling_time,
-                                            processing_details,
-                                            sampling_size_uom,
-                                            sampling_size,
-                                            current_location,
-                                            id_mat_fk,
-                                            id_met_fk,
-                                            sampling_location,
-                                            specimen_type
-                                        )
-                                        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s, {},%s) RETURNING id;
-                                            """.format(geom_var), (
-                specimen['description'],
-                specimen['identifier'],
-                specimen['name'],
-                specimen['type']['href'],
-                specimen['sampledFeature']['href'],
-                specimen['samplingTime']['timeInstant']['instant'],
-                json.dumps(specimen['processingDetails']),
-                specimen['size']['uom'],
-                specimen['size']['value'],
-                json.dumps(specimen['currentLocation']),
-                mat_id, met_id, spec_type
-            ))
+                INSERT INTO processing(
+                    id_spec,
+                    operator,
+                    details,
+                    ptime
+                ) VALUES %s;
+            """ % ", ".join(pds))
 
-            yield from cur.execute("COMMIT;")
-
-    @asyncio.coroutine
-    def __check_material(self, cur, mat_name):
-
-        yield from cur.execute("""SELECT id FROM material_classes WHERE name=%s;""", (mat_name,))
-
-        res = yield from cur.fetchone()
-
-        if not res:
-            yield from cur.execute("""INSERT INTO material_classes(name, description) VALUES (%s,%s) RETURNING id;""",
-                                   (mat_name, ''))
-
-            mat = yield from cur.fetchone()
-            return mat[0]
-        else:
-            return res[0]
-
-    @asyncio.coroutine
-    def __check_method(self, cur, met_name):
-
-        yield from cur.execute("""SELECT id FROM methods WHERE name=%s;""", (met_name,))
-
-        res = yield from cur.fetchone()
-
-        if not res:
-            yield from cur.execute("""INSERT INTO methods(name, description) VALUES (%s,%s) RETURNING id;""",
-                                   (met_name, ''))
-
-            met = yield from cur.fetchone()
-            return met[0]
-
-        else:
-            return res[0]
+        yield from self.commit()

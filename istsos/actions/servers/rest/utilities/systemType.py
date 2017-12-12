@@ -6,7 +6,7 @@
 import asyncio
 from istsos.entity.rest.response import Response
 from istsos.actions.action import CompositeAction
-import istsos
+from istsos import setting
 
 
 class SystemType(CompositeAction):
@@ -27,6 +27,6 @@ class SystemType(CompositeAction):
         response = Response.get_template()
 
         if request.get_action() == 'retrieve':
-            response['data'] = istsos.get_sensor_type()
+            response['data'] = setting._sensor_type
 
         request['response'] = Response(response)

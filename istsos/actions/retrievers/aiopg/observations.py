@@ -5,6 +5,7 @@
 
 import asyncio
 import istsos
+from istsos import setting
 from istsos.actions.retrievers.observations import Observations
 from istsos.entity.observation import Observation
 from istsos.entity.observedProperty import (
@@ -47,7 +48,8 @@ temporalFilter:
                 self.__get_data(offering, request) for offering in request[
                     'offerings']
             ]
-            loop = asyncio.get_event_loop()
+            # loop = asyncio.get_event_loop()
+            asyncio.get_event_loop()
             yield from asyncio.gather(*funcs)
 
         else:
@@ -74,13 +76,13 @@ temporalFilter:
             })
 
             columns = []
-            columns_qi = []
+            # columns_qi = []
             op_filter = request.get_filter('observedProperties')
 
             observation = {}
             observation.update(template)
             if offering.is_complex():
-                observation["type"] = istsos._COMPLEX_OBSERVATION
+                observation["type"] = setting._COMPLEX_OBSERVATION
                 op = offering.get_complex_observable_property()
                 observation["observedProperty"] = \
                     ObservedPropertyComplex.get_template({
@@ -90,7 +92,7 @@ temporalFilter:
                         "uom": op['uom']
                     })
                 for op in offering['observable_property']:
-                    if op['type'] == istsos._COMPLEX_OBSERVATION:
+                    if op['type'] == setting._COMPLEX_OBSERVATION:
                         continue
                     else:
                         # observedProperty filters are applied here excluding
@@ -134,9 +136,12 @@ temporalFilter:
 
             sql = """
                 SELECT
-                    begin_time, end_time, result_time, %s""" % (
+                    begin_time,
+                    end_time,
+                    result_time,
+                    %s""" % (
                                 ", ".join(columns)
-                            ) + """
+                    ) + """
                 FROM %s
                 """ % table_name
             temporal = []

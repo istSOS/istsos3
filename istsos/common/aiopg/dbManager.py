@@ -5,6 +5,7 @@
 
 import asyncio
 import istsos
+from istsos import setting
 
 
 class DbManager():
@@ -22,7 +23,7 @@ class DbManager():
     def init_connection(self):
         if self.state is None:
             istsos.debug("Initializing cursor for aiopg connection")
-            self.state = yield from istsos.get_state()
+            self.state = yield from setting.get_state()
             if self.cur is None:
                 self.context_manager = (
                     yield from self.state.pool.cursor()

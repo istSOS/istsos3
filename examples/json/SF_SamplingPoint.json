@@ -1,0 +1,12 @@
+{
+    "description": "Meteo station",
+    "identifier": "TREVANO",
+    "name": "Trevano meteo station",
+    "type": "http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint",
+    "sampledFeature": "http://www.istsos.org/sos/foi/lugano",
+    "shape": {
+        "type": "point",
+        "coordinates": [100.0, 0.0],
+        "epsg": 4326
+    }
+}

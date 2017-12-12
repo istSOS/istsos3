@@ -4,7 +4,7 @@
 # Version: v3.0.0
 
 import asyncio
-import istsos
+from istsos import setting
 from istsos.actions.retrievers.retriever import Retriever
 from istsos.entity.loader import Loader as ELoader
 
@@ -14,7 +14,7 @@ class Loader(Retriever):
     def process(self, request):
 
         request['loader'] = ELoader(json_source=(
-                yield from istsos.get_state()
+                yield from setting.get_state()
             ).get_loader()
         )
 

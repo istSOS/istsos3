@@ -25,3 +25,10 @@ Inspect:
 List running:
 
 `docker ps`
+
+
+## Run docker as a non-root user:
+
+sudo groupadd docker
+sudo gpasswd -a $USER docker
+newgrp docker

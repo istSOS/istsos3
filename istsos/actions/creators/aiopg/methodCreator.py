@@ -13,21 +13,21 @@ class MethodCreator(MethodCreator):
     @asyncio.coroutine
     def process(self, request):
 
-        with (yield from request['state'].pool.cursor()) as cur:
-            yield from cur.execute("BEGIN;")
-
-            method = request['specimenMethod']
-
-            yield from cur.execute("""
-                        INSERT INTO methods(
-                            name,
-                            description
-                        )
-                        VALUES (%s,%s) RETURNING id;
-                    """, (
-                method['name'],
-                method['description']
-            ))
-
-            yield from cur.execute("COMMIT;")
-
+        dbmanager = yield from self.init_connection()
+        cur = dbmanager.cur
+        yield from self.begin()
+        method = request['samplingMethod']
+        yield from cur.execute("""
+                    INSERT INTO methods(
+                        identifier,
+                        name,
+                        description
+                    )
+                    VALUES (%s, %s,%s) RETURNING id;
+                """, (
+            method['identifier'],
+            method['name'],
+            method['description']
+        ))
+        request['samplingMethod']['id'] = rec[0]
+        yield from self.commit()
