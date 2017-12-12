@@ -1,4 +1,4 @@
-CREATE EXTENSION postgis;
+﻿CREATE EXTENSION postgis;
 
 CREATE SCHEMA data;
 
@@ -215,7 +215,7 @@ CREATE TABLE public.sensor_descriptions
     keywords character varying[],
     description character varying,
     manufacturer character varying,
-    model_number character varying
+    model_number character varying,
     serial_number character varying,
     sampling_resolution interval,
     acquisition_resolution interval,
@@ -276,6 +276,28 @@ CREATE TABLE public.off_obs_type
 CREATE INDEX
    ON public.off_obs_type USING btree (id_off ASC NULLS LAST);
 
+CREATE TABLE public.fois
+(
+   id serial NOT NULL,
+   description character varying,
+   identifier character varying NOT NULL,
+   foi_name character varying,
+   foi_type character varying,
+   geom geometry,
+   PRIMARY KEY (id),
+   UNIQUE (identifier)
+);
+
+CREATE TABLE public.sampled_foi
+(
+    id integer NOT NULL,
+    id_sam integer NOT NULL,
+    PRIMARY KEY (id, id_sam),
+    FOREIGN KEY (id) REFERENCES public.fois (id)
+        ON UPDATE NO ACTION ON DELETE CASCADE,
+    FOREIGN KEY (id_sam) REFERENCES public.fois (id)
+        ON UPDATE NO ACTION ON DELETE CASCADE
+);
 
 CREATE SEQUENCE specimen_id_seq
     INCREMENT BY 1
@@ -341,36 +363,12 @@ CREATE TABLE public.processing
     PRIMARY KEY (id),
 
     CONSTRAINT specimen_id_spec_fkey FOREIGN KEY (id_spec)
-      REFERENCES specimens (identifier) MATCH SIMPLE
+      REFERENCES specimens (id) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE CASCADE
 );
 
-CREATE TABLE public.fois
-(
-   id serial NOT NULL,
-   description character varying,
-   identifier character varying NOT NULL,
-   foi_name character varying,
-   foi_type character varying,
-   geom geometry,
-   PRIMARY KEY (id),
-   UNIQUE (identifier)
-);
-
-CREATE TABLE public.sampled_foi
-(
-    id integer NOT NULL,
-    id_sam integer NOT NULL,
-    PRIMARY KEY (id, id_sam),
-    FOREIGN KEY (id) REFERENCES public.fois (id)
-        ON UPDATE NO ACTION ON DELETE CASCADE,
-    FOREIGN KEY (id_sam) REFERENCES public.fois (id)
-        ON UPDATE NO ACTION ON DELETE CASCADE
-);
-
-
 INSERT INTO public.fois(
-    description, identifier, foi_name, sampled_foi, foi_type, geom)
+    description, identifier, foi_name, foi_type, geom)
 VALUES (
     'There is no value',
     'http://www.opengis.net/def/nil/OGC/0/inapplicable',
