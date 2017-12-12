@@ -13,7 +13,7 @@ class TestObservedProperties:
 
     def execute_get(self):
         # Installation of the istSOS server
-        state = State('config-test.json')
+        state = State('config.json')
         server = yield from Server.create(state)
 
         body = {
@@ -38,19 +38,25 @@ class TestObservedProperties:
         assert False
 
     def execute_post(self):
-        state = State('config-test.json')
+        state = State('config.json')
         server = yield from Server.create(state)
 
         self.body = {
-                    "entity": "observedProperties",
-                    "action": "create",
-                    "data": {
-                        "description": "Air temperature at 2 meters above terrain",
-                        "def": "urn:ogc:def:parameter:x-istsos:1.0:meteo:air:temperature:{}".format(uuid.uuid4()),
-                        "name": "air-temperature-test",
-                        "type": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"
-                    }
-                }
+            "entity": "observedProperties",
+            "action": "create",
+            "data": {
+                "description": (
+                    "Air temperature at 2 meters above terrain"),
+                "def": (
+                    "urn:ogc:def:parameter:x-istsos:1.0:"
+                    "meteo:air:temperature:{}"
+                ).format(uuid.uuid4()),
+                "name": "air-temperature-test",
+                "type": (
+                    "http://www.opengis.net/def/observationType/"
+                    "OGC-OM/2.0/OM_Measurement")
+            }
+        }
 
         # Preparing the Request object
         request = HttpRequest("POST", '/rest', body=self.body)

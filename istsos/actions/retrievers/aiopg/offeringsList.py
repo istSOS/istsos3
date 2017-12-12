@@ -4,7 +4,11 @@
 # Version: v3.0.0
 
 import asyncio
+import istsos
+from istsos import setting
+from istsos.entity.offering import Offering
 from istsos.actions.retrievers.offeringsList import OfferingsList
+from istsos.entity.observableProperty import ObservableProperty
 
 
 class OfferingsList(OfferingsList):
@@ -17,71 +21,138 @@ class OfferingsList(OfferingsList):
         """Load all the offerings relative to the given filter.
         """
 
-        with (yield from request['state'].pool.cursor()) as cur:
+        dbmanager = yield from self.init_connection()
+        cur = dbmanager.cur
 
-            sql = """
-                SELECT
-                    id,
-                    offering_name,
-                    procedure_name,
-                    description_format,
-                    pt_begin,
-                    pt_end,
-                    foi_name,
-                    foi_type,
-                    data_table_exists
-                FROM
-                    offerings 
-            """
+        sql = """
+SELECT DISTINCT
+    offerings.id,
+    offering_name,
+    procedure_name,
+    foi_type,
+    sampled_foi,
+    data_table_exists,
+    pt_begin,
+    pt_end,
+    rt_begin,
+    rt_end,
+    config
+FROM
+    offerings,
+    off_obs_prop,
+    observed_properties
+WHERE
+    id_opr = observed_properties.id
+AND
+    id_off = offerings.id
+        """
 
-            yield from cur.execute(sql)
-            recs = yield from cur.fetchall()
+        where = []
+        if request.get_filters() is not None:
+            keys = list(request.get_filters())
+            for key in keys:
+                if key == 'specimen':
+                    where.append(
+                        "foi_type = '%s'" % setting._SAMPLING_SPECIMEN
+                    )
+                if key == 'observedProperties' and \
+                        len(request.get_filter(key)) > 0:
+                    ops = []
+                    for op in request.get_filter(key):
+                        ops.append((
+                            yield from cur.mogrify(
+                                "observed_properties.def = %s", (op,)
+                            )
+                        ).decode("utf-8"))
+                    where.append(
+                        "(%s)" % " OR ".join(ops)
+                    )
 
-            for res in recs:
+        if len(where) > 0:
+            sql += "AND %s" % (
+                '\nAND '.join(where)
+            )
 
-                table = res[8]
+        istsos.debug(
+            (
+                yield from cur.mogrify(sql)
+            ).decode("utf-8")
+        )
+        yield from cur.execute(sql)
+        recs = yield from cur.fetchall()
 
-                off = {
-                    'offering': res[1],
-                    'procedure': res[2],
-                    'description': res[3],
-                    'begin_pos': res[4].isoformat() if res[4] else None,
-                    'end_pos': res[5].isoformat() if res[5] else None,
-                    'foi_name': res[6],
-                    'foi_type': res[7],
-                    'observable_properties': []
+        for res in recs:
+
+            off = Offering.get_template({
+                'id': res[0],
+                'offering': res[1],
+                'procedure': res[2],
+                'foi_type': res[3],
+                'sampled_foi': res[4],
+                'config': res[10]
+            })
+
+            table = res[5]
+
+            if res[6] is not None and res[7] is not None:
+                off["phenomenon_time"] = {
+                    "begin": res[6].isoformat(),
+                    "end": res[7].isoformat()
                 }
 
-                if table:
-                    yield from cur.execute("""
-                        SELECT
-                            observed_properties.name,
-                            observed_properties.def,
-                            uoms.name
-                        FROM
-                            off_obs_prop
-                        INNER JOIN observed_properties
-                            ON id_opr = observed_properties.id
-                        LEFT JOIN uoms
-                            ON id_uom = uoms.id
-                        WHERE
-                            id_off = %s;""", (res[0],))
+            if res[8] is not None and res[9] is not None:
+                off["result_time"] = {
+                    "begin": res[8].isoformat(),
+                    "end": res[9].isoformat()
+                }
 
-                    r_obs = yield from cur.fetchall()
+            yield from cur.execute("""
+                SELECT
+                    observation_type
+                FROM
+                    off_obs_type
+                WHERE
+                    id_off = %s;""", (res[0],))
 
-                    for obs_prop in r_obs:
-                        off['observable_properties'].append({
-                            "name": obs_prop[0],
-                            "definition": obs_prop[1],
-                            "uom": obs_prop[2],
-                            # "type": obs_prop[3]
-                        })
+            observation_types = yield from cur.fetchall()
 
-                    # this value is updated on VACUUM
-                    # sql = "SELECT reltuples FROM pg_class WHERE relname = '_{}';".format(res[4])
-                    # yield from cur.execute(sql)
-                    # est = yield from cur.fetchone()
-                    # if len(est) > 0:
-                    #     off['estimated'] = int(est[0])
+            for observation_type in observation_types:
+                off['observation_types'].append(
+                    observation_type[0]
+                )
 
-                request['offeringsList'].append(off)
+            if table:
+                yield from cur.execute("""
+                    SELECT
+                        off_obs_prop.id,
+                        observed_properties.name,
+                        observed_properties.def,
+                        uoms.name,
+                        observation_type
+                    FROM
+                        off_obs_prop
+                    INNER JOIN observed_properties
+                        ON id_opr = observed_properties.id
+                    LEFT JOIN uoms
+                        ON id_uom = uoms.id
+                    WHERE
+                        id_off = %s;""", (res[0],))
+
+                r_obs = yield from cur.fetchall()
+
+                for obs_prop in r_obs:
+                    op = ObservableProperty.get_template({
+                        "id": obs_prop[0],
+                        "name": obs_prop[1],
+                        "definition": obs_prop[2],
+                        "uom": obs_prop[3],
+                        # "type": obs_prop[3]
+                    })
+                    if obs_prop[4] is not None:
+                        op['type'] = obs_prop[4]
+
+                    off['observable_properties'].append(
+                        ObservableProperty(op)
+                    )
+
+            request['offeringsList'].append(Offering(off))

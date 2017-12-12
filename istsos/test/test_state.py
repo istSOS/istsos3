@@ -4,14 +4,14 @@
 # Version: v3.0.0
 
 import asyncio
-import istsos
+from istsos import setting
 
 
 class TestState:
 
     @asyncio.coroutine
     def execute_get_state(self):
-        state = yield from istsos.get_state()
+        state = yield from setting.get_state()
         print(state)
 
     def test_execute_http_request(self):

@@ -5,6 +5,8 @@
 
 import asyncio
 import istsos
+from psycopg2.extras import Json
+from istsos import setting
 from istsos.common.exceptions import InvalidParameterValue
 from istsos.actions.creators.offeringCreator import OfferingCreator
 
@@ -20,14 +22,6 @@ class OfferingCreator(OfferingCreator):
         dbmanager = yield from self.init_connection()
         yield from self.begin()
         cur = dbmanager.cur
-
-        # get the sensorType id
-        """if request['offering']['systemType'] not in istsos._sensor_type.keys():
-            raise InvalidParameterValue(
-                "systemType",
-                "Unrecognised systemType '%s'" %
-                request['offering']['systemType']
-            )"""
 
         # Check if offering already exists
         yield from cur.execute("""
@@ -47,6 +41,49 @@ class OfferingCreator(OfferingCreator):
                     'offering']['name']
             )
 
+        # check the sampled feature
+        if "sampled_foi" in request['offering'] and \
+                request['offering']["sampled_foi"] == "":
+            request['offering']["sampled_foi"] = setting._ogc_nil
+        else:
+            # Check if a FeatureOfInterest entity is given instead of the uri
+            if isinstance(request['offering']["sampled_foi"], dict):
+                # In this case inser the feature of interest in the database
+                yield from (
+                    yield from istsos.actions.get_creator(
+                        'FeatureOfInterestCreator',
+                        parent=self
+                    )
+                ).process({
+                    "featureOfInterest": request['offering']["sampled_foi"]
+                })
+                request['offering']["sampled_foi"] = request[
+                    "offering"]["sampled_foi"]["identifier"]
+            else:
+                # Check if sampled_foi exists, in istSOS Feature of Interest
+                # must exists before insert
+                yield from cur.execute("""
+                    SELECT EXISTS(
+                        SELECT 1
+                        FROM fois
+                        WHERE identifier = %s
+                    ) AS exists;
+                """, (
+                    request['offering']["sampled_foi"],
+                ))
+                rec = yield from cur.fetchone()
+                if rec[0] is False:
+                    raise InvalidParameterValue(
+                        "sampled_foi",
+                        "Sampled feature '%s' not exists" % request[
+                            'offering']["sampled_foi"]
+                    )
+
+        config = None
+        if 'config' in request['offering'] and \
+                isinstance(request['offering']["config"], dict):
+            config = Json(request['offering']['config'])
+
         # Register the new sensor into the offerings table
         yield from cur.execute("""
             INSERT INTO offerings(
@@ -54,23 +91,84 @@ class OfferingCreator(OfferingCreator):
                 procedure_name,
                 description_format,
                 foi_type,
-                foi_name
+                sampled_foi,
+                fixed,
+                config
             ) VALUES (
-                %s, %s, %s, %s, %s
+                %s, %s, %s, %s, %s, %s, %s
             ) RETURNING id;
         """, (
             request['offering']['name'],
             request['offering']['procedure'],
             request['offering']['procedure_description_format'][0],
             request['offering']['foi_type'],
-            request['offering']['foi_name']
+            request['offering']['sampled_foi'],
+            request['offering']['fixed'],
+            config
         ))
         rec = yield from cur.fetchone()
         request['offering']['id'] = rec[0]
 
+        # Check if observation type is managed by this istSOS
+        print(request['offering']['observation_types'])
+        for observationType in request['offering']['observation_types']:
+            if observationType not in setting._observationTypesList:
+                raise Exception(
+                    "Sorry, %s not implemented" % observationType)
+
+            yield from cur.execute("""
+                INSERT INTO off_obs_type(
+                    id_off, observation_type
+                )
+                VALUES (%s, %s) RETURNING id;
+            """, (
+                request['offering']['id'],
+                observationType
+            ))
+
+        # Create specific table columns in case if the feature type is
+        # a specimen
+        if request['offering']['foi_type'] == \
+                setting._SAMPLING_SPECIMEN:
+            yield from cur.execute("""
+                CREATE TABLE data._%s
+                (
+                    id integer NOT NULL default nextval(
+                        'data.observations_id_seq'
+                    ),
+                    obs_id character varying NOT NULL,
+                    begin_time timestamp with time zone NOT NULL,
+                    end_time timestamp with time zone NOT NULL,
+                    result_time timestamp with time zone NOT NULL,
+                    specimen_name character varying,
+                    PRIMARY KEY (id),
+                    UNIQUE (begin_time, end_time)
+                );
+            """ % request['offering']['name'], (
+                request['offering']['id']
+            ))
+
+        else:
+            yield from cur.execute("""
+                CREATE TABLE data._%s
+                (
+                    id integer NOT NULL default nextval(
+                        'data.observations_id_seq'
+                    ),
+                    obs_id character varying NOT NULL,
+                    begin_time timestamp with time zone NOT NULL,
+                    end_time timestamp with time zone NOT NULL,
+                    result_time timestamp with time zone NOT NULL,
+                    PRIMARY KEY (id),
+                    UNIQUE (begin_time, end_time)
+                );
+            """ % request['offering']['name'], (
+                request['offering']['id']
+            ))
+
         # Check if current observed properties exists in the database
-        for observableProperty in request['offering'][
-                'observable_property']:
+        data_table_exists = False
+        for observableProperty in request['offering']['observable_property']:
             yield from cur.execute("""
                 SELECT id
                 FROM observed_properties
@@ -105,66 +203,35 @@ class OfferingCreator(OfferingCreator):
                 request['offering']['id'],
                 id_opr
             ))
+            rec = yield from cur.fetchone()
+            id_obp = rec[0]
+            observableProperty['id'] = id_obp
 
-        # Check for observation type is managed by this istSOS
-        for observationType in request['offering'][
-                'observation_type']:
-            if observationType[
-                    'definition'] not in istsos._observationTypesList:
-                raise Exception(
-                    "Sorry, %s not implemented" %
-                    observationType['definition'])
-
-            yield from cur.execute("""
-                INSERT INTO off_obs_type(
-                    id_off, observation_type
+            # This happens when the REST "CREATE_SENSOR" request is used,
+            # Because the InsertSensor request do not define this relation.
+            if ("uom" in observableProperty and
+                    observableProperty["uom"] not in ["", None]) and (
+                    "type" in observableProperty and
+                    observableProperty["type"] not in ["", None]):
+                yield from (
+                    yield from istsos.actions.get_creator('ObservationCreator')
+                ).add_field(
+                    request['offering'],
+                    {
+                        'def': observableProperty['definition'],
+                        'uom': observableProperty['uom'],
+                        'type': observableProperty["type"]
+                    },
+                    cur
                 )
-                VALUES (%s, %s) RETURNING id;
-            """, (
-                request['offering']['id'],
-                observationType['definition']
-            ))
+                data_table_exists = True
 
-        # Create specific table columns in case if the feature type is
-        # a specimen
-        if request['offering']['foi_type'] == \
-                istsos._SAMPLING_SPECIMEN:
+        if data_table_exists:
+            request['offering']['results'] = True
             yield from cur.execute("""
-                CREATE TABLE data._%s
-                (
-                    id integer NOT NULL default nextval(
-                        'data.observations_id_seq'
-                    ),
-                    obs_id character varying NOT NULL,
-                    begin_time timestamp with time zone NOT NULL,
-                    end_time timestamp with time zone NOT NULL,
-                    result_time timestamp with time zone NOT NULL,
-                    foi_name character varying NOT NULL,
-                    specimen_name character varying,
-                    PRIMARY KEY (id),
-                    UNIQUE (begin_time, end_time)
-                );
-            """ % request['offering']['name'], (
-                request['offering']['id']
-            ))
-
-        else:
-            yield from cur.execute("""
-                CREATE TABLE data._%s
-                (
-                    id integer NOT NULL default nextval(
-                        'data.observations_id_seq'
-                    ),
-                    obs_id character varying NOT NULL,
-                    begin_time timestamp with time zone NOT NULL,
-                    end_time timestamp with time zone NOT NULL,
-                    result_time timestamp with time zone NOT NULL,
-                    foi_name character varying NOT NULL,
-                    PRIMARY KEY (id),
-                    UNIQUE (begin_time, end_time)
-                );
-            """ % request['offering']['name'], (
-                request['offering']['id']
-            ))
+                UPDATE public.offerings
+                   SET data_table_exists=True
+                 WHERE id = %s;
+            """ % (request['offering']['id'],))
 
         yield from self.commit()

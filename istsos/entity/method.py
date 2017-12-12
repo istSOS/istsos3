@@ -10,6 +10,12 @@ class Method(BaseEntity):
     json_schema = {
         "type": "object",
         "properties": {
+            "id": {
+                "type": "integer"
+            },
+            "identifier": {
+                "type": "string"
+            },
             "name": {
                 "type": "string"
             },
@@ -20,8 +26,12 @@ class Method(BaseEntity):
     }
 
     @staticmethod
-    def get_template():
-        return {
+    def get_template(method):
+        ret = {
+            "identifier": "",
             "name": "",
             "description": ""
         }
+        if method is not None:
+            ret.update(method)
+        return ret

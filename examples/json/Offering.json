@@ -1,0 +1,42 @@
+{
+    "id": 3214,
+    "name": "d0ee4e863aca11e79ff7e0db55c4a7a5",
+    "procedure": "BELLINZONA",
+    "procedure_description_format": [
+        "http://www.opengis.net/sensorML/1.0.1"
+    ],
+    "observable_property": [
+        {
+            "id": 12,
+            "name": "air temperature",
+            "definition": "urn:ogc:def:parameter:x-istsos:1.0:meteo:air:temperature",
+            "uom": "°C",
+            "type": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+            "column": "_32"
+        },
+        {
+            "id": 13,
+            "name": "air humidity",
+            "definition": "urn:ogc:def:parameter:x-istsos:1.0:meteo:air:humidity",
+            "uom": "%",
+            "type": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+            "column": "_32"
+        }
+    ],
+    "observation_type": [
+        "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"
+    ],
+    "observed_area": {
+        "lower_corner": [0, 0],
+        "upper_corner": [0, 0]
+    },
+    "phenomenon_time": {
+        "begin": "",
+        "end": ""
+    },
+    "result_time": {
+        "begin": "",
+        "end": ""
+    },
+    "foi_type":
+}

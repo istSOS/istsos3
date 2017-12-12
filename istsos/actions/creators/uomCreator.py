@@ -4,7 +4,6 @@
 # Version: v3.0.0
 
 import asyncio
-import istsos
 from istsos.actions.action import Action
 
 

@@ -5,6 +5,7 @@
 
 import asyncio
 import istsos
+from istsos import setting
 from istsos.entity.offering import Offering
 from istsos.actions.builders.offeringBuilder import OfferingBuilder
 
@@ -75,7 +76,7 @@ class OfferingBuilder(OfferingBuilder):
                 data['foi_type'] = foi_type.text.strip()
                 istsos.debug(
                     "Feature of Interest Type: %s" %
-                    data['foi_type'].replace(istsos._foidef, '')
+                    data['foi_type'].replace(setting._foidef, '')
                 )
 
             """for classifier in request.get_xml().iterfind(
@@ -87,20 +88,20 @@ class OfferingBuilder(OfferingBuilder):
 
             if data['systemType'] is None:
                 # Guess from other configuration elements
-                if istsos._GEOMETRY_OBSERVATION in data['observation_type'] \
-                        and istsos._SAMPLING_CURVE == data['foi_type']:
-                    data['systemType'] = istsos._INSITU_MOBILE_POINT
+                if setting._GEOMETRY_OBSERVATION in data['observation_type'] \
+                        and setting._SAMPLING_CURVE == data['foi_type']:
+                    data['systemType'] = setting._INSITU_MOBILE_POINT
 
-                elif istsos._GEOMETRY_OBSERVATION not in data[
+                elif setting._GEOMETRY_OBSERVATION not in data[
                         'observation_type'] \
-                        and istsos._SAMPLING_POINT == data['foi_type']:
-                    data['systemType'] = istsos._INSITU_MOBILE_POINT
+                        and setting._SAMPLING_POINT == data['foi_type']:
+                    data['systemType'] = setting._INSITU_MOBILE_POINT
 
-                elif istsos._SAMPLING_SPECIMEN == data['foi_type']:
-                    data['systemType'] = istsos._INSITU_FIXED_SPECIMEN
+                elif setting._SAMPLING_SPECIMEN == data['foi_type']:
+                    data['systemType'] = setting._INSITU_FIXED_SPECIMEN
 
                 else:
-                    data['systemType'] = istsos._INSITU_FIXED_POINT
+                    data['systemType'] = setting._INSITU_FIXED_POINT
 
             istsos.debug(
                 "System Type: %s" % data['systemType'])"""

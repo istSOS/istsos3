@@ -25,8 +25,8 @@ class Specimen(Specimen):
                 ident = request.get_filter('identifier')
 
             sql = """
-                    SELECT 
-                        specimens.description, 
+                    SELECT
+                        specimens.description,
                         specimens.identifier,
                         specimens.name,
                         specimens.type,

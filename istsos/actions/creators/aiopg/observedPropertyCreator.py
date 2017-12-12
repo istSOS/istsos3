@@ -4,7 +4,9 @@
 # Version: v3.0.0
 
 import asyncio
-from istsos.actions.creators.observedPropertyCreator import ObservedPropertyCreator
+from istsos.actions.creators.observedPropertyCreator import (
+    ObservedPropertyCreator
+)
 
 
 class ObservedPropertyCreator(ObservedPropertyCreator):
@@ -22,17 +24,17 @@ class ObservedPropertyCreator(ObservedPropertyCreator):
 
             if 'id' in op.keys():
                 yield from cur.execute("""
-                                            UPDATE 
-                                                observed_properties
-                                            SET
-                                                name=%s,
-                                                def=%s,
-                                                description=%s
-                                            WHERE
-                                                id=%s;
-                                        """, (
+                    UPDATE
+                        observed_properties
+                    SET
+                        name=%s,
+                        def=%s,
+                        description=%s
+                    WHERE
+                        id=%s;
+                """, (
                     op['name'],
-                    op['def'],
+                    op['definition'],
                     op['description'],
                     op['id']
                 ))
@@ -40,22 +42,20 @@ class ObservedPropertyCreator(ObservedPropertyCreator):
             else:
 
                 yield from cur.execute("""
-                                            INSERT INTO observed_properties(
-                                                name,
-                                                def,
-                                                description
-                                            )
-                                            VALUES (%s,%s,%s) RETURNING id;
-                                        """, (
+                    INSERT INTO observed_properties(
+                        name,
+                        def,
+                        description
+                    )
+                    VALUES (%s,%s,%s) RETURNING id;
+                """, (
                     op['name'],
-                    op['def'],
+                    op['definition'],
                     op['description']
                 ))
 
                 rec = yield from cur.fetchone()
 
                 request['observedProperty']['id'] = rec[0]
-
-
 
             yield from cur.execute("COMMIT;")

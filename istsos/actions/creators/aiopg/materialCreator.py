@@ -13,20 +13,20 @@ class MaterialCreator(MaterialCreator):
     @asyncio.coroutine
     def process(self, request):
 
-        with (yield from request['state'].pool.cursor()) as cur:
-            yield from cur.execute("BEGIN;")
-
-            material = request['material']
-
-            yield from cur.execute("""
-                        INSERT INTO material_classes(
-                            name,
-                            description
-                        )
-                        VALUES (%s,%s) RETURNING id;
-                    """, (
-                material['name'],
-                material['description']
-            ))
-
-            yield from cur.execute("COMMIT;")
+        dbmanager = yield from self.init_connection()
+        cur = dbmanager.cur
+        yield from self.begin()
+        material = request['material']
+        yield from cur.execute("""
+                    INSERT INTO material_classes(
+                        name,
+                        description
+                    )
+                    VALUES (%s,%s) RETURNING id;
+                """, (
+            material['name'],
+            material['description']
+        ))
+        rec = yield from cur.fetchone()
+        request['material']['id'] = rec[0]
+        yield from self.commit()

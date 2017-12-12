@@ -16,12 +16,11 @@ class Uoms(Uoms):
                 FROM public.uoms;
             """
             yield from cur.execute(sql)
-            data = {}
+            request['uoms'] = []
             recs = yield from cur.fetchall()
             for rec in recs:
-                data[rec[0]] = {
+                request['uoms'].append({
                     "id": rec[0],
                     "name": rec[1],
                     "description": rec[2]
-                }
-            request['uoms'] = data
+                })

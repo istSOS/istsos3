@@ -91,7 +91,7 @@ class Point(BaseEntity):
         "properties": {
             "type": {
                 "type": "string",
-                "enum": ["point"]
+                "enum": ["Point"]
             },
             "coordinates": {
                 "oneOf": [
@@ -101,8 +101,18 @@ class Point(BaseEntity):
             }
         },
         "required": ["type", "coordinates"],
-        "additionalProperties": False,
+        "additionalProperties": False
     }
+
+    @staticmethod
+    def get_template(point=None):
+        ret = {
+            "type": "Point",
+            "coordinates": []
+        }
+        if point is not None:
+            ret.update(point)
+        return ret
 
 
 class Linestring(BaseEntity):

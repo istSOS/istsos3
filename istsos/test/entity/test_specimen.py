@@ -10,7 +10,7 @@ from istsos.entity.specimen import Specimen
 class TestSpecimen:
 
     def test_initialization(self):
-        with open('examples/json/specimen.json') as data_file:
+        with open('examples/json/SF_Specimen.json') as data_file:
             data = json.load(data_file)
             specimen = Specimen(data)
         assert 1 == 1

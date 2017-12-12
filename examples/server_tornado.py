@@ -44,7 +44,7 @@ https://gist.github.com/drgarcia1986/6b666c05ccb03e9525b4
                 future.set_exception(e)
 
         # asyncio.async() is deprecated, replaced with asyncio.ensure_future()
-        asyncio.ensure_future(func(*args, **kwargs)).add_done_callback(future_done)
+        asyncio.async(func(*args, **kwargs)).add_done_callback(future_done)
         return future
     return decorator
 
@@ -64,7 +64,6 @@ class SosHandler(BaseHandler):
         parameters = {
             k: self.get_argument(k) for k in self.request.arguments
         }
-        print(self.request.path)
         request = HttpRequest(
             "GET",
             self.request.path,
@@ -90,6 +89,7 @@ class SosHandler(BaseHandler):
         )
         self.write(request['response'])
 
+
 class RestHandler(BaseHandler):
 
     @coroutine
@@ -100,7 +100,7 @@ class RestHandler(BaseHandler):
         request = HttpRequest(
             "POST",
             self.request.path,
-            body=json.loads(self.request.body.decode('utf-8')),
+            json=json.loads(self.request.body.decode('utf-8')),
             content_type=self.request.headers.get(
                 "content-type", "application/json")
         )

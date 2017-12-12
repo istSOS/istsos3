@@ -33,3 +33,13 @@ class Measure(BaseEntity):
         },
         "required": ["value"]
     }
+
+    @staticmethod
+    def get_template(measure=None):
+        ret = {
+            "value": None,
+            "uom": ""
+        }
+        if measure is not None:
+            ret.update(measure)
+        return ret

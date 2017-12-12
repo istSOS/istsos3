@@ -14,18 +14,25 @@ class Materials(Materials):
     def process(self, request):
         with (yield from request['state'].pool.cursor()) as cur:
             sql = """
-                SELECT 
-                    id,
-                    name,
-                    description
-                FROM
-                    public.material_classes
+                SELECT
+                    count(*),
+                    array_to_json(
+                        array_agg(
+                            row_to_json(t)
+                        )
+                    )
+                FROM (
+                    SELECT
+                        id,
+                        name,
+                        definition,
+                        description,
+                        image
+                    FROM
+                        public.material_classes
+                ) t;
             """
             yield from cur.execute(sql)
-            recs = yield from cur.fetchall()
-            for rec in recs:
-                request['materials'].append(Material({
-                    "id": rec[0],
-                    "name": rec[1],
-                    "description": rec[2]
-                }))
+            rec = yield from cur.fetchone()
+            if rec[0] > 0:
+                request['materials'] = rec[1]

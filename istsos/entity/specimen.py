@@ -4,12 +4,14 @@
 # Version: v3.0.0
 
 from istsos.entity.baseEntity import BaseEntity
-from istsos.entity.om_base_entity.eventTime import EventTime
-from istsos.entity.om_base_entity.timeElements import Instant
+from istsos.entity.om_base_entity.eventTime import (
+    EventTime,
+    EventTimeInstant
+)
 from istsos.entity.om_base_entity.measure import Measure
-from istsos.entity.om_base_entity.geoJson import Point
+# from istsos.entity.om_base_entity.geoJson import Point
 from istsos.entity.om_base_entity.link import Link
-import collections
+from istsos import setting
 
 
 class Specimen(BaseEntity):
@@ -75,15 +77,38 @@ class Specimen(BaseEntity):
     json_schema = {
         "type": "object",
         "properties": {
-            "description": {"type": "string"},
-            "identifier": {"type": "string"},
-            "name": {"type": "string"},
-            "type": Link.json_schema,
+            "id": {
+                "type": "integer"
+            },
+            "offering": {
+                "type": "string"
+            },
+            "name": {
+                "type": "string"
+            },
+            "description": {
+                "type": "string"
+            },
+            "identifier": {
+                "type": "string",
+                "minLength": 1
+            },
+            "type": {
+                "type": "string",
+                "enum": [
+                    setting._SAMPLING_SPECIMEN
+                ]
+            },
             "sampledFeature": Link.json_schema,
             "materialClass": Link.json_schema,
             "samplingTime": EventTime.json_schema,
-            "samplingMethod": Link.json_schema,
-            "samplingLocation": Point.json_schema,
+            "samplingMethod": {
+                "oneOf": [
+                    Link.json_schema,
+                    {"type": "null"}
+                ]
+            },
+            #  "samplingLocation": Point.json_schema,
             "processingDetails": {
                 "type": "array",
                 "items": {
@@ -91,14 +116,19 @@ class Specimen(BaseEntity):
                     "properties": {
                         "processOperator": Link.json_schema,
                         "processingDetails": Link.json_schema,
-                        "time": Instant.json_schema
+                        "time": EventTimeInstant.json_schema
                     },
                     "additionalProperties": False
                 }
             },
             "size": Measure.json_schema,
             "currentLocation": Link.json_schema,
-            "specimenType": {"oneOf": [Link.json_schema, {type: "null"}]}
+            "specimenType": {
+                "oneOf": [
+                    {"type": "null"},
+                    Link.json_schema
+                ]
+            }
         },
         "required": [
             "description",
@@ -109,11 +139,30 @@ class Specimen(BaseEntity):
             "materialClass",
             "samplingTime",
             "samplingMethod",
-            "samplingLocation",
-            "processingDetails",
+            # "samplingLocation",
             "size",
             "currentLocation",
             "specimenType"
         ],
         "additionalProperties": False
     }
+
+    @staticmethod
+    def get_template(specimen=None):
+        ret = {
+            "description": "",
+            "identifier": "",
+            "name": "",
+            "type": setting._SAMPLING_SPECIMEN,
+            "sampledFeature": "",
+            "materialClass": "",
+            "samplingTime": "",
+            "samplingMethod": "",
+            # "samplingLocation": "",
+            "size": Measure.get_template(),
+            "currentLocation": "",
+            "specimenType": ""
+        }
+        if specimen is not None:
+            ret.update(specimen)
+        return ret

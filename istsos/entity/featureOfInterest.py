@@ -7,30 +7,30 @@ from istsos.entity.baseEntity import BaseEntity
 from istsos.entity.om_base_entity.geoJson import Point, Linestring
 from istsos.entity.om_base_entity.link import Link
 from istsos.entity.specimen import Specimen
+from istsos import setting
+
+typedef = (
+    'http://www.opengis.net/def/'
+    'samplingFeatureType/OGC-OM/2.0/'
+)
 
 
 class SamplingType(BaseEntity):
 
-    typedef = (
-        'http://www.opengis.net/def/'
-        'samplingFeatureType/OGC-OM/2.0/'
-    )
-
     json_schema = {
         "type": "string",
         "enum": [
-            "%sSF_SamplingCurve" % typedef,
-            "%sSF_SamplingPoint" % typedef,
-            "%sSF_SamplingSolid" % typedef,
-            "%sSF_SamplingSurface" % typedef,
-            "%sSF_SpatialSamplingFeature" % typedef,
-            "%sSF_Specimen" % typedef
+            setting._SAMPLING_CURVE,
+            setting._SAMPLING_POINT,
+            setting._SAMPLING_SOLID,
+            setting._SAMPLING_SURFACE,
+            setting._SAMPLING_SPATIAL_FEATURE,
+            setting._SAMPLING_SPECIMEN
         ]
-
     }
 
 
-class SamplingPoint(BaseEntity):
+class SamplingPoint(SamplingType):
     """
     """
 
@@ -40,12 +40,48 @@ class SamplingPoint(BaseEntity):
             "id": {
                 "type": "integer"
             },
+            "description": {
+                "type": "string"
+            },
+            "identifier": {
+                "type": "string",
+                "minLength": 1
+            },
             "name": {
                 "type": "string"
             },
-            "geom": Point.json_schema
-        }
+            "type": {
+                "type": "string",
+                "enum": [
+                    setting._SAMPLING_POINT
+                ]
+            },
+            "sampled_feature": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                },
+                "minItems": 1
+            },
+            "shape": Point.json_schema
+        },
+        "required": [
+            "identifier",
+            "type",
+            "shape"
+        ]
     }
+
+    @staticmethod
+    def get_template(samplingPoint=None):
+        ret = {
+            "identifier": None,
+            "type": setting._SAMPLING_POINT,
+            "shape": Point.get_template()
+        }
+        if samplingPoint is not None:
+            ret.update(samplingPoint)
+        return ret
 
 
 class SamplingCurve(BaseEntity):
@@ -58,11 +94,30 @@ class SamplingCurve(BaseEntity):
             "id": {
                 "type": "integer"
             },
+            "description": {
+                "type": "string"
+            },
+            "identifier": {
+                "type": "string"
+            },
             "name": {
                 "type": "string"
             },
-            "geom": Linestring.json_schema
-        }
+            "type": {
+                "type": "string",
+                "enum": [
+                    setting._SAMPLING_CURVE
+                ]
+            },
+            "sampled_feature": {
+                "type": "string"
+            },
+            "shape": Linestring.json_schema
+        },
+        "required": [
+            "identifier",
+            "geom"
+        ]
     }
 
 

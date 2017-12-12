@@ -5,7 +5,7 @@
 
 import asyncio
 from lxml import etree
-import istsos
+from istsos import setting
 from istsos.actions.action import CompositeAction
 from istsos.actions.builders.sos_2_0_0.temporalFilterBuilder import (
     TemporalFilterBuilder
@@ -188,11 +188,11 @@ class GetObservation(CompositeAction):
                 omresult = etree.SubElement(
                     omObs, '{%s}result' % ns['om_2_0'])
 
-                if observation['type'] == istsos._COMPLEX_OBSERVATION:
+                if observation['type'] == setting._COMPLEX_OBSERVATION:
                     omresult.set(
                         "{%s}type" % ns['xsi'],
-                        istsos.get_observation_type(
-                            istsos._COMPLEX_OBSERVATION
+                        setting.get_observation_type(
+                            setting._COMPLEX_OBSERVATION
                         )['type']
                     )
 
@@ -233,7 +233,7 @@ class GetObservation(CompositeAction):
                             '{%s}value' % ns['swe_2_0']
                         ).text = "%s" % observation["result"][idx]
 
-                elif observation['type'] == istsos._ARRAY_OBSERVATION:
+                elif observation['type'] == setting._ARRAY_OBSERVATION:
                     pass
                 else:
                     omresult.set(
@@ -242,7 +242,7 @@ class GetObservation(CompositeAction):
                     )
                     omresult.set(
                         "{%s}type" % ns['xsi'],
-                        istsos.get_observation_type(
+                        setting.get_observation_type(
                             observation["observedProperty"]['type']
                         )['type']
                     )
@@ -289,7 +289,7 @@ class GetObservation(CompositeAction):
                     '{%s}type' % ns['om_2_0']
                 ).set(
                     "{%s}href" % ns['xlink'],
-                    istsos._arrayObservation['definition']
+                    setting._arrayObservation['definition']
                 )
 
                 # Adding om:phenomenonTime
@@ -358,8 +358,8 @@ class GetObservation(CompositeAction):
                     omObs, '{%s}result' % ns['om_2_0'])
                 omresult.set(
                     "{%s}type" % ns['xsi'],
-                    istsos.get_observation_type(
-                        istsos._arrayObservation['definition']
+                    setting.get_observation_type(
+                        setting._arrayObservation['definition']
                     )['type']
                 )
 
@@ -588,7 +588,7 @@ class GetObservation(CompositeAction):
                         )
                         omresult.set(
                             "{%s}type" % ns['xsi'],
-                            istsos.get_observation_type(
+                            setting.get_observation_type(
                                 observation['type'][idx]
                             )['type']
                         )
