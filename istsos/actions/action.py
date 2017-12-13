@@ -200,6 +200,10 @@ class CompositeAction(Action):
     def add_checker(self, action, filter=None):
         self.add((yield from get_checker(action, filter=filter)))
 
+    @asyncio.coroutine
+    def add_plugin(self, plugin, action, filter=None):
+        self.add((yield from get_plugin(plugin, action, filter=filter)))
+
     def remove(self, action):
         self.actions.remove(action)
 
@@ -246,6 +250,31 @@ def __get_proxy(istsos_package, action_module, **kwargs):
         m = importlib.import_module(module)
 
     m = getattr(m, action_module)
+    if kwargs is not None:
+        return m(**kwargs)
+    return m()
+
+
+@asyncio.coroutine
+def get_plugin(plugin, name, **kwargs):
+    import importlib
+    fileName = name[0].lower() + name[1:]
+    module = 'istsos.plugins.%s.%s.%s' % (
+        plugin,
+        fileName,
+        name
+    )
+    istsos.debug("Importing Plugin %s: %s.%s" % (plugin, fileName, name))
+    try:
+        m = importlib.import_module(module)
+    except Exception:
+        module = 'istsos.plugins.%s.%s' % (
+            plugin,
+            fileName
+        )
+        m = importlib.import_module(module)
+
+    m = getattr(m, name)
     if kwargs is not None:
         return m(**kwargs)
     return m()

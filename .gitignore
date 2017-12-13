@@ -1,8 +1,9 @@
+__pycache__/
 *.py[cod]
 .cache/
-docs/_build/
-istsos/__pycache__/
-istsos/entity/__pycache__/
-istsos/action/__pycache__/
-config.json
 .idea/
+./config.json
+docs/_build/
+istsos/plugins/*
+!istsos/plugins/__init__.py
+!istsos/plugins/example/

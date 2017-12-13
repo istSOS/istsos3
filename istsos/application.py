@@ -10,6 +10,7 @@ import uuid
 import importlib
 import traceback
 import sys
+import pathlib
 
 import istsos
 from istsos.common.exceptions import DbError, InvalidParameterValue
@@ -38,6 +39,7 @@ def get_state(path='config.json', config=None):
     state = State(path, config)
     if not state.is_ready():
         yield from state.init_connections()
+        state.init_plugins()
         # #todo to be emproved
         '''if state.is_cache_active():
             yield from state.init_cache()'''
@@ -69,6 +71,7 @@ like this:
     class __State():
         def __init__(self, path='config.json', config=None):
             self.requests = {}
+            self.plugins = {}
             self.cache = None
             self.request_counter = 0
             self.ready = False
@@ -132,6 +135,24 @@ like this:
             self.instance.pool = yield from (
                 aiopg.create_pool(dns)
             )
+
+    def init_plugins(self):
+        pFolders = [
+            p for p in pathlib.Path(
+                '%s/plugins' % os.path.dirname(os.path.realpath(__file__))
+            ).iterdir() if p.is_dir()
+        ]
+        # https://docs.python.org/3/library/pathlib.html
+        for folder in pFolders:
+            configPath = os.path.join(str(folder), "config.json")
+            if os.path.isfile(configPath):
+                with open(configPath, 'r') as f:
+                    config = json.load(f)
+                    if 'api' in config:
+                        for api in config['api'].keys():
+                            PLUGIN_API[api] = tuple(
+                                config['api'][api]
+                            )
 
     @asyncio.coroutine
     def init_cache(self):
@@ -206,21 +227,7 @@ like this:
         return self.instance.requests
 
 
-REST_API = [
-    (r'uoms', r'uom', 'Uom'),
-    (r'identification', r'configurations.identification', 'Identification'),
-    (r'provider', r'configurations.provider', 'Provider'),
-    (r'loader', r'configurations.loader', 'Loader'),
-    (r'observedProperties', r'observedProperties', 'ObservedProperties'),
-    (r'offering', r'offering', 'Offering'),
-    (r'observation', r'observation', 'Observation'),
-    (r'specimen', r'specimen.specimen', 'Specimen'),
-    (r'material', r'specimen.materials', 'Materials'),
-    (r'method', r'specimen.methods', 'Methods'),
-    (r'offeringList', r'utilities.offeringsList', 'OfferingList'),
-    (r'observationType', r'utilities.observationType', 'ObservationType'),
-    (r'systemType', r'utilities.systemType', 'SystemType')
-]
+PLUGIN_API = {}
 
 REST_API = {
 
@@ -374,6 +381,17 @@ class Server:
             m = importlib.import_module(module)
             action = getattr(m, rule[1])
             self.rules[key] = action
+
+        keys = PLUGIN_API.keys()
+        if len(keys) > 0:
+            istsos.debug(
+                "Initializing PLUGIN API: \n   > %s" % "\n   > ".join(keys))
+            for key in keys:
+                rule = PLUGIN_API[key]
+                module = 'istsos.plugins.%s' % rule[0]
+                m = importlib.import_module(module)
+                action = getattr(m, rule[1])
+                self.rules[key] = action
 
     @classmethod
     @asyncio.coroutine
