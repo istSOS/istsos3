@@ -78,11 +78,11 @@ class ObservationCreator(ObservationCreator):
 
     @asyncio.coroutine
     def add_field(self, offering, observedProperty, cur):
-        istsos.debug("Adding field: %s" % observedProperty['def'])
+        istsos.debug("Adding field: %s" % observedProperty['definition'])
 
         # Getting offering's observable property
         observable_property = offering.get_observable_property(
-                observedProperty['def'])
+                observedProperty['definition'])
 
         # Get id from off_obs_prop table
         id_obp = observable_property['id']
@@ -199,7 +199,7 @@ class ObservationCreator(ObservationCreator):
         columns = []
         for field in observation.get_field_list():
             observed_property = offering.get_observable_property(
-                    field['def'])
+                    field['definition'])
             columns.extend([
                 observed_property['column'],
                 "%s_qi" % observed_property['column']

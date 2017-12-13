@@ -168,7 +168,7 @@ class OfferingCreator(OfferingCreator):
 
         # Check if current observed properties exists in the database
         data_table_exists = False
-        for observableProperty in request['offering']['observable_property']:
+        for observableProperty in request['offering']['observable_properties']:
             yield from cur.execute("""
                 SELECT id
                 FROM observed_properties
@@ -218,7 +218,7 @@ class OfferingCreator(OfferingCreator):
                 ).add_field(
                     request['offering'],
                     {
-                        'def': observableProperty['definition'],
+                        'definition': observableProperty['definition'],
                         'uom': observableProperty['uom'],
                         'type': observableProperty["type"]
                     },
