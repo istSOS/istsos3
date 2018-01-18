@@ -4,7 +4,6 @@
 # Version: v3.0.0
 
 import asyncio
-import uuid
 from istsos.entity.filters.temporalFilter import TemporalFilter
 from istsos.actions.builders.temporalFilterBuilder import TemporalFilterBuilder
 

@@ -280,6 +280,10 @@ REST_API = {
         'list.processingDetails',
         'ProcessingDetails'
     ),
+    "FETCH_OBSERVATIONS": (
+        'list.observations',
+        'Observations'
+    ),
 
     #  CREATION API
     "CREATE_SENSOR": (
@@ -513,8 +517,8 @@ The HTTPRequest shall be prepared by the web framework used.
                         print("\n")
                         if len(request['response']) > 1000:
                             print(request['response'][:1000])
-                        else:
-                            print(request['response'])
+                        # else:
+                        #    print(request['response'][:1000])
                         print("\n")
 
                     # Print statistics

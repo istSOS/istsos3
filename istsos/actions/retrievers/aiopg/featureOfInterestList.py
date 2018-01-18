@@ -4,7 +4,6 @@
 # Version: v3.0.0
 
 import asyncio
-from istsos.entity.offering import Offering
 from istsos.actions.retrievers.featureOfInterestList import (
     FeatureOfInterestList
 )
@@ -21,10 +20,9 @@ class FeatureOfInterestList(FeatureOfInterestList):
         """
         dbmanager = yield from self.init_connection()
         cur = dbmanager.cur
-        domains = request.get_filter("domains")
-        print("*****************************************")
-        print(domains)
-        print(request['filters'])
+        domains = request.get_filter(
+            self._DOMAIN
+        )
 
         if domains is not None and domains == 'all':
             sql = """

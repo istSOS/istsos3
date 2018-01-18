@@ -39,6 +39,13 @@ class DbManager():
         )
 
     @asyncio.coroutine
+    def get_cursor(self):
+        # conn = yield from self.context_manager._pool.acquire()
+        return (
+            yield from self.context_manager._pool.cursor()
+        )
+
+    @asyncio.coroutine
     def begin(self):
         if self.cur is None:
             yield from self.init_cursor()

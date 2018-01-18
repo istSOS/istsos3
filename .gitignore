@@ -7,3 +7,4 @@ docs/_build/
 istsos/plugins/*
 !istsos/plugins/__init__.py
 !istsos/plugins/example/
+istsos/plugins/example/__pycache__

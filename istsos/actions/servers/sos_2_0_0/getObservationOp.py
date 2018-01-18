@@ -4,6 +4,7 @@
 # Version: v3.0.0
 
 import asyncio
+import istsos
 from lxml import etree
 from istsos import setting
 from istsos.actions.action import CompositeAction
@@ -22,6 +23,7 @@ from istsos.actions.builders.sos_2_0_0.observedPropertyFilterBuilder import (
 from istsos.actions.servers.sos_2_0_0.requirement.goRequirement import (
     GORequirement
 )
+# import itertools
 
 
 class GetObservation(CompositeAction):
@@ -34,7 +36,7 @@ class GetObservation(CompositeAction):
         # Add request validation of the GetCapabilities request
         self.add(GORequirement())
 
-        # Add builder for temporal filter
+        # Add filter builders
         self.add(TemporalFilterBuilder())
         self.add(OfferingFilterBuilder())
         self.add(ProcedureFilterBuilder())
@@ -89,7 +91,7 @@ class GetObservation(CompositeAction):
 
                 if 'timeInstant' in observation['phenomenonTime']:
                     timeInstantId = "p%s" % oid
-                    timeResultId = "r%s" % oid
+                    # timeResultId = "r%s" % oid
                     timeInstant = etree.SubElement(
                         phenomenonTime,
                         '{%s}TimeInstant' % ns['gml_3_2'])

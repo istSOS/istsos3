@@ -5,6 +5,7 @@
 
 import asyncio
 import istsos
+import json
 from istsos import setting
 from istsos.actions.retrievers.observations import Observations
 from istsos.entity.observation import Observation
@@ -25,10 +26,6 @@ temporalFilter:
           2012-11-19T14:00:00.000+01:00
     """
 
-    filter_map = {
-        "procedure": "procedure_name"
-    }
-
     @asyncio.coroutine
     def process(self, request):
         """Depending on the selected procedures call its specific retriever to
@@ -42,14 +39,13 @@ temporalFilter:
             return
 
         # @todo check if this helps
-        if len(request['offerings']) > 1:
+        if False:  # len(request['offerings']) > 1:
             istsos.debug("Running retrieval in parallel")
             funcs = [
-                self.__get_data(offering, request) for offering in request[
-                    'offerings']
+                self.__get_data(
+                    offering, request
+                ) for offering in request['offerings']
             ]
-            # loop = asyncio.get_event_loop()
-            asyncio.get_event_loop()
             yield from asyncio.gather(*funcs)
 
         else:
@@ -63,167 +59,199 @@ temporalFilter:
     def __get_data(self, offering, request):
 
         dbmanager = yield from self.init_connection()
-        with (yield from dbmanager.cursor()) as cur:
-            # with (yield from request['state'].pool.cursor()) as cur:
+        cur = dbmanager.cur
 
-            table_name = "data._%s" % offering['name'].lower()
+        table_name = "data._%s" % offering['name'].lower()
 
-            # preparing an Observation template that will be used with
-            # every Observation
-            template = Observation.get_template({
-                "offering": offering['name'],
-                "procedure": offering['procedure']
-            })
+        columns = []
+        # columns_qi = []
+        op_filter = request.get_filter('observedProperties')
 
-            columns = []
-            # columns_qi = []
-            op_filter = request.get_filter('observedProperties')
-
-            observation = {}
-            observation.update(template)
-            if offering.is_complex():
-                observation["type"] = setting._COMPLEX_OBSERVATION
-                op = offering.get_complex_observable_property()
-                observation["observedProperty"] = \
-                    ObservedPropertyComplex.get_template({
-                        "def": op['definition'],
-                        "name": op['name'],
-                        "type": op['type'],
-                        "uom": op['uom']
-                    })
-                for op in offering['observable_property']:
-                    if op['type'] == setting._COMPLEX_OBSERVATION:
-                        continue
-                    else:
-                        # observedProperty filters are applied here excluding
-                        # the observed properties columns from the query
-                        if op_filter is not None and (
-                                op['definition'] not in op_filter):
-                            continue
-
-                        observation["observedProperty"]['fields'].append(
-                            ObservedProperty.get_template({
-                                "def": op['definition'],
-                                "name": op['name'],
-                                "type": op['type'],
-                                "uom": op['uom']
-                            })
-                        )
-                        columns.append(op['column'])
-                        # columns_qi.append('%s_qi' % op['column'])
-
-            elif offering.is_array():
-                raise Exception("Not implemented yet")
-
-            else:
-                for op in offering['observable_property']:
-                    observation["type"] = op['type']
+        observation = Observation.get_template({
+            "offering": offering['name'],
+            "procedure": offering['procedure']
+        })
+        print(offering)
+        if offering.is_complex():
+            observation["type"] = setting._COMPLEX_OBSERVATION
+            op = offering.get_complex_observable_property()
+            observation["observedProperty"] = \
+                ObservedPropertyComplex.get_template({
+                    "def": op['definition'],
+                    "name": op['name'],
+                    "type": op['type'],
+                    "uom": op['uom']
+                })
+            for op in offering['observable_properties']:
+                if op['type'] == setting._COMPLEX_OBSERVATION:
+                    continue
+                else:
                     # observedProperty filters are applied here excluding
                     # the observed properties columns from the query
                     if op_filter is not None and (
                             op['definition'] not in op_filter):
                         continue
 
-                    observation["observedProperty"] = \
+                    observation["observedProperty"]['fields'].append(
                         ObservedProperty.get_template({
                             "def": op['definition'],
                             "name": op['name'],
                             "type": op['type'],
                             "uom": op['uom']
                         })
+                    )
                     columns.append(op['column'])
                     # columns_qi.append('%s_qi' % op['column'])
 
-            sql = """
+        elif offering.is_array():
+            raise Exception("Not implemented yet")
+
+        else:
+            for op in offering['observable_properties']:
+                observation["type"] = op['type']
+                # observedProperty filters are applied here excluding
+                # the observed properties columns from the query
+                if op_filter is not None and (
+                        op['definition'] not in op_filter):
+                    continue
+
+                observation["observedProperty"] = \
+                    ObservedProperty.get_template({
+                        "def": op['definition'],
+                        "name": op['name'],
+                        "type": op['type'],
+                        "uom": op['uom']
+                    })
+                columns.append(op['column'])
+                # columns_qi.append('%s_qi' % op['column'])
+
+        observation["phenomenonTime"] = {
+            "timePeriod": {
+                "begin": "",
+                "end": ""
+            }
+        }
+
+        if request.get_filter(
+                "responseFormat") in setting._responseFormat['vega']:
+            fastSql = """
+                SELECT array_to_json(
+                    array_agg(('{
+                        "o": "%s",
+                        "b": "' || to_char(
+                            begin_time, 'YYYY-MM-DD"T"HH24:MI:SS+02:00')
+                            || '",
+                        "e": "' || to_char(
+                            end_time, 'YYYY-MM-DD"T"HH24:MI:SS+02:00')
+                            || '",
+                        "r": "' || to_char(
+                            result_time, 'YYYY-MM-DD"T"HH24:MI:SS+02:00')
+                            || '",
+                        "a": "' || %s || '"
+                    }')::json)
+                )
+                FROM (
+            """ % (
+                offering['name'],
+                columns[0],
+            )
+
+        else:
+            fastSql = """
                 SELECT
-                    begin_time,
-                    end_time,
-                    result_time,
-                    %s""" % (
-                                ", ".join(columns)
-                    ) + """
-                FROM %s
-                """ % table_name
-            temporal = []
-            where = []
-            params = []
-            if request.get_filters() is not None:
-                keys = list(request.get_filters())
-                for key in keys:
-                    fltr = request.get_filters()[key]
-                    if key == 'temporal':
-                        if fltr['fes'] == 'during':
-                            temporal.append("""
-                                begin_time >= %s::timestamp with time zone
-                            AND
-                                end_time <= %s::timestamp with time zone
-                            """)
-                            params.extend(fltr['period'])
-
-                        elif fltr['fes'] == 'equals':
-                            temporal.append("""
-                                begin_time = end_time
-                            AND
-                                begin_time = %s::timestamp with time zone
-                            """)
-                            params.append(fltr['instant'])
-
-                        where.append(
-                            "(%s)" % (' OR '.join(temporal))
-                        )
-
-            if len(where) > 0:
-                sql += "WHERE %s" % (
-                    'AND'.join(where)
+                    array_to_json(
+                        array_agg(('{
+                            "offering": "%s",
+                            "procedure": "%s",
+                            "type": %s,
+                            "featureOfInterest": "ciao",
+                            "phenomenonTime": {
+                                "timePeriod": {
+                                    "begin": "' || begin_time || '",
+                                    "end": "' || end_time || '"
+                                }
+                            },
+                            "resultTime": {
+                                "timeInstant": {
+                                    "instant": "' || result_time || '"
+                                }
+                            },
+                            "result": "' || %s || '",
+                            "observedProperty": %s
+                        }')::json)
                 )
+                FROM (
+                """ % (
+                offering['name'],
+                offering['procedure'],
+                json.dumps(observation["type"]),
+                columns[0],
+                json.dumps(observation["observedProperty"])
+            )
 
-            sql += " ORDER BY begin_time;"
+        sql = """
+            SELECT
+                begin_time,
+                end_time,
+                result_time,
+                %s""" % (
+                            ", ".join(columns)
+                ) + """
+            FROM %s
+            """ % table_name
+        temporal = []
+        where = []
+        params = []
+        if request.get_filters() is not None:
+            keys = list(request.get_filters())
+            for key in keys:
+                fltr = request.get_filters()[key]
+                if key == 'temporal':
+                    if fltr['fes'] == 'during':
+                        temporal.append("""
+                            begin_time >= %s::timestamp with time zone
+                        AND
+                            end_time <= %s::timestamp with time zone
+                        """)
+                        params.extend(fltr['period'])
 
-            '''istsos.debug(
-                (
-                    yield from cur.mogrify(sql, tuple(params))
-                ).decode("utf-8")
-            )'''
+                    elif fltr['fes'] == 'equals':
+                        temporal.append("""
+                            begin_time = end_time
+                        AND
+                            begin_time = %s::timestamp with time zone
+                        """)
+                        params.append(fltr['instant'])
 
-            yield from cur.execute(sql, tuple(params))
-            recs = yield from cur.fetchall()
-            for rec in recs:
-                pt_begin = rec[0].isoformat() if rec[0] else None
-                pt_end = rec[1].isoformat() if rec[1] else None
-                r_time = rec[2].isoformat() if rec[2] else None
-                if rec[0] == rec[1]:
-                    observation["phenomenonTime"] = {
-                        "timeInstant": {
-                            "instant": pt_begin
-                        }
-                    }
-                else:
-                    observation["phenomenonTime"] = {
-                        "timePeriod": {
-                            "begin": pt_begin,
-                            "end": pt_end
-                        }
-                    }
-                observation["resultTime"] = {
-                    "timeInstant": {
-                        "instant": r_time
-                    }
-                }
-                if offering.is_complex():
-                    observation["result"] = []
-                    for idx in range(0, len(columns)):
-                        observation["result"].append((idx+3))
+                    where.append(
+                        "(%s)" % (' OR '.join(temporal))
+                    )
 
-                elif offering.is_array():
-                    raise Exception("Not yet implemented")
+        if len(where) > 0:
+            sql += "WHERE %s" % (
+                'AND'.join(where)
+            )
 
-                else:
-                    observation["result"] = rec[3]
+        sql = """
+            SET enable_seqscan=false;
+            SET SESSION TIME ZONE '+02:00';
+            %s
+            %s
+             ORDER BY begin_time ) t
+        """ % (
+            fastSql,
+            sql
+        )
 
-                request['observations'].append(
-                    Observation(json_source=observation)
-                )
+        istsos.debug(
+            (
+                yield from cur.mogrify(sql, tuple(params))
+            ).decode("utf-8")
+        )
 
-            istsos.debug("Loaded %s measures for procedure %s" % (
-                len(recs), observation["procedure"]
-            ))
+        yield from cur.execute(sql, tuple(params))
+        rec = yield from cur.fetchone()
+        # print(rec[0])
+        request['observations'] += rec[0]
+        # recs = yield from cur.fetchall()
+        istsos.debug("Data is fetched!")

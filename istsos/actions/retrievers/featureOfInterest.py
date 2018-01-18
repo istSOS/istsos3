@@ -7,18 +7,14 @@ import asyncio
 from istsos.actions.retrievers.retriever import Retriever
 
 
-class FeatureOfInterestList(Retriever):
+class FeatureOfInterest(Retriever):
     """Query an SOS to retrieve observation data structured according to the
     O&M specification.
     """
-    _ID = 'foi_id'
     _IDENTIFIER = 'foi_identifier'
-    _NAME = 'foi_name'
-    _DOMAIN = 'foi_domain'
-    _TYPE = 'foi_type'
 
     @asyncio.coroutine
     def before(self, request):
         """Load all the offerings relative to the given filter.
         """
-        request['featureOfInterestList'] = []
+        request['featureOfInterest'] = None

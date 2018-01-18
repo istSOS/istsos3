@@ -30,6 +30,43 @@ class SamplingType(BaseEntity):
     }
 
 
+class SamplingDomain(SamplingType):
+    """
+    """
+
+    json_schema = {
+        "type": "object",
+        "properties": {
+            "id": {
+                "type": "integer"
+            },
+            "description": {
+                "type": "string"
+            },
+            "identifier": {
+                "type": "string",
+                "minLength": 1
+            },
+            "name": {
+                "type": "string"
+            },
+            "type": {"type": "null"},
+            "sampled_feature": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                },
+                "minItems": 1
+            },
+            "shape": {"type": "null"}
+        },
+        "required": [
+            "identifier",
+            "type"
+        ]
+    }
+
+
 class SamplingPoint(SamplingType):
     """
     """

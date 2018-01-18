@@ -1,4 +1,11 @@
 
+_responseFormat = {
+    "vega": [
+        "application/json;subtype='vega'",
+        'application/json;subtype="vega"'
+    ]
+}
+
 _ogc_def = "http://www.opengis.net/def/"
 
 _ogc_nil = "%snil/OGC/0/unknown" % _ogc_def

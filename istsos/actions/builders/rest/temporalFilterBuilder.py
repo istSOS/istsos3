@@ -15,7 +15,6 @@ class TemporalFilterBuilder(TemporalFilterBuilder):
     def process(self, request):
         """ @todo docstring
         """
-
         temporal_filter = request['body']['params'].get("temporalFilter", None)
         if temporal_filter is not None:
             tmpl = TemporalFilter.get_template()

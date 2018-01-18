@@ -11,6 +11,8 @@ class Observations(Retriever):
     """Query an SOS to retrieve observation data structured according to the
     O&M specification.
     """
+    _NAME = 'procedure_name'
+
     @asyncio.coroutine
     def before(self, request):
         request['observations'] = []

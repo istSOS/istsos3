@@ -27,9 +27,9 @@ describeSensor = (
 
 getObservation = (
     'service=SOS&request=GetObservation&service=SOS'
-    '&version=2.0.0&procedure=urn:ogc:def:procedure:x-istsos:1.0:LUGANO'
+    '&version=2.0.0&procedure=T_TRE'
     '&temporalFilter=om:phenomenonTime,2006-01-01T00:00:00Z/'
-    '2007-01-01T00:00:00Z'
+    '2008-01-01T00:00:00Z'
 )
 
 

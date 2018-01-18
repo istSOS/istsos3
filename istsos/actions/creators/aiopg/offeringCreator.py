@@ -42,6 +42,7 @@ class OfferingCreator(OfferingCreator):
             )
 
         # check the sampled feature
+        print(request['offering']["sampled_foi"])
         if "sampled_foi" in request['offering'] and \
                 request['offering']["sampled_foi"] == "":
             request['offering']["sampled_foi"] = setting._ogc_nil

@@ -4,9 +4,13 @@
 # Version: v3.0.0
 
 import asyncio
+import istsos
 from istsos import setting
 from istsos.actions.retrievers.offerings import Offerings
 from istsos.entity.offering import Offering
+from istsos.actions.retrievers.featureOfInterest import (
+    FeatureOfInterest
+)
 
 
 class Offerings(Offerings):
@@ -20,27 +24,28 @@ class Offerings(Offerings):
         dbmanager = yield from self.init_connection()
         cur = dbmanager.cur
         sql = """
-SELECT DISTINCT
-    offerings.id,
-    offering_name,
-    procedure_name,
-    observed_area,
-    pt_begin,
-    pt_end,
-    rt_begin,
-    rt_end,
-    foi_type,
-    data_table_exists,
-    config
-FROM
-    offerings,
-    off_obs_prop,
-    observed_properties
-WHERE
-    id_opr = observed_properties.id
-AND
-    id_off = offerings.id
-"""
+            SELECT DISTINCT
+                offerings.id,
+                offering_name,
+                procedure_name,
+                observed_area,
+                pt_begin,
+                pt_end,
+                rt_begin,
+                rt_end,
+                foi_type,
+                data_table_exists,
+                config,
+                sampled_foi
+            FROM
+                offerings,
+                off_obs_prop,
+                observed_properties
+            WHERE
+                id_opr = observed_properties.id
+            AND
+                id_off = offerings.id
+        """
         where = []
         params = []
         # If filters are set, modify the query to filter the query
@@ -139,21 +144,21 @@ AND
 
             # Load Observable Property
             yield from cur.execute("""
-SELECT
-    off_obs_prop.id,
-    observed_properties.name,
-    observed_properties.def,
-    uoms.name,
-    off_obs_prop.observation_type,
-    off_obs_prop.col_name
-FROM
-    off_obs_prop
-INNER JOIN observed_properties
-    ON id_opr = observed_properties.id
-LEFT JOIN uoms
-    ON id_uom = uoms.id
-WHERE
-    id_off = %s;""", (data['id'],))
+                SELECT
+                    off_obs_prop.id,
+                    observed_properties.name,
+                    observed_properties.def,
+                    uoms.name,
+                    off_obs_prop.observation_type,
+                    off_obs_prop.col_name
+                FROM
+                    off_obs_prop
+                INNER JOIN observed_properties
+                    ON id_opr = observed_properties.id
+                LEFT JOIN uoms
+                    ON id_uom = uoms.id
+                WHERE
+                    id_off = %s;""", (data['id'],))
             rObs = yield from cur.fetchall()
             for obs_prop in rObs:
                 data['observable_properties'].append({
@@ -167,18 +172,32 @@ WHERE
 
             # Load Observation Types
             yield from cur.execute("""
-SELECT DISTINCT
-    observation_type
-FROM
-    off_obs_type
-WHERE
-    id_off = %s;""", (data['id'],))
+                SELECT DISTINCT
+                    observation_type
+                FROM
+                    off_obs_type
+                WHERE
+                    id_off = %s;""", (data['id'],))
             rOty = yield from cur.fetchall()
             for obs_type in rOty:
                 data['observation_types'].append(
                     obs_type[0]
                     # setting._observationTypesDict[obs_type[0]]
                 )
+
+            # Retrieve the Feature of Interest using the retriever
+            request.set_filter({
+                FeatureOfInterest._IDENTIFIER: rec[11]
+            })
+            print(rec[11])
+            yield from (
+                yield from istsos.actions.get_retrievers(
+                    'FeatureOfInterest',
+                    parent=self
+                )
+            ).process(request)
+            if 'featureOfInterest' in request:
+                data['sampled_foi'] = request['featureOfInterest']
 
             request['offerings'].append(Offering(data))
 

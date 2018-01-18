@@ -328,7 +328,7 @@ CREATE TABLE public.specimens
 
     CONSTRAINT specimen_offering_name_fkey FOREIGN KEY (offering_name)
       REFERENCES offerings (offering_name) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION,
+      ON UPDATE NO ACTION ON DELETE CASCADE,
 
     CONSTRAINT specimen_sampled_feature_fkey FOREIGN KEY (sampled_feature)
       REFERENCES fois (identifier) MATCH SIMPLE

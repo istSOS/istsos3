@@ -12,7 +12,8 @@ from istsos.entity.featureOfInterest import SamplingType
 from istsos.entity.om_base_entity.observationType import ObservationType
 from istsos.entity.observableProperty import ObservableProperty
 from istsos.entity.featureOfInterest import (
-    SamplingPoint
+    SamplingPoint,
+    SamplingDomain
 )
 from istsos.entity.human import Human
 
@@ -174,6 +175,7 @@ class Offering(BaseEntity):
                 "oneOf": [
                     {"type": "string"},
                     SamplingPoint.json_schema,
+                    SamplingDomain.json_schema,
                     {"type": "null"}
                 ]
             }
@@ -208,7 +210,7 @@ class Offering(BaseEntity):
 
     def is_complex(self):
         for ot in self['observation_types']:
-            if ot['definition'] == setting._COMPLEX_OBSERVATION:
+            if ot == setting._COMPLEX_OBSERVATION:
                 return True
         return False
 
@@ -221,7 +223,7 @@ class Offering(BaseEntity):
 
     def is_array(self):
         for ot in self['observation_types']:
-            if ot['definition'] == setting._ARRAY_OBSERVATION:
+            if ot == setting._ARRAY_OBSERVATION:
                 return True
         return False
 
