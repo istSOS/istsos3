@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
-from tornado import gen
+# from tornado import gen
+from tornado.httpserver import HTTPServer
 from tornado.web import Application
 from tornado.web import RequestHandler
-import tornado.concurrent
+# import tornado.concurrent
 from tornado.platform.asyncio import AsyncIOMainLoop
 
 # Python 3.4.4+
-# from tornado.platform.asyncio import to_tornado_future
+from tornado.platform.asyncio import to_tornado_future
 # from tornado.platform.asyncio import ensure_future
-# import functools
+from asyncio import ensure_future
+import functools
 import asyncio
 import json
 import sys
@@ -17,18 +19,18 @@ sys.path.append('.')
 
 
 # Python>3.4.3
-'''def coroutine(func):
+def coroutine(func):
     """code from: WGH
 https://gist.github.com/drgarcia1986/6b666c05ccb03e9525b4#gistcomment-2008480
     """
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         return to_tornado_future(ensure_future(func(*args, **kwargs)))
-    return wrapper'''
+    return wrapper
 
 
 # Python<=3.4.3
-def coroutine(func):
+'''def coroutine(func):
     """code from: drgarcia1986
 https://gist.github.com/drgarcia1986/6b666c05ccb03e9525b4
     """
@@ -46,7 +48,7 @@ https://gist.github.com/drgarcia1986/6b666c05ccb03e9525b4
         # asyncio.async() is deprecated, replaced with asyncio.ensure_future()
         asyncio.async(func(*args, **kwargs)).add_done_callback(future_done)
         return future
-    return decorator
+    return decorator'''
 
 
 class BaseHandler(RequestHandler):
@@ -70,7 +72,7 @@ class SosHandler(BaseHandler):
             parameters=parameters
         )
         yield from self.istsos.execute_http_request(
-            request, stats=True
+            request, stats=False
         )
         self.write(request['response'])
 
@@ -85,7 +87,7 @@ class SosHandler(BaseHandler):
                 "content-type", "application/xml")
         )
         yield from self.istsos.execute_http_request(
-            request, stats=True
+            request, stats=False
         )
         self.write(request['response'])
 
@@ -105,7 +107,7 @@ class RestHandler(BaseHandler):
                 "content-type", "application/json")
         )
         yield from self.istsos.execute_http_request(
-            request, stats=True
+            request, stats=False
         )
         self.write(request['response'])
 
@@ -126,7 +128,7 @@ if __name__ == "__main__":
     istsos = ioloop.run_until_complete(get_istsos_server())
 
     settings = dict(
-        debug=True,
+        debug=False,
         istsos=istsos
     )
 

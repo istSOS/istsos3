@@ -50,6 +50,14 @@ class FeatureOfInterestCreator(Action):
         geometry = 'POINT(%s)' % (
             ' '.join(str(coord) for coord in foi['shape']['coordinates'])
         )
+
+        default_epsg = 3857  # @todo load system default epsg
+        sql = "ST_GeomFromText(%s, %s)" % ('%s', default_epsg)
+        if 'epsg' in foi['shape'] and foi['shape']['epsg'] != default_epsg:
+            sql = "ST_Transform(ST_GeomFromText(%s, %s), %s)" % (
+                '%s', foi['shape']['epsg'], default_epsg
+            )
+
         yield from cur.execute("""
             INSERT INTO public.fois(
                 description,
@@ -59,15 +67,14 @@ class FeatureOfInterestCreator(Action):
                 geom
             ) VALUES (
                 %s, %s, %s, %s,
-                ST_GeomFromText(
-                    %s, 3857)
+                """ + sql + """
             ) RETURNING id;
         """, (
             foi['description'] if 'description' in foi else '',
             foi['identifier'],
             foi['name'] if 'name' in foi else '',
             foi['type'],
-            geometry,
+            geometry
         ))
         rec = yield from cur.fetchone()
         foi["id"] = rec[0]

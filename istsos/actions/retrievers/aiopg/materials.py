@@ -5,7 +5,6 @@
 
 import asyncio
 from istsos.actions.retrievers.materials import Materials
-from istsos.entity.material import Material
 
 
 class Materials(Materials):

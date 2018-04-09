@@ -33,7 +33,7 @@ class FeatureOfInterest(FeatureOfInterest):
                         foi_name as name,
                         foi_type as type,
                         (
-                            ST_AsGeoJSON(geom)
+                            ST_AsGeoJSON(ST_Force2D(geom))
                         )::json as shape
                     FROM
                         public.fois

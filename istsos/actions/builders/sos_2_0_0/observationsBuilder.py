@@ -139,8 +139,7 @@ class ObservationsBuilder(ObservationsBuilder):
 
                         op = ObservedProperty.get_template()
                         op['type'] = data_type
-                        op['def'] = componentType.get(
-                            'definition')
+                        op['def'] = componentType.get('definition')
 
                         uom = componentType.find(
                             './/swe_2_0:uom', request.ns)

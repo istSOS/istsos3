@@ -4,11 +4,10 @@
 # Version: v3.0.0
 
 import asyncio
-from istsos.actions.retrievers.materials import Materials
-from istsos.entity.material import Material
+from istsos.actions.retrievers.humans import Humans
 
 
-class Humans(Materials):
+class Humans(Humans):
 
     @asyncio.coroutine
     def process(self, request):

@@ -42,14 +42,13 @@ class OfferingCreator(OfferingCreator):
             )
 
         # check the sampled feature
-        print(request['offering']["sampled_foi"])
         if "sampled_foi" in request['offering'] and \
                 request['offering']["sampled_foi"] == "":
             request['offering']["sampled_foi"] = setting._ogc_nil
         else:
             # Check if a FeatureOfInterest entity is given instead of the uri
             if isinstance(request['offering']["sampled_foi"], dict):
-                # In this case inser the feature of interest in the database
+                # In this case insert the feature of interest in the database
                 yield from (
                     yield from istsos.actions.get_creator(
                         'FeatureOfInterestCreator',
@@ -111,7 +110,6 @@ class OfferingCreator(OfferingCreator):
         request['offering']['id'] = rec[0]
 
         # Check if observation type is managed by this istSOS
-        print(request['offering']['observation_types'])
         for observationType in request['offering']['observation_types']:
             if observationType not in setting._observationTypesList:
                 raise Exception(
@@ -167,6 +165,18 @@ class OfferingCreator(OfferingCreator):
                 request['offering']['id']
             ))
 
+        yield from cur.execute("""
+            CREATE INDEX _%s_begin_time_end_time_idx
+            ON data._%s USING btree
+                (
+                    begin_time DESC NULLS LAST,
+                    end_time DESC NULLS LAST
+                );
+        """ % (
+            request['offering']['name'],
+            request['offering']['name']
+        ))
+
         # Check if current observed properties exists in the database
         data_table_exists = False
         for observableProperty in request['offering']['observable_properties']:
@@ -182,11 +192,19 @@ class OfferingCreator(OfferingCreator):
                 # Insert non existing observable properties
                 yield from cur.execute("""
                     INSERT INTO observed_properties(
-                        def
+                        def, name, description
                     )
-                    VALUES (%s) RETURNING id;
+                    VALUES (%s, %s, %s) RETURNING id;
                 """, (
                     observableProperty['definition'],
+                    (
+                        observableProperty['name'] if
+                        'name' in observableProperty else None
+                    ),
+                    (
+                        observableProperty['description'] if
+                        'description' in observableProperty else None
+                    )
                 ))
                 rec = yield from cur.fetchone()
 
@@ -197,12 +215,13 @@ class OfferingCreator(OfferingCreator):
             # insert observation request
             yield from cur.execute("""
                 INSERT INTO off_obs_prop(
-                    id_off, id_opr
+                    id_off, id_opr, observation_type
                 )
-                VALUES (%s, %s) RETURNING id;
+                VALUES (%s, %s, %s) RETURNING id;
             """, (
                 request['offering']['id'],
-                id_opr
+                id_opr,
+                observableProperty['type']
             ))
             rec = yield from cur.fetchone()
             id_obp = rec[0]
@@ -219,7 +238,7 @@ class OfferingCreator(OfferingCreator):
                 ).add_field(
                     request['offering'],
                     {
-                        'definition': observableProperty['definition'],
+                        'def': observableProperty['definition'],
                         'uom': observableProperty['uom'],
                         'type': observableProperty["type"]
                     },

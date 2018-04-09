@@ -66,4 +66,3 @@ class IOSpecimenPointRequirement(Action):
 
         # Feature of Interest Point & Multiple Results in Time & Specimen
         # fixed sensors has always the same FOI
-        # raise Exception("PRINT")

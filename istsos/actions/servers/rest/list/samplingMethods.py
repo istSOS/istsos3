@@ -20,7 +20,6 @@ class SamplingMethods(CompositeAction):
     def after(self, request):
         """Render the result of the request in json.
         """
-        print(request['methods'])
         request['response'] = Response(
             json_source=Response.get_template({
                 "data": request['methods']

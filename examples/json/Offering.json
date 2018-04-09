@@ -5,7 +5,7 @@
     "procedure_description_format": [
         "http://www.opengis.net/sensorML/1.0.1"
     ],
-    "observable_property": [
+    "observable_properties": [
         {
             "id": 12,
             "name": "air temperature",
@@ -23,7 +23,7 @@
             "column": "_32"
         }
     ],
-    "observation_type": [
+    "observation_types": [
         "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"
     ],
     "observed_area": {
@@ -38,5 +38,20 @@
         "begin": "",
         "end": ""
     },
-    "foi_type":
+    "foi_type": "http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint",
+    "sampled_foi": {
+        "name": "Torre nord",
+        "identifier": "belli_castello_2",
+        "description": "",
+        "shape": {
+            "coordinates": [
+                715086,
+                98172,
+                292.64
+            ],
+            "type": "Point"
+        },
+        "id": 53,
+        "type": "http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint"
+    }
 }

@@ -318,6 +318,10 @@ REST_API = {
         'create.processingDetail',
         'ProcessingDetail'
     ),
+    "INSERT_OBSERVATIONS": (
+        'create.observations',
+        'Observations'
+    ),
 
     #  CHECK API
     "CHECK_SENSOR_NAME": (

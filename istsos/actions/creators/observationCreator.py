@@ -6,6 +6,7 @@
 import asyncio
 import istsos
 from istsos.actions.action import CompositeAction
+from istsos.entity.observation import Observation
 
 
 class ObservationCreator(CompositeAction):
@@ -16,6 +17,8 @@ class ObservationCreator(CompositeAction):
 
         offering = request['offerings'][0]
         for observation in request['observations']:
+            if not isinstance(observation, Observation):
+                observation = Observation(observation)
 
             # Check that all the Offerings *observation properties* are within
             # the Observation.
@@ -32,14 +35,8 @@ class ObservationCreator(CompositeAction):
 
             # Check that all the Offerings *observation types* are within
             # the Observation.
-            print(offering['observation_types'])
             offering_ots = offering.get_ot_definition_list()
             observation_ots = observation.get_op_type_list()
-
-            print(offering_ots)
-            print(observation_ots)
-            print(set(
-                offering_ots).symmetric_difference(observation_ots))
 
             difference = set(
                 offering_ots).symmetric_difference(observation_ots)
@@ -58,14 +55,16 @@ class ObservationCreator(CompositeAction):
                     observed_property = offering.get_observable_property(
                             observedProperty["def"])
 
-                    if observed_property['uom'] != observedProperty['uom']:
-                        istsos.warning("uom: %s != %s" % (
-                            observed_property['uom'],
-                            observedProperty['uom']
-                        ))
-                        raise Exception(
-                            "Observation's Unit of measure not "
-                            "consistent with Offering")
+                    if 'uom' in observed_property and (
+                            'uom' in observedProperty):
+                        if observed_property['uom'] != observedProperty['uom']:
+                            istsos.warning("uom: %s != %s" % (
+                                observed_property['uom'],
+                                observedProperty['uom']
+                            ))
+                            raise Exception(
+                                "Observation's Unit of measure not "
+                                "consistent with Offering")
 
                     if observed_property['type'] != observedProperty['type']:
                         istsos.warning("type: %s != %s" % (

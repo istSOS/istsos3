@@ -8,6 +8,7 @@ import uuid
 import istsos
 from istsos import setting
 from istsos.actions.creators.observationCreator import ObservationCreator
+from istsos.entity.observation import Observation
 
 
 class ObservationCreator(ObservationCreator):
@@ -21,16 +22,16 @@ class ObservationCreator(ObservationCreator):
 
         offering = request['offerings'][0]
         for observation in request['observations']:
+            if not isinstance(observation, Observation):
+                observation = Observation(observation)
             yield from self.create_data_table(
                 offering, observation, cur
             )
-            if observation['type'] == setting._complexObservation[
-                    'definition']:
+            if observation['type'] == setting._COMPLEX_OBSERVATION:
                 yield from self.insert_result(
                     offering, observation, cur)
 
-            elif observation['type'] == setting._arrayObservation[
-                    'definition']:
+            elif observation['type'] == setting._ARRAY_OBSERVATION:
                 pass
 
             else:
@@ -55,14 +56,12 @@ class ObservationCreator(ObservationCreator):
 
             # The data table are not yet initialized.
             # Now the missing columns will be created.
-            if observation['type'] == setting._complexObservation[
-                    'definition']:
+            if observation['type'] == setting._COMPLEX_OBSERVATION:
                 for op in observation.get_op_list():
                     yield from self.add_field(
                         offering, op, cur)
 
-            elif observation['type'] == setting._arrayObservation[
-                    'definition']:
+            elif observation['type'] == setting._ARRAY_OBSERVATION:
                 raise Exception("Not implemented yet")
 
             else:
@@ -78,11 +77,11 @@ class ObservationCreator(ObservationCreator):
 
     @asyncio.coroutine
     def add_field(self, offering, observedProperty, cur):
-        istsos.debug("Adding field: %s" % observedProperty['definition'])
+        istsos.debug("Adding field: %s" % observedProperty['def'])
 
         # Getting offering's observable property
         observable_property = offering.get_observable_property(
-                observedProperty['definition'])
+                observedProperty['def'])
 
         # Get id from off_obs_prop table
         id_obp = observable_property['id']
@@ -199,7 +198,7 @@ class ObservationCreator(ObservationCreator):
         columns = []
         for field in observation.get_field_list():
             observed_property = offering.get_observable_property(
-                    field['definition'])
+                    field['def'])
             columns.extend([
                 observed_property['column'],
                 "%s_qi" % observed_property['column']
@@ -209,45 +208,77 @@ class ObservationCreator(ObservationCreator):
             str(uuid.uuid1()).replace('-', ''),
             observation['phenomenonTime']['timeInstant']['instant'],
             observation['phenomenonTime']['timeInstant']['instant'],
-            observation['phenomenonTime']['timeInstant']['instant'],
-            observation['featureOfInterest']
+            observation['phenomenonTime']['timeInstant']['instant']
         ]
-        if observation['type'] == setting._complexObservation['definition']:
-            istsos.debug(columns)
+        if not offering['fixed']:
+            params.append(
+                observation['featureOfInterest']
+            )
+        if observation['type'] == setting._COMPLEX_OBSERVATION:
             for result in observation['result']:
                 params.extend([result, 100])
-            yield from cur.execute("""
-                INSERT INTO data._%s(
-                    obs_id, begin_time, end_time, result_time,
-                    foi_name, %s)
-                """ % (
-                    offering['name'],
-                    ", ".join(columns)
-                ) + """
-                    VALUES (
-                    %s, %s::TIMESTAMPTZ, %s::TIMESTAMPTZ, %s::TIMESTAMPTZ,
-                    %s """ + (", %s" * (len(columns))) + """)
-                """, tuple(params)
-            )
+            if not offering['fixed']:
+                yield from cur.execute("""
+                    INSERT INTO data._%s(
+                        obs_id, begin_time, end_time, result_time,
+                        foi_name, %s)
+                    """ % (
+                        offering['name'],
+                        ", ".join(columns)
+                    ) + """
+                        VALUES (
+                        %s, %s::TIMESTAMPTZ, %s::TIMESTAMPTZ, %s::TIMESTAMPTZ,
+                        %s """ + (", %s" * (len(columns))) + """)
+                    """, tuple(params)
+                )
+            else:
+                yield from cur.execute("""
+                    INSERT INTO data._%s(
+                        obs_id, begin_time, end_time, result_time,
+                        %s)
+                    """ % (
+                        offering['name'],
+                        ", ".join(columns)
+                    ) + """
+                        VALUES (
+                        %s, %s::TIMESTAMPTZ, %s::TIMESTAMPTZ, %s::TIMESTAMPTZ
+                        """ + (", %s" * (len(columns))) + """)
+                    """, tuple(params)
+                )
 
-        elif observation['type'] == setting._arrayObservation['definition']:
+        elif observation['type'] == setting._ARRAY_OBSERVATION:
             pass
 
         else:
             params.extend([observation['result'], 100])
-            yield from cur.execute("""
-                    INSERT INTO data._%s(
-                        obs_id, begin_time, end_time, result_time,
-                        foi_name, %s)
-                """ % (
-                    offering['name'],
-                    ", ".join(columns)
-                ) + """
-                    VALUES (
-                    %s, %s::TIMESTAMPTZ, %s::TIMESTAMPTZ, %s::TIMESTAMPTZ,
-                    %s, %s, %s)
-                """, tuple(params)
-            )
+            if not offering['fixed']:
+                yield from cur.execute("""
+                        INSERT INTO data._%s(
+                            obs_id, begin_time, end_time, result_time,
+                            foi_name, %s)
+                    """ % (
+                        offering['name'],
+                        ", ".join(columns)
+                    ) + """
+                        VALUES (
+                        %s, %s::TIMESTAMPTZ, %s::TIMESTAMPTZ, %s::TIMESTAMPTZ,
+                        %s, %s, %s)
+                    """, tuple(params)
+                )
+            else:
+                yield from cur.execute("""
+                        INSERT INTO data._%s(
+                            obs_id, begin_time, end_time, result_time,
+                            %s)
+                    """ % (
+                        offering['name'],
+                        ", ".join(columns)
+                    ) + """
+                        VALUES (
+                        %s, %s::TIMESTAMPTZ, %s::TIMESTAMPTZ, %s::TIMESTAMPTZ,
+                        %s, %s)
+                    """, tuple(params)
+                )
 
     def update_offering(self, offering, observations, cur):
         # Updating the offering phenomenon time
@@ -257,7 +288,7 @@ class ObservationCreator(ObservationCreator):
         # rt_end = None
 
         if observations[0]['type'] == \
-                setting._complexObservation['definition']:
+                setting._COMPLEX_OBSERVATION:
             pt = []
             rt = []
             for observation in observations:
@@ -273,7 +304,7 @@ class ObservationCreator(ObservationCreator):
             # rt_end = max(pt)
 
         elif observations[0]['type'] == \
-                setting._arrayObservation['definition']:
+                setting._ARRAY_OBSERVATION:
             pass
 
         else:

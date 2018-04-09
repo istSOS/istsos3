@@ -93,6 +93,9 @@ class Point(BaseEntity):
                 "type": "string",
                 "enum": ["Point"]
             },
+            "epsg": {  # Used only during registration (not retrieval)
+                "type": "integer"
+            },
             "coordinates": {
                 "oneOf": [
                     Coordinates2D.json_schema,
@@ -123,6 +126,9 @@ class Linestring(BaseEntity):
                 "type": "string",
                 "enum": ["LineString"]
             },
+            "epsg": {  # Used only during registration (not retrieval)
+                "type": "integer"
+            },
             "coordinates": {
                 "type": "array",
                 "items": {
@@ -131,8 +137,7 @@ class Linestring(BaseEntity):
                         Coordinates3D.json_schema
                     ]
                 }
-            },
-            "epsg": {"type": "integer"}
+            }
         },
         "required": ["type", "coordinates"],
         "additionalProperties": False
@@ -147,6 +152,9 @@ class Polygon(BaseEntity):
                 "type": "string",
                 "enum": ["Polygon"]
             },
+            "epsg": {  # Used only during registration (not retrieval)
+                "type": "integer"
+            },
             "coordinates": {
                 "type": "array",
                 "items": {
@@ -155,8 +163,7 @@ class Polygon(BaseEntity):
                         Coordinates3D.json_schema
                     ]
                 }
-            },
-            "epsg": {"type": "integer"}
+            }
         },
         "required": ["type", "coordinates"],
         "additionalProperties": False

@@ -36,7 +36,8 @@ class Offerings(Offerings):
                 foi_type,
                 data_table_exists,
                 config,
-                sampled_foi
+                sampled_foi,
+                fixed
             FROM
                 offerings,
                 off_obs_prop,
@@ -115,6 +116,7 @@ class Offerings(Offerings):
             data = Offering.get_template({
                 "id": rec[0],
                 "results": rec[9],
+                "fixed": rec[12],
                 "name": rec[1],
                 "procedure": rec[2],
                 "foi_type": rec[8],
@@ -189,7 +191,6 @@ class Offerings(Offerings):
             request.set_filter({
                 FeatureOfInterest._IDENTIFIER: rec[11]
             })
-            print(rec[11])
             yield from (
                 yield from istsos.actions.get_retrievers(
                     'FeatureOfInterest',

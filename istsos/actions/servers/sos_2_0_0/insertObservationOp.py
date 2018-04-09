@@ -4,7 +4,6 @@
 # Version: v3.0.0
 
 import asyncio
-from istsos import *
 from istsos.actions.action import CompositeAction
 from istsos.actions.builders.sos_2_0_0.observationsBuilder import (
     ObservationsBuilder

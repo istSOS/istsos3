@@ -43,6 +43,7 @@ class Observations(CompositeAction):
     def after(self, request):
         request['response'] = Response(
             json_source=Response.get_template({
-                "data": request['observations']
+                "data": request['observations'],
+                "headers": request['headers']
             })
         )

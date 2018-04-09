@@ -3,6 +3,14 @@ _responseFormat = {
     "vega": [
         "application/json;subtype='vega'",
         'application/json;subtype="vega"'
+    ],
+    "array": [
+        "application/json;subtype='array'",
+        'application/json;subtype="array"'
+    ],
+    "array2": [
+        "application/json;subtype='array2'",
+        'application/json;subtype="array2"'
     ]
 }
 

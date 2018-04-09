@@ -209,9 +209,8 @@ class Offering(BaseEntity):
         return ret
 
     def is_complex(self):
-        for ot in self['observation_types']:
-            if ot == setting._COMPLEX_OBSERVATION:
-                return True
+        if setting._COMPLEX_OBSERVATION in self['observation_types']:
+            return True
         return False
 
     def get_complex_observable_property(self):

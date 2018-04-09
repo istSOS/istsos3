@@ -17,7 +17,6 @@ class OfferingFilterBuilder(OfferingFilterBuilder):
         """ @todo docstring
         """
         offeringFilter = None
-        offeringName = None
 
         if request.is_get_observation():
             if request['method'] == 'GET':
