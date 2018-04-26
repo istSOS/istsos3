@@ -160,7 +160,10 @@ class Offerings(Offerings):
                 LEFT JOIN uoms
                     ON id_uom = uoms.id
                 WHERE
-                    id_off = %s;""", (data['id'],))
+                    id_off = %s
+                ORDER BY
+                    off_obs_prop.id
+            """, (data['id'],))
             rObs = yield from cur.fetchall()
             for obs_prop in rObs:
                 data['observable_properties'].append({

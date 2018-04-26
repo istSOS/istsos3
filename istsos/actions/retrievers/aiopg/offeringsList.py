@@ -136,7 +136,10 @@ AND
                     LEFT JOIN uoms
                         ON id_uom = uoms.id
                     WHERE
-                        id_off = %s;""", (res[0],))
+                        id_off = %s
+                    ORDER BY
+                        off_obs_prop.id
+                """, (res[0],))
 
                 r_obs = yield from cur.fetchall()
 

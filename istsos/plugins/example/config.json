@@ -5,8 +5,8 @@
     "author_email": "hi@example.com",
     "description": "This is an Example Package",
     "license": "GPL3",
-    "url": "http://example.com/SumAll/",
-    "img": "http://example.com/SumAll/logo.png",
+    "url": "http://example.com/ping/",
+    "img": "http://example.com/ping/logo.png",
     "api": {
         "PING": [
             "example.pingApi", "PingApi"

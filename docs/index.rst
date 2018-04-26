@@ -42,6 +42,7 @@ follow the `PEP8 Style Guide for Python Code
     :maxdepth: 1
 
     architecture
+    plugins
     entities
     filters
     actions

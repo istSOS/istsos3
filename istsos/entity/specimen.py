@@ -83,6 +83,9 @@ class Specimen(BaseEntity):
             "offering": {
                 "type": "string"
             },
+            "prefix": {
+                "type": "string"
+            },
             "name": {
                 "type": "string"
             },

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 # from tornado import gen
-from tornado.httpserver import HTTPServer
 from tornado.web import Application
 from tornado.web import RequestHandler
 # import tornado.concurrent
@@ -128,7 +127,7 @@ if __name__ == "__main__":
     istsos = ioloop.run_until_complete(get_istsos_server())
 
     settings = dict(
-        debug=False,
+        debug=True,
         istsos=istsos
     )
 

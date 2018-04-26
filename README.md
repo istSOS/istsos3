@@ -1,33 +1,86 @@
 # istSOS3
 
-## Installation
+In this repository you can find the istSOS3 python module.
+By following the instruction you will be able to run and use
+the core of istSOS3 on your Linux (Debian/Ubuntu) machine.
+For ready to use versions please go to (todo: link of the
+dowload pages) to the complete builds.
 
-[Describe here the installation process]
+## Installation guide for developers
 
-### Dependencies:
+Make a fork of the official repository if you think to contribute
+to the development, then clone your fork to your workstation.
+
+If you want just to make some tests you can clone directly the official
+repository.
 
 ```bash
-sudo pip3 install lxml
-sudo pip3 install jsonschema
+git clone https://github.com/istSOS/istsos3.git
 ```
-
-If postgreSQL database is used then install also:
+Install all the dependencies
 
 ```bash
-sudo pip3 install psycopg2
-sudo pip3 install aiopg
+sudo apt-get install postgresql postgis python3-pip
 ```
 
-## Developer guide
+And some Python3 dependencies:
 
-### Run tornado server
+```bash
+sudo pip3 install lxml \
+    jsonschema \
+    python-dateutil \
+    tornado \
+    psycopg2 \
+    aiopg \
+    pytest
+```
+
+## Preparing the istSOS3 server
+
+Create a PostgreSQL database named istsos3 and execute the sql file (postgresql_9.4_istsos_3.0.0.sql) that you can find in the ```istsos3/assets``` folder.
+
+```bash
+sudo -u postgres createdb -E UTF8 istsos3
+sudo -u postgres psql \
+  -d istsos3 -a \
+  -f istsos3/istsos/assets/postgresql_9.4_istsos_3.0.0.sql
+```
+
+Set your postgres user password
+
+```bash
+sudo -u postgres psql
+alter user postgres password 'postgres';
+```
+Ctrl-D to exit from psql console
+
+
+Create the configuration file adapting the loader attribute.
+
+```bash
+cd istsos3
+cp config-example.json config.json
+```
+
+Edit your config file:
+
+```json
+{
+    "type": "aiopg",
+    "host": "localhost",
+    "port": "5432",
+    "user": "postgres",
+    "password": "postgres",
+    "database": "istsos3"
+}
+```
 
 There is a basic server implementation using [Townado Web](http://www.tornadoweb.org)
 
 ```bash
 python3 examples/server_tornado.py
 ```
-Listening at http://localhost:8888/sos
+Listening at http://localhost:8887/sos
 
 ### Testing
 
@@ -88,7 +141,7 @@ To build the docs:
 https://about.gitlab.com/features/gitlab-ci-cd/
 
 The tests are executed automatically at each commit on the remote repository.
-The test are performed inside a docker environment. 
+The test are performed inside a docker environment.
 
 ### Installation
 
@@ -136,7 +189,7 @@ Locally you can only run one test at time, the test run only on commited changes
 
 ```bash
     cd git-root
-    gitlab-runner exec docker [test_name] 
+    gitlab-runner exec docker [test_name]
 
 ```
 
@@ -229,5 +282,3 @@ state = State(
 )
 
 ```
-
-
