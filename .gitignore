@@ -4,6 +4,9 @@ __pycache__/
 .idea/
 ./config.json
 docs/_build/
+dist/
+tutorial/
+MANIFEST
 istsos/plugins/*
 !istsos/plugins/__init__.py
 !istsos/plugins/example/

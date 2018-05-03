@@ -1,10 +1,18 @@
 # istSOS3
 
-In this repository you can find the istSOS3 python module.
+In this repository you can find the istSOS3 Python3 module.
 By following the instruction you will be able to run and use
-the core of istSOS3 on your Linux (Debian/Ubuntu) machine.
-For ready to use versions please go to (todo: link of the
-dowload pages) to the complete builds.
+the core of istSOS3 on your machine.
+For full packaged versions please go to (todo: link of the
+dowload pages).
+
+## Quick Installation
+
+To install istSOS3, you ca use pip:
+
+```bash
+pip3 install istsos
+```
 
 ## Installation guide for developers
 
@@ -37,7 +45,9 @@ sudo pip3 install lxml \
 
 ## Preparing the istSOS3 server
 
-Create a PostgreSQL database named istsos3 and execute the sql file (postgresql_9.4_istsos_3.0.0.sql) that you can find in the ```istsos3/assets``` folder.
+Installa and create a PostgreSQL database named istsos3 and execute the sql file
+(postgresql_9.4_istsos_3.0.0.sql) that you can find in
+the ```istsos3/assets``` folder.
 
 ```bash
 sudo -u postgres createdb -E UTF8 istsos3

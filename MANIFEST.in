@@ -1,0 +1,3 @@
+include LICENSE requirements.txt examples/server_tornado.py config.json
+global-exclude *.pyc *__pycache__* *.pyo
+include istsos/assets/*.sql
