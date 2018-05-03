@@ -5,6 +5,8 @@ __pycache__/
 ./config.json
 docs/_build/
 dist/
+build/
+istsos.egg-info/
 tutorial/
 MANIFEST
 istsos/plugins/*
