@@ -264,6 +264,10 @@ REST_API = {
         'list.domains',
         'Domains'
     ),
+    "FETCH_CATEGORIES": (
+        'list.categories',
+        'Categories'
+    ),
     "FETCH_MATERIALS": (
         'list.materials',
         'Materials'
