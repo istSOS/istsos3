@@ -1,0 +1,15 @@
+{
+    "name": "unit_conversion",
+    "version": "1.0.0",
+    "author": "rahulworld",
+    "author_email": "rahulnitsxr@gmail.com",
+    "description": "This is an istSOS3 plugin",
+    "license": "GPL3",
+    "url": "http://unit_con_post.com/unit_con_post/",
+    "img": "http://unit_con_post.com/unit_con_post/logo.png",
+    "api": {
+        "UNIT_CONVERSION_USING_POSTGRESQL_UNIT": [
+            "unit_con_post.unitConvPost", "UnitConvPost"
+        ]
+    }
+}
