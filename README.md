@@ -1,5 +1,12 @@
 # istSOS3
 
+## Status
+
+istSOS3 is currently not supported and its advancement not foreseen.
+see istSOS2 is for the current supported version
+
+## Description
+
 In this repository you can find the istSOS3 Python3 module.
 By following the instruction you will be able to run and use
 the core of istSOS3 on your machine.
